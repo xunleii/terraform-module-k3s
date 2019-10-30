@@ -1,23 +1,31 @@
-terraform-module-k3s
-=====================
+# terraform-module-k3s
 
 [![MIT Licensed](https://img.shields.io/badge/license-MIT-green.svg)](https://tldrlegal.com/license/mit-license)
 
-Terraform module that creates a [k3s](https://k3s.io/) cluster with all node given nodes. Currently, it only applies the k3s installation script, without any settings nor HA cluster (may be in future releases).
+Terraform module that creates a [k3s](https://k3s.io/) cluster with all node given nodes. Currently, it only applies the k3s installation script, without any complex settings nor HA cluster (may be in future releases).
 
 ## Usage
 
-> This is a draft...
-```
+``` terraform
 module "k3s" {
-  source  = "github.com/xunleii/terraform-module-k3s"
+  source  = "xunleii/k3s/module"
 
-  cluster_name = "k3s"
+  k3s_version = "v0.10.2"
+
+  cluster_name = "my.k3s.local"
+  cluster_cidr = "10.0.0.0/16"
+  cluster_service_cidr = "10.1.0.0/16"
+  additional_tls_san = ["k3s.my.domain.com"]
+  
   master_node = {
+      # This IP will be used as k3s master node IP.... if you want to use a public
+      # address for the connection, use connection.host instead
       ip = "10.123.45.67"
+
       # Connection uses Terraform connection syntax
       connection = {
-        user = "core"
+        host = "203.123.45.67"
+        user = "ubuntu"
       }
   }
   minion_nodes = [
@@ -27,7 +35,7 @@ module "k3s" {
               type = "ssh"
               user = "root"
               bastion_host = "10.123.45.67"
-              bastion_user = "core"
+              bastion_user = "ubuntu"
           }
       },
       {
@@ -36,7 +44,7 @@ module "k3s" {
               type = "ssh"
               user = "root"
               bastion_host = "10.123.45.67"
-              bastion_user = "core"
+              bastion_user = "ubuntu"
           }
       },
   ]
