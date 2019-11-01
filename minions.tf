@@ -1,0 +1,102 @@
+resource "null_resource" "k3s-minions" {
+  count = "${length(var.minion_nodes)}"
+
+  triggers = {
+    master = null_resource.k3s-master.id
+  }
+
+  connection {
+    host = "${element(var.minion_nodes.*.ip, count.index)}"
+
+    type        = "${lookup(element(var.minion_nodes.*.connection, count.index), "type", "ssh")}"
+    user        = "${lookup(element(var.minion_nodes.*.connection, count.index), "user", null)}"
+    password    = "${lookup(element(var.minion_nodes.*.connection, count.index), "password", null)}"
+    port        = "${lookup(element(var.minion_nodes.*.connection, count.index), "port", null)}"
+    timeout     = "${lookup(element(var.minion_nodes.*.connection, count.index), "timeout", null)}"
+    script_path = "${lookup(element(var.minion_nodes.*.connection, count.index), "script_path", null)}"
+
+    private_key    = "${lookup(element(var.minion_nodes.*.connection, count.index), "private_key", null)}"
+    certificate    = "${lookup(element(var.minion_nodes.*.connection, count.index), "certificate", null)}"
+    agent          = "${lookup(element(var.minion_nodes.*.connection, count.index), "agent", null)}"
+    agent_identity = "${lookup(element(var.minion_nodes.*.connection, count.index), "agent_identity", null)}"
+    host_key       = "${lookup(element(var.minion_nodes.*.connection, count.index), "host_key", null)}"
+
+    # NOTE: Currently not working on Windows machines
+    # https    = "${lookup(element(var.minion_nodes.*.connection, count.index), "https", null)}"
+    # insecure = "${lookup(element(var.minion_nodes.*.connection, count.index), "insecure", null)}"
+    # use_ntlm = "${lookup(element(var.minion_nodes.*.connection, count.index), "use_ntlm", null)}"
+    # cacert   = "${lookup(element(var.minion_nodes.*.connection, count.index), "cacert", null)}"
+
+    bastion_host        = "${lookup(element(var.minion_nodes.*.connection, count.index), "bastion_host", null)}"
+    bastion_host_key    = "${lookup(element(var.minion_nodes.*.connection, count.index), "bastion_host_key", null)}"
+    bastion_port        = "${lookup(element(var.minion_nodes.*.connection, count.index), "bastion_port", null)}"
+    bastion_user        = "${lookup(element(var.minion_nodes.*.connection, count.index), "bastion_user", null)}"
+    bastion_password    = "${lookup(element(var.minion_nodes.*.connection, count.index), "bastion_password", null)}"
+    bastion_private_key = "${lookup(element(var.minion_nodes.*.connection, count.index), "bastion_private_key", null)}"
+    bastion_certificate = "${lookup(element(var.minion_nodes.*.connection, count.index), "bastion_certificate", null)}"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "if ! command -V curl > /dev/null; then echo >&2 '[ERROR] curl must be installed to continue...'; exit 127; fi",
+      "echo >&2 [NOTE] Importing node-token is mandatory and require some SSH configuration.",
+      "echo >&2 [NOTE] If the next command fails, feel free to open an issue on the module repository.",
+      "rm -rf /etc/rancher/k3s/server",
+      "mkdir -p /etc/rancher/k3s/server",
+      "scp -P ${lookup(var.master_node.connection, "port", "22")} -o 'StrictHostKeyChecking no' ${lookup(var.master_node.connection, "user", "root")}@${var.master_node.ip}:/var/lib/rancher/k3s/server/node-token /etc/rancher/k3s/server"
+    ]
+  }
+
+  provisioner "remote-exec" {
+    when = "destroy"
+    inline = [
+      "([ -f /usr/local/bin/k3s-agent-uninstall.sh ] && /usr/local/bin/k3s-agent-uninstall.sh) || echo >&2 '[ERROR] failed to uninstall k3s ... skip'",
+    ]
+  }
+}
+
+resource "null_resource" "k3s-minions-updater" {
+  count = length(var.minion_nodes)
+
+  triggers = {
+    master = null_resource.k3s-master-updater.id
+    minion = element(null_resource.k3s-minions.*.id, count.index)
+  }
+
+  connection {
+    host = "${element(var.minion_nodes.*.ip, count.index)}"
+
+    type        = "${lookup(element(var.minion_nodes.*.connection, count.index), "type", "ssh")}"
+    user        = "${lookup(element(var.minion_nodes.*.connection, count.index), "user", null)}"
+    password    = "${lookup(element(var.minion_nodes.*.connection, count.index), "password", null)}"
+    port        = "${lookup(element(var.minion_nodes.*.connection, count.index), "port", null)}"
+    timeout     = "${lookup(element(var.minion_nodes.*.connection, count.index), "timeout", null)}"
+    script_path = "${lookup(element(var.minion_nodes.*.connection, count.index), "script_path", null)}"
+
+    private_key    = "${lookup(element(var.minion_nodes.*.connection, count.index), "private_key", null)}"
+    certificate    = "${lookup(element(var.minion_nodes.*.connection, count.index), "certificate", null)}"
+    agent          = "${lookup(element(var.minion_nodes.*.connection, count.index), "agent", null)}"
+    agent_identity = "${lookup(element(var.minion_nodes.*.connection, count.index), "agent_identity", null)}"
+    host_key       = "${lookup(element(var.minion_nodes.*.connection, count.index), "host_key", null)}"
+
+    # NOTE: Currently not working on Windows machines
+    # https    = "${lookup(element(var.minion_nodes.*.connection, count.index), "https", null)}"
+    # insecure = "${lookup(element(var.minion_nodes.*.connection, count.index), "insecure", null)}"
+    # use_ntlm = "${lookup(element(var.minion_nodes.*.connection, count.index), "use_ntlm", null)}"
+    # cacert   = "${lookup(element(var.minion_nodes.*.connection, count.index), "cacert", null)}"
+
+    bastion_host        = "${lookup(element(var.minion_nodes.*.connection, count.index), "bastion_host", null)}"
+    bastion_host_key    = "${lookup(element(var.minion_nodes.*.connection, count.index), "bastion_host_key", null)}"
+    bastion_port        = "${lookup(element(var.minion_nodes.*.connection, count.index), "bastion_port", null)}"
+    bastion_user        = "${lookup(element(var.minion_nodes.*.connection, count.index), "bastion_user", null)}"
+    bastion_password    = "${lookup(element(var.minion_nodes.*.connection, count.index), "bastion_password", null)}"
+    bastion_private_key = "${lookup(element(var.minion_nodes.*.connection, count.index), "bastion_private_key", null)}"
+    bastion_certificate = "${lookup(element(var.minion_nodes.*.connection, count.index), "bastion_certificate", null)}"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=${local.k3s_version} K3S_URL=https://${var.master_node.ip}:6443 K3S_TOKEN=$(cat /etc/rancher/k3s/server/node-token) sh -"
+    ]
+  }
+}
