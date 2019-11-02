@@ -1,0 +1,29 @@
+style: github
+template: CHANGELOG.tpl.md
+info:
+  title: CHANGELOG
+  repository_url: https://github.com/xunleii/terraform-module-k3s
+options:
+  commits:
+    filters:
+      Type:
+        - feat
+        - fix
+        - perf
+        - refact
+        - doc
+  commit_groups:
+    title_maps:
+      feat: Features
+      fix: Bug Fixes
+      perf: Performance Improvements
+      refact: Code Refactoring
+      doc: Documentation
+  header:
+    pattern: "^(\\w*)\\:\\s(.*)$"
+    pattern_maps:
+      - Type
+      - Subject
+  notes:
+    keywords:
+      - BREAKING CHANGE
