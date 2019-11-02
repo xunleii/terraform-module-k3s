@@ -1,19 +1,20 @@
-resource "null_resource" "k3s-master" {
+resource "null_resource" "k3s_master" {
   triggers = {
-    uniq_sha = sha1(join("", [var.cluster_name, var.cluster_cidr, var.cluster_service_cidr]))
-    master   = "${sha1(jsonencode(var.master_node))}"
+    uniq_sha     = sha1(join("", [var.cluster_name, var.cluster_cidr, var.cluster_service_cidr]))
+    master_ip    = "${sha1(var.master_node.ip)}"
+    master_input = "${sha1(lookup(var.master_node.connection, "host", var.master_node.ip))}"
   }
 
   connection {
-    host = "${lookup(var.master_node.connection, "host", var.master_node.ip)}"
+    type = "${lookup(var.master_node.connection, "type", "ssh")}"
 
-    type        = "${lookup(var.master_node.connection, "type", "ssh")}"
-    user        = "${lookup(var.master_node.connection, "user", null)}"
-    password    = "${lookup(var.master_node.connection, "password", null)}"
-    port        = "${lookup(var.master_node.connection, "port", null)}"
-    timeout     = "${lookup(var.master_node.connection, "timeout", null)}"
-    script_path = "${lookup(var.master_node.connection, "script_path", null)}"
+    host     = "${lookup(var.master_node.connection, "host", var.master_node.ip)}"
+    user     = "${lookup(var.master_node.connection, "user", null)}"
+    password = "${lookup(var.master_node.connection, "password", null)}"
+    port     = "${lookup(var.master_node.connection, "port", null)}"
+    timeout  = "${lookup(var.master_node.connection, "timeout", null)}"
 
+    script_path    = "${lookup(var.master_node.connection, "script_path", null)}"
     private_key    = "${lookup(var.master_node.connection, "private_key", null)}"
     certificate    = "${lookup(var.master_node.connection, "certificate", null)}"
     agent          = "${lookup(var.master_node.connection, "agent", null)}"
@@ -49,22 +50,23 @@ resource "null_resource" "k3s-master" {
   }
 }
 
-resource "null_resource" "k3s-master-updater" {
+resource "null_resource" "k3s_master_installer" {
   triggers = {
-    master  = null_resource.k3s-master.id
-    version = local.k3s_version
+    master_init = null_resource.k3s_master.id
+    version     = local.k3s_version
   }
+  depends_on = [null_resource.k3s_master]
 
   connection {
-    host = "${lookup(var.master_node.connection, "host", var.master_node.ip)}"
+    type = "${lookup(var.master_node.connection, "type", "ssh")}"
 
-    type        = "${lookup(var.master_node.connection, "type", "ssh")}"
-    user        = "${lookup(var.master_node.connection, "user", null)}"
-    password    = "${lookup(var.master_node.connection, "password", null)}"
-    port        = "${lookup(var.master_node.connection, "port", null)}"
-    timeout     = "${lookup(var.master_node.connection, "timeout", null)}"
-    script_path = "${lookup(var.master_node.connection, "script_path", null)}"
+    host     = "${lookup(var.master_node.connection, "host", var.master_node.ip)}"
+    user     = "${lookup(var.master_node.connection, "user", null)}"
+    password = "${lookup(var.master_node.connection, "password", null)}"
+    port     = "${lookup(var.master_node.connection, "port", null)}"
+    timeout  = "${lookup(var.master_node.connection, "timeout", null)}"
 
+    script_path    = "${lookup(var.master_node.connection, "script_path", null)}"
     private_key    = "${lookup(var.master_node.connection, "private_key", null)}"
     certificate    = "${lookup(var.master_node.connection, "certificate", null)}"
     agent          = "${lookup(var.master_node.connection, "agent", null)}"
