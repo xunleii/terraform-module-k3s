@@ -1,4 +1,3 @@
-
 locals {
   master_host = lookup(var.master_node.connection, "host", var.master_node.ip)
 
@@ -18,7 +17,6 @@ locals {
   ]
   install_opt = join(" ", local.install_opts)
 }
-
 
 resource "null_resource" "k3s_master" {
   triggers = {
@@ -61,13 +59,6 @@ resource "null_resource" "k3s_master" {
   provisioner "remote-exec" {
     inline = [
       "if ! command -V curl > /dev/null; then echo >&2 '[ERROR] curl must be installed to continue...'; exit 127; fi",
-    ]
-  }
-
-  provisioner "remote-exec" {
-    when = "destroy"
-    inline = [
-      "([ -f /usr/local/bin/k3s-uninstall.sh ] && /usr/local/bin/k3s-uninstall.sh) || echo >&2 '[ERROR] failed to uninstall k3s ... skip'",
     ]
   }
 }
