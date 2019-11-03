@@ -2,6 +2,13 @@
 ## [Unreleased]
 
 
+<a name="v1.1.0"></a>
+## [v1.1.0] - 2019-11-03
+### Bug Fixes
+- drain & delete node from the master node
+- use map instead of list to fix removable node
+
+
 <a name="v1.0.0"></a>
 ## v1.0.0 - 2019-11-03
 ### Bug Fixes
@@ -21,4 +28,5 @@
 - add module variables
 
 
-[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v1.1.0...HEAD
+[v1.1.0]: https://github.com/xunleii/terraform-module-k3s/compare/v1.0.0...v1.1.0
