@@ -28,8 +28,8 @@ module "k3s" {
         user = "ubuntu"
       }
   }
-  minion_nodes = [
-      {
+  minion_nodes = {
+      k3s-node-01 = {
           ip = "10.123.45.68"
           connection = {
               type = "ssh"
@@ -38,7 +38,7 @@ module "k3s" {
               bastion_user = "ubuntu"
           }
       },
-      {
+      k3s-node-02 = {
           ip = "10.123.45.69"
           connection = {
               type = "ssh"
@@ -47,7 +47,7 @@ module "k3s" {
               bastion_user = "ubuntu"
           }
       },
-  ]
+  }
 }
 ```
 
@@ -62,18 +62,6 @@ The `connection` object can use all SSH [Terraform connection arguments](https:/
 ### Kubeconfig
 
 Because Terraform doesn't allow us to get file remotely, you need to get it manually (with `external` data for example).
-
-## Known issues
-
-### Removing a minion node(s)
-
-Currently, you can't removing a minion directly from the list module for the following reasons:
-
-- **K3s side**: The node is not drained, so all workflow on it will be unvailable
-- **K3s side**: If we reload `k3s_minions_installer` a removed node, the node will be seen as `NotReady`
-- **Terraform side**: If you not remove the last one, Terraform will try to recreate all nodes after the deleted
-  - This is due to the `triggers`: because the position in the list will changed, the `IP` of the minion will changed too, activating the trigger.
-- **Terraform side**: If all nodes are removed, Terraform will crashed
 
 ## License
 
