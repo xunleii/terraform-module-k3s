@@ -28,8 +28,8 @@ module "k3s" {
         user = "ubuntu"
       }
   }
-  minion_nodes = [
-      {
+  minion_nodes = {
+      k3s-node-01 = {
           ip = "10.123.45.68"
           connection = {
               type = "ssh"
@@ -38,7 +38,7 @@ module "k3s" {
               bastion_user = "ubuntu"
           }
       },
-      {
+      k3s-node-02 = {
           ip = "10.123.45.69"
           connection = {
               type = "ssh"
@@ -47,7 +47,7 @@ module "k3s" {
               bastion_user = "ubuntu"
           }
       },
-  ]
+  }
 }
 ```
 

@@ -38,9 +38,9 @@ variable "master_node" {
 
 variable "minion_nodes" {
   description = "List of minion configuration nodes."
-  type = list(object({
+  type = map(object({
     ip         = string
     connection = map(any)
   }))
-  default = []
+  default = {}
 }

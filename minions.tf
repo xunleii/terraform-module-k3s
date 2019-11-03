@@ -9,44 +9,44 @@ locals {
 
 
 resource "null_resource" "k3s_minions" {
-  count = length(var.minion_nodes)
+  for_each = var.minion_nodes
 
   triggers = {
     master_init  = null_resource.k3s_master.id
-    minion_ip    = sha1(element(var.minion_nodes.*.ip, count.index))
-    minion_input = sha1(lookup(element(var.minion_nodes.*.connection, count.index), "host", element(var.minion_nodes.*.ip, count.index)))
+    minion_ip    = sha1(each.value.ip)
+    minion_input = sha1(lookup(each.value.connection, "host", each.value.ip))
   }
   depends_on = [null_resource.k3s_master_installer]
 
   connection {
-    type = lookup(element(var.minion_nodes.*.connection, count.index), "type", "ssh")
+    type = lookup(each.value.connection, "type", "ssh")
 
-    host     = lookup(element(var.minion_nodes.*.connection, count.index), "host", element(var.minion_nodes.*.ip, count.index))
-    user     = lookup(element(var.minion_nodes.*.connection, count.index), "user", null)
-    password = lookup(element(var.minion_nodes.*.connection, count.index), "password", null)
-    port     = lookup(element(var.minion_nodes.*.connection, count.index), "port", null)
-    timeout  = lookup(element(var.minion_nodes.*.connection, count.index), "timeout", null)
+    host     = lookup(each.value.connection, "host", each.value.ip)
+    user     = lookup(each.value.connection, "user", null)
+    password = lookup(each.value.connection, "password", null)
+    port     = lookup(each.value.connection, "port", null)
+    timeout  = lookup(each.value.connection, "timeout", null)
 
-    script_path    = lookup(element(var.minion_nodes.*.connection, count.index), "script_path", null)
-    private_key    = lookup(element(var.minion_nodes.*.connection, count.index), "private_key", null)
-    certificate    = lookup(element(var.minion_nodes.*.connection, count.index), "certificate", null)
-    agent          = lookup(element(var.minion_nodes.*.connection, count.index), "agent", null)
-    agent_identity = lookup(element(var.minion_nodes.*.connection, count.index), "agent_identity", null)
-    host_key       = lookup(element(var.minion_nodes.*.connection, count.index), "host_key", null)
+    script_path    = lookup(each.value.connection, "script_path", null)
+    private_key    = lookup(each.value.connection, "private_key", null)
+    certificate    = lookup(each.value.connection, "certificate", null)
+    agent          = lookup(each.value.connection, "agent", null)
+    agent_identity = lookup(each.value.connection, "agent_identity", null)
+    host_key       = lookup(each.value.connection, "host_key", null)
 
     # NOTE: Currently not working on Windows machines
-    # https    = lookup(element(var.minion_nodes.*.connection, count.index), "https", null)
-    # insecure = lookup(element(var.minion_nodes.*.connection, count.index), "insecure", null)
-    # use_ntlm = lookup(element(var.minion_nodes.*.connection, count.index), "use_ntlm", null)
-    # cacert   = lookup(element(var.minion_nodes.*.connection, count.index), "cacert", null)
+    # https    = lookup(each.value.connection, "https", null)
+    # insecure = lookup(each.value.connection, "insecure", null)
+    # use_ntlm = lookup(each.value.connection, "use_ntlm", null)
+    # cacert   = lookup(each.value.connection, "cacert", null)
 
-    bastion_host        = lookup(element(var.minion_nodes.*.connection, count.index), "bastion_host", null)
-    bastion_host_key    = lookup(element(var.minion_nodes.*.connection, count.index), "bastion_host_key", null)
-    bastion_port        = lookup(element(var.minion_nodes.*.connection, count.index), "bastion_port", null)
-    bastion_user        = lookup(element(var.minion_nodes.*.connection, count.index), "bastion_user", null)
-    bastion_password    = lookup(element(var.minion_nodes.*.connection, count.index), "bastion_password", null)
-    bastion_private_key = lookup(element(var.minion_nodes.*.connection, count.index), "bastion_private_key", null)
-    bastion_certificate = lookup(element(var.minion_nodes.*.connection, count.index), "bastion_certificate", null)
+    bastion_host        = lookup(each.value.connection, "bastion_host", null)
+    bastion_host_key    = lookup(each.value.connection, "bastion_host_key", null)
+    bastion_port        = lookup(each.value.connection, "bastion_port", null)
+    bastion_user        = lookup(each.value.connection, "bastion_user", null)
+    bastion_password    = lookup(each.value.connection, "bastion_password", null)
+    bastion_private_key = lookup(each.value.connection, "bastion_private_key", null)
+    bastion_certificate = lookup(each.value.connection, "bastion_certificate", null)
   }
 
   provisioner "remote-exec" {
@@ -72,48 +72,48 @@ resource "null_resource" "k3s_minions" {
 }
 
 resource "null_resource" "k3s_minions_installer" {
-  count = length(var.minion_nodes)
+  for_each = var.minion_nodes
 
   triggers = {
     master_node = null_resource.k3s_master_installer.id
-    minion_init = element(null_resource.k3s_minions.*.id, count.index)
+    minion_init = lookup(null_resource.k3s_minions, each.key).id
   }
   depends_on = [null_resource.k3s_minions]
 
   connection {
-    type = lookup(element(var.minion_nodes.*.connection, count.index), "type", "ssh")
+    type = lookup(each.value.connection, "type", "ssh")
 
-    host     = lookup(element(var.minion_nodes.*.connection, count.index), "host", element(var.minion_nodes.*.ip, count.index))
-    user     = lookup(element(var.minion_nodes.*.connection, count.index), "user", null)
-    password = lookup(element(var.minion_nodes.*.connection, count.index), "password", null)
-    port     = lookup(element(var.minion_nodes.*.connection, count.index), "port", null)
-    timeout  = lookup(element(var.minion_nodes.*.connection, count.index), "timeout", null)
+    host     = lookup(each.value.connection, "host", each.value.ip)
+    user     = lookup(each.value.connection, "user", null)
+    password = lookup(each.value.connection, "password", null)
+    port     = lookup(each.value.connection, "port", null)
+    timeout  = lookup(each.value.connection, "timeout", null)
 
-    script_path    = lookup(element(var.minion_nodes.*.connection, count.index), "script_path", null)
-    private_key    = lookup(element(var.minion_nodes.*.connection, count.index), "private_key", null)
-    certificate    = lookup(element(var.minion_nodes.*.connection, count.index), "certificate", null)
-    agent          = lookup(element(var.minion_nodes.*.connection, count.index), "agent", null)
-    agent_identity = lookup(element(var.minion_nodes.*.connection, count.index), "agent_identity", null)
-    host_key       = lookup(element(var.minion_nodes.*.connection, count.index), "host_key", null)
+    script_path    = lookup(each.value.connection, "script_path", null)
+    private_key    = lookup(each.value.connection, "private_key", null)
+    certificate    = lookup(each.value.connection, "certificate", null)
+    agent          = lookup(each.value.connection, "agent", null)
+    agent_identity = lookup(each.value.connection, "agent_identity", null)
+    host_key       = lookup(each.value.connection, "host_key", null)
 
     # NOTE: Currently not working on Windows machines
-    # https    = lookup(element(var.minion_nodes.*.connection, count.index), "https", null)
-    # insecure = lookup(element(var.minion_nodes.*.connection, count.index), "insecure", null)
-    # use_ntlm = lookup(element(var.minion_nodes.*.connection, count.index), "use_ntlm", null)
-    # cacert   = lookup(element(var.minion_nodes.*.connection, count.index), "cacert", null)
+    # https    = lookup(each.value.connection, "https", null)
+    # insecure = lookup(each.value.connection, "insecure", null)
+    # use_ntlm = lookup(each.value.connection, "use_ntlm", null)
+    # cacert   = lookup(each.value.connection, "cacert", null)
 
-    bastion_host        = lookup(element(var.minion_nodes.*.connection, count.index), "bastion_host", null)
-    bastion_host_key    = lookup(element(var.minion_nodes.*.connection, count.index), "bastion_host_key", null)
-    bastion_port        = lookup(element(var.minion_nodes.*.connection, count.index), "bastion_port", null)
-    bastion_user        = lookup(element(var.minion_nodes.*.connection, count.index), "bastion_user", null)
-    bastion_password    = lookup(element(var.minion_nodes.*.connection, count.index), "bastion_password", null)
-    bastion_private_key = lookup(element(var.minion_nodes.*.connection, count.index), "bastion_private_key", null)
-    bastion_certificate = lookup(element(var.minion_nodes.*.connection, count.index), "bastion_certificate", null)
+    bastion_host        = lookup(each.value.connection, "bastion_host", null)
+    bastion_host_key    = lookup(each.value.connection, "bastion_host_key", null)
+    bastion_port        = lookup(each.value.connection, "bastion_port", null)
+    bastion_user        = lookup(each.value.connection, "bastion_user", null)
+    bastion_password    = lookup(each.value.connection, "bastion_password", null)
+    bastion_private_key = lookup(each.value.connection, "bastion_private_key", null)
+    bastion_certificate = lookup(each.value.connection, "bastion_certificate", null)
   }
 
   provisioner "remote-exec" {
     inline = [
-      "curl -sfL https://get.k3s.io | ${local.minion_install_opt} sh -s - --node-ip ${element(var.minion_nodes.*.ip, count.index)}"
+      "curl -sfL https://get.k3s.io | ${local.minion_install_opt} sh -s - --node-ip ${each.value.ip}"
     ]
   }
 }
