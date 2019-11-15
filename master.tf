@@ -1,28 +1,38 @@
 locals {
+  # Generates the master public IP address
   master_host = lookup(var.master_node.connection, "host", var.master_node.ip)
 
-  default_tls_san = [
-    var.master_node.ip,
-    lookup(var.master_node.connection, "host", var.master_node.ip)
-  ]
-  tls_san_values = concat(local.default_tls_san, var.additional_tls_san)
-  tls_san_opt    = "--tls-san ${join(" --tls-san ", local.tls_san_values)}"
+  # Generates custom TLS Subject Alternative Name for the cluster
+  tls_san_values = distinct(
+    concat(
+      [var.master_node.ip, local.master_host],
+      var.additional_tls_san
+    )
+  )
+  tls_san_opts = "--tls-san ${join(" --tls-san ", local.tls_san_values)}"
 
-  install_opts = [
+  # Generates the master installation arguments
+  master_install_arg_list = [
     "--node-ip ${var.master_node.ip}",
     "--cluster-domain ${var.cluster_name}",
     "--cluster-cidr ${var.cluster_cidr}",
     "--service-cidr ${var.cluster_service_cidr}",
-    local.tls_san_opt,
+    local.tls_san_opts,
   ]
-  install_opt = join(" ", local.install_opts)
+  master_install_args = join(" ", local.master_install_arg_list)
+
+  # Generates the master installation env vars
+  master_install_env_list = [
+    "INSTALL_K3S_VERSION=${local.k3s_version}",
+    "K3S_CLUSTER_SECRET=${random_string.k3s_cluster_secret.result}"
+  ]
+  master_install_envs = join(" ", local.master_install_env_list)
 }
 
 resource "null_resource" "k3s_master" {
   triggers = {
-    master_ip    = sha1(var.master_node.ip)
-    master_input = sha1(local.master_host)
-    install_opt  = sha1(local.install_opt)
+    master_ip           = sha1(var.master_node.ip)
+    install_args = sha1(local.master_install_args)
   }
 
   connection {
@@ -56,9 +66,19 @@ resource "null_resource" "k3s_master" {
     bastion_certificate = lookup(var.master_node.connection, "bastion_certificate", null)
   }
 
+  # Check if curl is installed
   provisioner "remote-exec" {
     inline = [
       "if ! command -V curl > /dev/null; then echo >&2 '[ERROR] curl must be installed to continue...'; exit 127; fi",
+    ]
+  }
+
+  # Remove old k3s installation
+  provisioner "remote-exec" {
+    inline = [
+      "if ! command -V k3s-uninstall.sh > /dev/null; then exit; fi",
+      "echo >&2 [WARN] K3S seems already installed on this node and will be uninstalled.",
+      "k3s-uninstall.sh",
     ]
   }
 }
@@ -101,9 +121,10 @@ resource "null_resource" "k3s_master_installer" {
     bastion_certificate = lookup(var.master_node.connection, "bastion_certificate", null)
   }
 
+  # Install K3S server
   provisioner "remote-exec" {
     inline = [
-      "curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=${local.k3s_version} sh -s - ${local.install_opt}",
+      "curl -sfL https://get.k3s.io | ${local.master_install_envs} sh -s - ${local.master_install_args}",
       "until kubectl get nodes | grep -v '[WARN] No resources found'; do sleep 1; done"
     ]
   }

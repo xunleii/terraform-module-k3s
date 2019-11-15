@@ -3,5 +3,5 @@ data "http" "k3s_version" {
 }
 
 locals {
-  k3s_version = "${var.k3s_version == "latest" ? "${jsondecode(data.http.k3s_version.body).tag_name}" : var.k3s_version}"
+  k3s_version = var.k3s_version == "latest" ? jsondecode(data.http.k3s_version.body).tag_name : var.k3s_version
 }

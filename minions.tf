@@ -1,10 +1,10 @@
 locals {
-  minion_install_opts = [
+  minion_install_env_list = [
     "INSTALL_K3S_VERSION=${local.k3s_version}",
     "K3S_URL=https://${var.master_node.ip}:6443",
-    "K3S_TOKEN=$(cat /etc/rancher/k3s/server/node-token)"
+    "K3S_CLUSTER_SECRET=${random_string.k3s_cluster_secret.result}"
   ]
-  minion_install_opt = join(" ", local.minion_install_opts)
+  minion_install_envs = join(" ", local.minion_install_env_list)
 }
 
 resource "null_resource" "k3s_minions" {
@@ -47,16 +47,19 @@ resource "null_resource" "k3s_minions" {
     bastion_certificate = lookup(each.value.connection, "bastion_certificate", null)
   }
 
+  # Check if curl is installed
   provisioner "remote-exec" {
     inline = [
       "if ! command -V curl > /dev/null; then echo >&2 '[ERROR] curl must be installed to continue...'; exit 127; fi",
-      "if command -V k3s-agent-uninstall.sh > /dev/null; then k3s-agent-uninstall.sh; fi",
-      "echo >&2 [NOTE] Importing node-token is mandatory and require some SSH configuration.",
-      "echo >&2 [NOTE] If the next command fails, feel free to open an issue on the module repository.",
-      "echo >&2 [NOTE] This behaviour will change only when we are able to download a file from the remote.",
-      "rm -rf /etc/rancher/k3s/server",
-      "mkdir -p /etc/rancher/k3s/server",
-      "scp -P ${lookup(var.master_node.connection, "port", "22")} -o 'StrictHostKeyChecking no' ${lookup(var.master_node.connection, "user", "root")}@${var.master_node.ip}:/var/lib/rancher/k3s/server/node-token /etc/rancher/k3s/server",
+    ]
+  }
+
+  # Remove old k3s installation
+  provisioner "remote-exec" {
+    inline = [
+      "if ! command -V k3s-agent-uninstall.sh > /dev/null; then exit; fi",
+      "echo >&2 [WARN] K3S seems already installed on this node and will be uninstalled.",
+      "k3s-agent-uninstall.sh",
     ]
   }
 }
@@ -100,9 +103,10 @@ resource "null_resource" "k3s_minions_installer" {
     bastion_certificate = lookup(each.value.connection, "bastion_certificate", null)
   }
 
+  # Install K3S agent
   provisioner "remote-exec" {
     inline = [
-      "curl -sfL https://get.k3s.io | ${local.minion_install_opt} sh -s - --node-ip ${each.value.ip}"
+      "curl -sfL https://get.k3s.io | ${local.minion_install_envs} sh -s - --node-ip ${each.value.ip}"
     ]
   }
 }
@@ -146,6 +150,7 @@ resource "null_resource" "k3s_minions_uninstaller" {
     bastion_certificate = lookup(var.master_node.connection, "bastion_certificate", null)
   }
 
+  # Drain and delete the removed node
   provisioner "remote-exec" {
     when = "destroy"
     inline = [
