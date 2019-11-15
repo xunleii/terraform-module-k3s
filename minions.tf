@@ -116,7 +116,6 @@ resource "null_resource" "k3s_minions_uninstaller" {
 
   triggers = {
     minion    = null_resource.k3s_minions[each.key].id
-    minion_ip = each.value.ip
   }
 
   connection {
@@ -154,8 +153,8 @@ resource "null_resource" "k3s_minions_uninstaller" {
   provisioner "remote-exec" {
     when = "destroy"
     inline = [
-      "NODE=$(kubectl get node -l 'k3s.io/internal-ip = ${self.triggers.minion_ip}' | tail -n 1 | awk '{printf $1}')",
-      "kubectl drain $${NODE} --force --delete-local-data --ignore-daemonsets",
+      "NODE=$(kubectl get node -l 'k3s.io/internal-ip = ${null_resource.k3s_minions[each.key].triggers.minion_ip}' | tail -n 1 | awk '{printf $1}')",
+      "kubectl drain $${NODE} --force --delete-local-data --ignore-daemonsets --timeout ${var.drain_timeout}",
       "kubectl delete node $${NODE}",
       "sed -i \"/$${NODE}$/d\" /var/lib/rancher/k3s/server/cred/node-passwd",
     ]

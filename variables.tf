@@ -36,6 +36,12 @@ variable "master_node" {
   })
 }
 
+variable "drain_timeout" {
+  description = "The length of time to wait before giving up the node draining. Infinite by default."
+  type = string
+  default = "0s"
+}
+
 variable "minion_nodes" {
   description = "List of minion configuration nodes."
   type = map(object({
