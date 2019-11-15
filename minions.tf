@@ -115,7 +115,7 @@ resource "null_resource" "k3s_minions_uninstaller" {
   for_each = var.minion_nodes
 
   triggers = {
-    minion    = null_resource.k3s_minions[each.key].id
+    minion = null_resource.k3s_minions[each.key].id
   }
 
   connection {

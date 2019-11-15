@@ -10,7 +10,7 @@ module "k3s" {
   k3s_version          = "latest"
   cluster_cidr         = "10.0.0.0/16"
   cluster_service_cidr = "10.1.0.0/16"
-  drain_timeout = "30s"
+  drain_timeout        = "30s"
 
   master_node = {
     ip = hcloud_server_network.master_network.ip

@@ -31,7 +31,7 @@ locals {
 
 resource "null_resource" "k3s_master" {
   triggers = {
-    master_ip           = sha1(var.master_node.ip)
+    master_ip    = sha1(var.master_node.ip)
     install_args = sha1(local.master_install_args)
   }
 
