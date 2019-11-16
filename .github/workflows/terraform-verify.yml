@@ -1,0 +1,11 @@
+name: 'K3S Deployment GitHub Actions'
+on:
+  pull_request
+jobs:
+  check_action:
+    name: 'Check Action'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'TEST'
+        run: |
+          echo '${{github.event.action}}'
