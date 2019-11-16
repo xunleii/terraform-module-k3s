@@ -2,6 +2,18 @@
 ## [Unreleased]
 
 
+<a name="v1.2.0"></a>
+## [v1.2.0] - 2019-11-16
+### Bug Fixes
+- fix Terraform crash
+
+### Code Refactoring
+- run terraform fmt
+
+### Features
+- use K3S_CLUSTER_SECRET and remove scp
+
+
 <a name="v1.1.0"></a>
 ## [v1.1.0] - 2019-11-03
 ### Bug Fixes
@@ -28,5 +40,6 @@
 - add module variables
 
 
-[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v1.2.0...HEAD
+[v1.2.0]: https://github.com/xunleii/terraform-module-k3s/compare/v1.1.0...v1.2.0
 [v1.1.0]: https://github.com/xunleii/terraform-module-k3s/compare/v1.0.0...v1.1.0
