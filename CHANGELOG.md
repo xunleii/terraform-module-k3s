@@ -2,6 +2,12 @@
 ## [Unreleased]
 
 
+<a name="v1.2.1"></a>
+## [v1.2.1] - 2019-11-16
+### Bug Fixes
+- use random_password to make k3s key sensitive
+
+
 <a name="v1.2.0"></a>
 ## [v1.2.0] - 2019-11-16
 ### Bug Fixes
@@ -40,6 +46,7 @@
 - add module variables
 
 
-[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v1.2.1...HEAD
+[v1.2.1]: https://github.com/xunleii/terraform-module-k3s/compare/v1.2.0...v1.2.1
 [v1.2.0]: https://github.com/xunleii/terraform-module-k3s/compare/v1.1.0...v1.2.0
 [v1.1.0]: https://github.com/xunleii/terraform-module-k3s/compare/v1.0.0...v1.1.0
