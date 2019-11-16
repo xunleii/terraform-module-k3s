@@ -2,7 +2,7 @@ locals {
   minion_install_env_list = [
     "INSTALL_K3S_VERSION=${local.k3s_version}",
     "K3S_URL=https://${var.master_node.ip}:6443",
-    "K3S_CLUSTER_SECRET=${random_string.k3s_cluster_secret.result}"
+    "K3S_CLUSTER_SECRET=${random_password.k3s_cluster_secret.result}"
   ]
   minion_install_envs = join(" ", local.minion_install_env_list)
 }

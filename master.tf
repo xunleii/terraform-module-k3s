@@ -24,7 +24,7 @@ locals {
   # Generates the master installation env vars
   master_install_env_list = [
     "INSTALL_K3S_VERSION=${local.k3s_version}",
-    "K3S_CLUSTER_SECRET=${random_string.k3s_cluster_secret.result}"
+    "K3S_CLUSTER_SECRET=${random_password.k3s_cluster_secret.result}"
   ]
   master_install_envs = join(" ", local.master_install_env_list)
 }
