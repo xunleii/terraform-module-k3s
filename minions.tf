@@ -151,7 +151,7 @@ resource "null_resource" "k3s_minions_uninstaller" {
 
   # Drain and delete the removed node
   provisioner "remote-exec" {
-    when = "destroy"
+    when = destroy
     inline = [
       "NODE=$(kubectl get node -l 'k3s.io/internal-ip = ${null_resource.k3s_minions[each.key].triggers.minion_ip}' | tail -n 1 | awk '{printf $1}')",
       "kubectl drain $${NODE} --force --delete-local-data --ignore-daemonsets --timeout ${var.drain_timeout}",
