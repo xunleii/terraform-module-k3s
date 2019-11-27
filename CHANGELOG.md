@@ -2,6 +2,12 @@
 ## [Unreleased]
 
 
+<a name="v1.4.0"></a>
+## [v1.4.0] - 2019-11-28
+### Code Refactoring
+- clean custom flags feature
+
+
 <a name="v1.3.2"></a>
 ## [v1.3.2] - 2019-11-27
 ### Bug Fixes
@@ -70,7 +76,8 @@
 - add module variables
 
 
-[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v1.3.2...HEAD
+[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v1.4.0...HEAD
+[v1.4.0]: https://github.com/xunleii/terraform-module-k3s/compare/v1.3.2...v1.4.0
 [v1.3.2]: https://github.com/xunleii/terraform-module-k3s/compare/v1.3.1...v1.3.2
 [v1.3.1]: https://github.com/xunleii/terraform-module-k3s/compare/v1.2.3...v1.3.1
 [v1.2.3]: https://github.com/xunleii/terraform-module-k3s/compare/v1.2.2...v1.2.3
