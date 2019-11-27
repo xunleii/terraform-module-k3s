@@ -17,7 +17,15 @@ module "k3s" {
   cluster_service_cidr = "10.1.0.0/16"
   additional_tls_san = ["k3s.my.domain.com"]
 
-  custom_server_args = ["-v 10"]
+  additional_flags = {
+    master = []
+    minion = [
+      "--node-label node-role.kubernetes.io/minion='true'",
+    ]
+    common = [
+      "--no-flannel"
+    ]
+  }
   
   master_node = {
       # This IP will be used as k3s master node IP.... if you want to use a public

@@ -1,6 +1,9 @@
 locals {
-  minion_install_arg_list = var.custom_agent_args
-  minion_install_args     = join(" ", local.minion_install_arg_list)
+  minion_install_arg_list = concat(
+    var.additional_flags.minion,
+    var.additional_flags.common,
+  )
+  minion_install_args = join(" ", local.minion_install_arg_list)
 
   minion_install_env_list = [
     "INSTALL_K3S_VERSION=${local.k3s_version}",
