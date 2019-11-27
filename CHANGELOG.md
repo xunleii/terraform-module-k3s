@@ -1,12 +1,18 @@
 <a name="unreleased"></a>
 ## [Unreleased]
 
-### Bug Fixes
-- remove warning 'quoted keywords are now deprecated'
+
+<a name="v1.3.1"></a>
+## [v1.3.1] - 2019-11-27
+### Features
+- add custom arguments
 
 
 <a name="v1.2.3"></a>
-## [v1.2.3] - 2019-11-16
+## [v1.2.3] - 2019-11-24
+### Bug Fixes
+- remove warning 'quoted keywords are now deprecated'
+
 
 <a name="v1.2.2"></a>
 ## [v1.2.2] - 2019-11-16
@@ -58,7 +64,8 @@
 - add module variables
 
 
-[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v1.2.3...HEAD
+[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v1.3.1...HEAD
+[v1.3.1]: https://github.com/xunleii/terraform-module-k3s/compare/v1.2.3...v1.3.1
 [v1.2.3]: https://github.com/xunleii/terraform-module-k3s/compare/v1.2.2...v1.2.3
 [v1.2.2]: https://github.com/xunleii/terraform-module-k3s/compare/v1.2.1...v1.2.2
 [v1.2.1]: https://github.com/xunleii/terraform-module-k3s/compare/v1.2.0...v1.2.1
