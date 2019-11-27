@@ -106,7 +106,7 @@ resource "null_resource" "k3s_minions_installer" {
   # Install K3S agent
   provisioner "remote-exec" {
     inline = [
-      "curl -sfL https://get.k3s.io | ${local.minion_install_envs} sh -s - --node-ip ${each.value.ip}"
+      "curl -sfL https://get.k3s.io | ${local.minion_install_envs} sh -s - --node-ip ${each.value.ip} ${var.custom_agent_args}"
     ]
   }
 }
