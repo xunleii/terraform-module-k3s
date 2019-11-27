@@ -20,8 +20,8 @@ locals {
       "--service-cidr ${var.cluster_service_cidr}",
       local.tls_san_opts,
     ],
-    var.custom_server_args,
-    var.custom_agent_args
+    var.additional_flags.master,
+    var.additional_flags.common,
   )
   master_install_args = join(" ", local.master_install_arg_list)
 
