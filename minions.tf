@@ -1,4 +1,7 @@
 locals {
+  minion_install_arg_list = var.custom_agent_args
+  minion_install_args     = join(" ", local.minion_install_arg_list)
+
   minion_install_env_list = [
     "INSTALL_K3S_VERSION=${local.k3s_version}",
     "K3S_URL=https://${var.master_node.ip}:6443",
@@ -106,7 +109,7 @@ resource "null_resource" "k3s_minions_installer" {
   # Install K3S agent
   provisioner "remote-exec" {
     inline = [
-      "curl -sfL https://get.k3s.io | ${local.minion_install_envs} sh -s - --node-ip ${each.value.ip} ${var.custom_agent_args}"
+      "curl -sfL https://get.k3s.io | ${local.minion_install_envs} sh -s - --node-ip ${each.value.ip} ${local.minion_install_args}"
     ]
   }
 }

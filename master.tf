@@ -12,13 +12,17 @@ locals {
   tls_san_opts = "--tls-san ${join(" --tls-san ", local.tls_san_values)}"
 
   # Generates the master installation arguments
-  master_install_arg_list = [
-    "--node-ip ${var.master_node.ip}",
-    "--cluster-domain ${var.cluster_name}",
-    "--cluster-cidr ${var.cluster_cidr}",
-    "--service-cidr ${var.cluster_service_cidr}",
-    local.tls_san_opts,
-  ]
+  master_install_arg_list = concat(
+    [
+      "--node-ip ${var.master_node.ip}",
+      "--cluster-domain ${var.cluster_name}",
+      "--cluster-cidr ${var.cluster_cidr}",
+      "--service-cidr ${var.cluster_service_cidr}",
+      local.tls_san_opts,
+    ],
+    var.custom_server_args,
+    var.custom_agent_args
+  )
   master_install_args = join(" ", local.master_install_arg_list)
 
   # Generates the master installation env vars
@@ -124,7 +128,7 @@ resource "null_resource" "k3s_master_installer" {
   # Install K3S server
   provisioner "remote-exec" {
     inline = [
-      "curl -sfL https://get.k3s.io | ${local.master_install_envs} sh -s - ${local.master_install_args} ${var.custom_server_args} ${var.custom_agent_args}",
+      "curl -sfL https://get.k3s.io | ${local.master_install_envs} sh -s - ${local.master_install_args}",
       "until kubectl get nodes | grep -v '[WARN] No resources found'; do sleep 1; done"
     ]
   }
