@@ -124,7 +124,7 @@ resource "null_resource" "k3s_master_installer" {
   # Install K3S server
   provisioner "remote-exec" {
     inline = [
-      "curl -sfL https://get.k3s.io | ${local.master_install_envs} sh -s - ${local.master_install_args}",
+      "curl -sfL https://get.k3s.io | ${local.master_install_envs} sh -s - ${local.master_install_args} ${var.custom_server_args} ${var.custom_agent_args}",
       "until kubectl get nodes | grep -v '[WARN] No resources found'; do sleep 1; done"
     ]
   }

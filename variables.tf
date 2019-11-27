@@ -28,6 +28,16 @@ variable "additional_tls_san" {
   default     = []
 }
 
+variable "custom_server_args" {
+  description = "Additional K3S server commands. (see https://rancher.com/docs/k3s/latest/en/installation/install-options/#k3s-server)"
+  type = list(string)
+}
+
+variable "custom_agent_args" {
+  description = "Additional K3S agent commands. (see https://rancher.com/docs/k3s/latest/en/installation/install-options/#k3s-agent)"
+  type = list(string)  
+}
+
 variable "master_node" {
   description = "Configuration of the K3S master node."
   type = object({
