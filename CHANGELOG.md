@@ -2,6 +2,16 @@
 ## [Unreleased]
 
 
+<a name="v1.5.0"></a>
+## [v1.5.0] - 2019-12-01
+### Code Refactoring
+- update examples with module refactoring
+- use new module variables
+
+### Documentation
+- update module usage
+
+
 <a name="v1.4.0"></a>
 ## [v1.4.0] - 2019-11-28
 ### Code Refactoring
@@ -76,7 +86,8 @@
 - add module variables
 
 
-[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v1.5.0...HEAD
+[v1.5.0]: https://github.com/xunleii/terraform-module-k3s/compare/v1.4.0...v1.5.0
 [v1.4.0]: https://github.com/xunleii/terraform-module-k3s/compare/v1.3.2...v1.4.0
 [v1.3.2]: https://github.com/xunleii/terraform-module-k3s/compare/v1.3.1...v1.3.2
 [v1.3.1]: https://github.com/xunleii/terraform-module-k3s/compare/v1.2.3...v1.3.1
