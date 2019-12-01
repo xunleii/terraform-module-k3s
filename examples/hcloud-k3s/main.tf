@@ -1,29 +1,30 @@
-terraform {
-  required_version = "~> 0.12.0"
-}
+provider hcloud {}
 
-provider "hcloud" {}
-
-module "k3s" {
+module k3s {
   source = "./../.."
 
-  k3s_version          = "latest"
-  cluster_cidr         = "10.0.0.0/16"
-  cluster_service_cidr = "10.1.0.0/16"
-  drain_timeout        = "30s"
+  k3s_version = "latest"
+  cluster_cidr = {
+    pods     = "10.42.0.0/16"
+    services = "10.43.0.0/16"
+  }
+  drain_timeout = "30s"
 
   additional_flags = {
-    master = []
-    minion = [
-      "--node-label node-role.kubernetes.io/minion='true'",
+    master = [
+      "--disable-cloud-controller",
+      "--flannel-iface ens10",
+      "--kubelet-arg cloud-provider=external" # required to use https://github.com/hetznercloud/hcloud-cloud-controller-manager
     ]
-    common = [
-      "--no-flannel"
+    minion = [
+      "--flannel-iface ens10",
+      "--kubelet-arg cloud-provider=external" # required to use https://github.com/hetznercloud/hcloud-cloud-controller-manager
     ]
   }
 
   master_node = {
-    ip = hcloud_server_network.master_network.ip
+    name = "master"
+    ip   = hcloud_server_network.master_network.ip
     connection = {
       host = hcloud_server.master.ipv4_address
     }
