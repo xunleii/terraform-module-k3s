@@ -1,24 +1,18 @@
 locals {
-  minion_install_arg_list = concat(
-    var.additional_flags.minion,
-    var.additional_flags.common,
-  )
-  minion_install_args = join(" ", local.minion_install_arg_list)
-
-  minion_install_env_list = [
-    "INSTALL_K3S_VERSION=${local.k3s_version}",
-    "K3S_URL=https://${var.master_node.ip}:6443",
-    "K3S_CLUSTER_SECRET=${random_password.k3s_cluster_secret.result}"
+  minion_default_flags = [
+    "--server https://${var.master_node.ip}:6443",
+    "--token ${random_password.k3s_cluster_secret.result}"
   ]
-  minion_install_envs = join(" ", local.minion_install_env_list)
+  minion_install_flags = join(" ", concat(var.additional_flags.minion, local.minion_default_flags))
 }
 
-resource "null_resource" "k3s_minions" {
+resource null_resource k3s_minions {
   for_each = var.minion_nodes
 
   triggers = {
-    master    = null_resource.k3s_master.id
-    minion_ip = each.value.ip
+    master_init  = null_resource.k3s_master.id
+    install_args = sha1(local.minion_install_flags)
+    minion_ip    = each.value.ip
   }
   depends_on = [null_resource.k3s_master_installer]
 
@@ -38,11 +32,10 @@ resource "null_resource" "k3s_minions" {
     agent_identity = lookup(each.value.connection, "agent_identity", null)
     host_key       = lookup(each.value.connection, "host_key", null)
 
-    # NOTE: Currently not working on Windows machines
-    # https    = lookup(each.value.connection, "https", null)
-    # insecure = lookup(each.value.connection, "insecure", null)
-    # use_ntlm = lookup(each.value.connection, "use_ntlm", null)
-    # cacert   = lookup(each.value.connection, "cacert", null)
+    https    = lookup(each.value.connection, "https", null)
+    insecure = lookup(each.value.connection, "insecure", null)
+    use_ntlm = lookup(each.value.connection, "use_ntlm", null)
+    cacert   = lookup(each.value.connection, "cacert", null)
 
     bastion_host        = lookup(each.value.connection, "bastion_host", null)
     bastion_host_key    = lookup(each.value.connection, "bastion_host_key", null)
@@ -54,14 +47,14 @@ resource "null_resource" "k3s_minions" {
   }
 
   # Check if curl is installed
-  provisioner "remote-exec" {
+  provisioner remote-exec {
     inline = [
       "if ! command -V curl > /dev/null; then echo >&2 '[ERROR] curl must be installed to continue...'; exit 127; fi",
     ]
   }
 
   # Remove old k3s installation
-  provisioner "remote-exec" {
+  provisioner remote-exec {
     inline = [
       "if ! command -V k3s-agent-uninstall.sh > /dev/null; then exit; fi",
       "echo >&2 [WARN] K3S seems already installed on this node and will be uninstalled.",
@@ -70,12 +63,13 @@ resource "null_resource" "k3s_minions" {
   }
 }
 
-resource "null_resource" "k3s_minions_installer" {
+resource null_resource k3s_minions_installer {
   for_each = var.minion_nodes
 
   triggers = {
-    master = null_resource.k3s_master_installer.id
-    minion = null_resource.k3s_minions[each.key].id
+    master_install = null_resource.k3s_master_installer.id
+    minion_init    = null_resource.k3s_minions[each.key].id
+    version        = local.k3s_version
   }
 
   connection {
@@ -94,11 +88,10 @@ resource "null_resource" "k3s_minions_installer" {
     agent_identity = lookup(each.value.connection, "agent_identity", null)
     host_key       = lookup(each.value.connection, "host_key", null)
 
-    # NOTE: Currently not working on Windows machines
-    # https    = lookup(each.value.connection, "https", null)
-    # insecure = lookup(each.value.connection, "insecure", null)
-    # use_ntlm = lookup(each.value.connection, "use_ntlm", null)
-    # cacert   = lookup(each.value.connection, "cacert", null)
+    https    = lookup(each.value.connection, "https", null)
+    insecure = lookup(each.value.connection, "insecure", null)
+    use_ntlm = lookup(each.value.connection, "use_ntlm", null)
+    cacert   = lookup(each.value.connection, "cacert", null)
 
     bastion_host        = lookup(each.value.connection, "bastion_host", null)
     bastion_host_key    = lookup(each.value.connection, "bastion_host_key", null)
@@ -110,18 +103,18 @@ resource "null_resource" "k3s_minions_installer" {
   }
 
   # Install K3S agent
-  provisioner "remote-exec" {
+  provisioner remote-exec {
     inline = [
-      "curl -sfL https://get.k3s.io | ${local.minion_install_envs} sh -s - --node-ip ${each.value.ip} ${local.minion_install_args}"
+      "curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=${local.k3s_version} INSTALL_K3S_EXEC=agent sh -s - ${local.minion_install_flags} --node-ip ${each.value.ip} --node-name ${each.key}"
     ]
   }
 }
 
-resource "null_resource" "k3s_minions_uninstaller" {
+resource null_resource k3s_minions_uninstaller {
   for_each = var.minion_nodes
 
   triggers = {
-    minion = null_resource.k3s_minions[each.key].id
+    minion_init = null_resource.k3s_minions[each.key].id
   }
 
   connection {
@@ -140,11 +133,10 @@ resource "null_resource" "k3s_minions_uninstaller" {
     agent_identity = lookup(var.master_node.connection, "agent_identity", null)
     host_key       = lookup(var.master_node.connection, "host_key", null)
 
-    # NOTE: Currently not working on Windows machines
-    # https    = lookup(var.master_node.connection, "https", null)
-    # insecure = lookup(var.master_node.connection, "insecure", null)
-    # use_ntlm = lookup(var.master_node.connection, "use_ntlm", null)
-    # cacert   = lookup(var.master_node.connection, "cacert", null)
+    https    = lookup(var.master_node.connection, "https", null)
+    insecure = lookup(var.master_node.connection, "insecure", null)
+    use_ntlm = lookup(var.master_node.connection, "use_ntlm", null)
+    cacert   = lookup(var.master_node.connection, "cacert", null)
 
     bastion_host        = lookup(var.master_node.connection, "bastion_host", null)
     bastion_host_key    = lookup(var.master_node.connection, "bastion_host_key", null)
@@ -156,13 +148,12 @@ resource "null_resource" "k3s_minions_uninstaller" {
   }
 
   # Drain and delete the removed node
-  provisioner "remote-exec" {
+  provisioner remote-exec {
     when = destroy
     inline = [
-      "NODE=$(kubectl get node -l 'k3s.io/internal-ip = ${null_resource.k3s_minions[each.key].triggers.minion_ip}' | tail -n 1 | awk '{printf $1}')",
-      "kubectl drain $${NODE} --force --delete-local-data --ignore-daemonsets --timeout ${var.drain_timeout}",
-      "kubectl delete node $${NODE}",
-      "sed -i \"/$${NODE}$/d\" /var/lib/rancher/k3s/server/cred/node-passwd",
+      "kubectl drain ${each.key} --force --delete-local-data --ignore-daemonsets --timeout ${var.drain_timeout}",
+      "kubectl delete node ${each.key}",
+      "sed -i \"/${each.key}/d\" /var/lib/rancher/k3s/server/cred/node-passwd",
     ]
   }
 }
