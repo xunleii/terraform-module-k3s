@@ -7,3 +7,6 @@
 
 # .tfvars files
 *.tfvars
+
+# Intellij folders (used as TF IDE)
+.idea/

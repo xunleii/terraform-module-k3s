@@ -1,42 +1,18 @@
 locals {
-  # Generates the master public IP address
-  master_host = lookup(var.master_node.connection, "host", var.master_node.ip)
-
-  # Generates custom TLS Subject Alternative Name for the cluster
-  tls_san_values = distinct(
-    concat(
-      [var.master_node.ip, local.master_host],
-      var.additional_tls_san
-    )
-  )
-  tls_san_opts = "--tls-san ${join(" --tls-san ", local.tls_san_values)}"
-
-  # Generates the master installation arguments
-  master_install_arg_list = concat(
-    [
-      "--node-ip ${var.master_node.ip}",
-      "--cluster-domain ${var.cluster_name}",
-      "--cluster-cidr ${var.cluster_cidr}",
-      "--service-cidr ${var.cluster_service_cidr}",
-      local.tls_san_opts,
-    ],
-    var.additional_flags.master,
-    var.additional_flags.common,
-  )
-  master_install_args = join(" ", local.master_install_arg_list)
-
-  # Generates the master installation env vars
-  master_install_env_list = [
-    "INSTALL_K3S_VERSION=${local.k3s_version}",
-    "K3S_CLUSTER_SECRET=${random_password.k3s_cluster_secret.result}"
+  master_default_flags = [
+    "--node-ip ${var.master_node.ip}",
+    "--node-name ${var.master_node.name}",
+    "--cluster-domain ${var.cluster_name}",
+    "--cluster-cidr ${var.cluster_cidr.pods}",
+    "--service-cidr ${var.cluster_cidr.services}",
+    "--token ${random_password.k3s_cluster_secret.result}",
   ]
-  master_install_envs = join(" ", local.master_install_env_list)
+  master_install_flags = join(" ", concat(var.additional_flags.master, local.master_default_flags))
 }
 
-resource "null_resource" "k3s_master" {
+resource null_resource k3s_master {
   triggers = {
-    master_ip    = sha1(var.master_node.ip)
-    install_args = sha1(local.master_install_args)
+    install_args = sha1(local.master_install_flags)
   }
 
   connection {
@@ -55,11 +31,10 @@ resource "null_resource" "k3s_master" {
     agent_identity = lookup(var.master_node.connection, "agent_identity", null)
     host_key       = lookup(var.master_node.connection, "host_key", null)
 
-    # NOTE: Currently not working on Windows machines
-    # https    = lookup(var.master_node.connection, "https", null)
-    # insecure = lookup(var.master_node.connection, "insecure", null)
-    # use_ntlm = lookup(var.master_node.connection, "use_ntlm", null)
-    # cacert   = lookup(var.master_node.connection, "cacert", null)
+    https    = lookup(var.master_node.connection, "https", null)
+    insecure = lookup(var.master_node.connection, "insecure", null)
+    use_ntlm = lookup(var.master_node.connection, "use_ntlm", null)
+    cacert   = lookup(var.master_node.connection, "cacert", null)
 
     bastion_host        = lookup(var.master_node.connection, "bastion_host", null)
     bastion_host_key    = lookup(var.master_node.connection, "bastion_host_key", null)
@@ -71,14 +46,14 @@ resource "null_resource" "k3s_master" {
   }
 
   # Check if curl is installed
-  provisioner "remote-exec" {
+  provisioner remote-exec {
     inline = [
       "if ! command -V curl > /dev/null; then echo >&2 '[ERROR] curl must be installed to continue...'; exit 127; fi",
     ]
   }
 
   # Remove old k3s installation
-  provisioner "remote-exec" {
+  provisioner remote-exec {
     inline = [
       "if ! command -V k3s-uninstall.sh > /dev/null; then exit; fi",
       "echo >&2 [WARN] K3S seems already installed on this node and will be uninstalled.",
@@ -87,7 +62,7 @@ resource "null_resource" "k3s_master" {
   }
 }
 
-resource "null_resource" "k3s_master_installer" {
+resource null_resource k3s_master_installer {
   triggers = {
     master_init = null_resource.k3s_master.id
     version     = local.k3s_version
@@ -110,11 +85,10 @@ resource "null_resource" "k3s_master_installer" {
     agent_identity = lookup(var.master_node.connection, "agent_identity", null)
     host_key       = lookup(var.master_node.connection, "host_key", null)
 
-    # NOTE: Currently not working on Windows machines
-    # https    = lookup(var.master_node.connection, "https", null)
-    # insecure = lookup(var.master_node.connection, "insecure", null)
-    # use_ntlm = lookup(var.master_node.connection, "use_ntlm", null)
-    # cacert   = lookup(var.master_node.connection, "cacert", null)
+    https    = lookup(var.master_node.connection, "https", null)
+    insecure = lookup(var.master_node.connection, "insecure", null)
+    use_ntlm = lookup(var.master_node.connection, "use_ntlm", null)
+    cacert   = lookup(var.master_node.connection, "cacert", null)
 
     bastion_host        = lookup(var.master_node.connection, "bastion_host", null)
     bastion_host_key    = lookup(var.master_node.connection, "bastion_host_key", null)
@@ -128,7 +102,7 @@ resource "null_resource" "k3s_master_installer" {
   # Install K3S server
   provisioner "remote-exec" {
     inline = [
-      "curl -sfL https://get.k3s.io | ${local.master_install_envs} sh -s - ${local.master_install_args}",
+      "curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=${local.k3s_version} sh -s - ${local.master_install_flags}",
       "until kubectl get nodes | grep -v '[WARN] No resources found'; do sleep 1; done"
     ]
   }
