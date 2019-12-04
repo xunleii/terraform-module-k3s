@@ -19,8 +19,8 @@ data hcloud_image ubuntu {
   name = "ubuntu-18.04"
 }
 
-resource hcloud_server master {
-  name = "k3s-master"
+resource hcloud_server server {
+  name = "k3s-server"
 
   image       = data.hcloud_image.ubuntu.name
   server_type = "cx11-ceph"
@@ -31,19 +31,19 @@ resource hcloud_server master {
   labels = {
     provisioner = "terraform",
     engine      = "k3s",
-    node_type   = "master"
+    node_type   = "server"
   }
 }
 
-resource hcloud_server_network master_network {
-  server_id  = hcloud_server.master.id
+resource hcloud_server_network server_network {
+  server_id  = hcloud_server.server.id
   network_id = hcloud_network.k3s.id
   ip         = cidrhost(hcloud_network_subnet.k3s_nodes.ip_range, 1)
 }
 
-resource hcloud_server minions {
-  count = var.minions_num
-  name  = "k3s-minion-${count.index}"
+resource hcloud_server agents {
+  count = var.agents_num
+  name  = "k3s-agent-${count.index}"
 
   image       = data.hcloud_image.ubuntu.name
   server_type = "cx11-ceph"
@@ -54,13 +54,13 @@ resource hcloud_server minions {
   labels = {
     provisioner = "terraform",
     engine      = "k3s",
-    node_type   = "minion"
+    node_type   = "agent"
   }
 }
 
-resource hcloud_server_network minions_network {
-  count      = length(hcloud_server.minions)
-  server_id  = hcloud_server.minions[count.index].id
+resource hcloud_server_network agents_network {
+  count      = length(hcloud_server.agents)
+  server_id  = hcloud_server.agents[count.index].id
   network_id = hcloud_network.k3s.id
   ip         = cidrhost(hcloud_network_subnet.k3s_nodes.ip_range, count.index + 2)
 }

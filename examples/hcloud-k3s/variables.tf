@@ -3,7 +3,7 @@ variable ssh_key {
   type        = string
 }
 
-variable minions_num {
-  description = "Number of minion nodes."
+variable agents_num {
+  description = "Number of agent nodes."
   default     = 3
 }

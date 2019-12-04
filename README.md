@@ -20,16 +20,16 @@ module "k3s" {
   }
 
   additional_flags = {
-    master = [
+    server = [
         "--flannel-backend=none",
         "--tls-san k3s.my.domain.com"
     ]
-    minion = [
+    agent = [
       "--flannel-backend=none",
     ]
   }
   
-  master_node = {
+  server_node = {
       # The node name will be automatically provided by 
       # the module using this value... any usage of --node-name
       # in additional_flags will be ignored
@@ -45,7 +45,7 @@ module "k3s" {
         user = "ubuntu"
       }
   }
-  minion_nodes = {
+  agent_nodes = {
       # The node name will be automatically provided by 
       # the module using the key... any usage of --node-name
       # in additional_flags will be ignored
