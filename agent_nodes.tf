@@ -46,18 +46,11 @@ resource null_resource k3s_agents {
     bastion_certificate = lookup(each.value.connection, "bastion_certificate", null)
   }
 
-  # Check if curl is installed
-  provisioner remote-exec {
-    inline = [
-      "if ! command -V curl > /dev/null; then echo >&2 '[ERROR] curl must be installed to continue...'; exit 127; fi",
-    ]
-  }
-
   # Remove old k3s installation
   provisioner remote-exec {
     inline = [
       "if ! command -V k3s-agent-uninstall.sh > /dev/null; then exit; fi",
-      "echo >&2 [WARN] K3S seems already installed on this node and will be uninstalled.",
+      "echo >&2 [WARN] K3s seems already installed on this node and will be uninstalled.",
       "k3s-agent-uninstall.sh",
     ]
   }
@@ -102,10 +95,16 @@ resource null_resource k3s_agents_installer {
     bastion_certificate = lookup(each.value.connection, "bastion_certificate", null)
   }
 
+  # Upload k3s file
+  provisioner file {
+    content = data.http.k3s_installer.body
+    destination = "/tmp/k3s-installer"
+  }
+
   # Install K3S agent
   provisioner remote-exec {
     inline = [
-      "curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=${local.k3s_version} INSTALL_K3S_EXEC=agent sh -s - ${local.agent_install_flags} --node-ip ${each.value.ip} --node-name ${each.key}"
+      "INSTALL_K3S_VERSION=${local.k3s_version} INSTALL_K3S_EXEC=agent sh /tmp/k3s-installer ${local.agent_install_flags} --node-ip ${each.value.ip} --node-name ${each.key}"
     ]
   }
 }
