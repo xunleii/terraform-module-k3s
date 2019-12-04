@@ -1,20 +1,20 @@
 locals {
-  minion_default_flags = [
-    "--server https://${var.master_node.ip}:6443",
+  agent_default_flags = [
+    "--server https://${var.server_node.ip}:6443",
     "--token ${random_password.k3s_cluster_secret.result}"
   ]
-  minion_install_flags = join(" ", concat(var.additional_flags.minion, local.minion_default_flags))
+  agent_install_flags = join(" ", concat(var.additional_flags.agent, local.agent_default_flags))
 }
 
-resource null_resource k3s_minions {
-  for_each = var.minion_nodes
+resource null_resource k3s_agents {
+  for_each = var.agent_nodes
 
   triggers = {
-    master_init  = null_resource.k3s_master.id
-    install_args = sha1(local.minion_install_flags)
-    minion_ip    = each.value.ip
+    server_init  = null_resource.k3s_server.id
+    install_args = sha1(local.agent_install_flags)
+    agent_ip     = each.value.ip
   }
-  depends_on = [null_resource.k3s_master_installer]
+  depends_on = [null_resource.k3s_server_installer]
 
   connection {
     type = lookup(each.value.connection, "type", "ssh")
@@ -63,12 +63,12 @@ resource null_resource k3s_minions {
   }
 }
 
-resource null_resource k3s_minions_installer {
-  for_each = var.minion_nodes
+resource null_resource k3s_agents_installer {
+  for_each = var.agent_nodes
 
   triggers = {
-    master_install = null_resource.k3s_master_installer.id
-    minion_init    = null_resource.k3s_minions[each.key].id
+    server_install = null_resource.k3s_server_installer.id
+    agent_init     = null_resource.k3s_agents[each.key].id
     version        = local.k3s_version
   }
 
@@ -105,46 +105,46 @@ resource null_resource k3s_minions_installer {
   # Install K3S agent
   provisioner remote-exec {
     inline = [
-      "curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=${local.k3s_version} INSTALL_K3S_EXEC=agent sh -s - ${local.minion_install_flags} --node-ip ${each.value.ip} --node-name ${each.key}"
+      "curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=${local.k3s_version} INSTALL_K3S_EXEC=agent sh -s - ${local.agent_install_flags} --node-ip ${each.value.ip} --node-name ${each.key}"
     ]
   }
 }
 
-resource null_resource k3s_minions_uninstaller {
-  for_each = var.minion_nodes
+resource null_resource k3s_agents_uninstaller {
+  for_each = var.agent_nodes
 
   triggers = {
-    minion_init = null_resource.k3s_minions[each.key].id
+    agent_init = null_resource.k3s_agents[each.key].id
   }
 
   connection {
-    type = lookup(var.master_node.connection, "type", "ssh")
+    type = lookup(var.server_node.connection, "type", "ssh")
 
-    host     = lookup(var.master_node.connection, "host", var.master_node.ip)
-    user     = lookup(var.master_node.connection, "user", null)
-    password = lookup(var.master_node.connection, "password", null)
-    port     = lookup(var.master_node.connection, "port", null)
-    timeout  = lookup(var.master_node.connection, "timeout", null)
+    host     = lookup(var.server_node.connection, "host", var.server_node.ip)
+    user     = lookup(var.server_node.connection, "user", null)
+    password = lookup(var.server_node.connection, "password", null)
+    port     = lookup(var.server_node.connection, "port", null)
+    timeout  = lookup(var.server_node.connection, "timeout", null)
 
-    script_path    = lookup(var.master_node.connection, "script_path", null)
-    private_key    = lookup(var.master_node.connection, "private_key", null)
-    certificate    = lookup(var.master_node.connection, "certificate", null)
-    agent          = lookup(var.master_node.connection, "agent", null)
-    agent_identity = lookup(var.master_node.connection, "agent_identity", null)
-    host_key       = lookup(var.master_node.connection, "host_key", null)
+    script_path    = lookup(var.server_node.connection, "script_path", null)
+    private_key    = lookup(var.server_node.connection, "private_key", null)
+    certificate    = lookup(var.server_node.connection, "certificate", null)
+    agent          = lookup(var.server_node.connection, "agent", null)
+    agent_identity = lookup(var.server_node.connection, "agent_identity", null)
+    host_key       = lookup(var.server_node.connection, "host_key", null)
 
-    https    = lookup(var.master_node.connection, "https", null)
-    insecure = lookup(var.master_node.connection, "insecure", null)
-    use_ntlm = lookup(var.master_node.connection, "use_ntlm", null)
-    cacert   = lookup(var.master_node.connection, "cacert", null)
+    https    = lookup(var.server_node.connection, "https", null)
+    insecure = lookup(var.server_node.connection, "insecure", null)
+    use_ntlm = lookup(var.server_node.connection, "use_ntlm", null)
+    cacert   = lookup(var.server_node.connection, "cacert", null)
 
-    bastion_host        = lookup(var.master_node.connection, "bastion_host", null)
-    bastion_host_key    = lookup(var.master_node.connection, "bastion_host_key", null)
-    bastion_port        = lookup(var.master_node.connection, "bastion_port", null)
-    bastion_user        = lookup(var.master_node.connection, "bastion_user", null)
-    bastion_password    = lookup(var.master_node.connection, "bastion_password", null)
-    bastion_private_key = lookup(var.master_node.connection, "bastion_private_key", null)
-    bastion_certificate = lookup(var.master_node.connection, "bastion_certificate", null)
+    bastion_host        = lookup(var.server_node.connection, "bastion_host", null)
+    bastion_host_key    = lookup(var.server_node.connection, "bastion_host_key", null)
+    bastion_port        = lookup(var.server_node.connection, "bastion_port", null)
+    bastion_user        = lookup(var.server_node.connection, "bastion_user", null)
+    bastion_password    = lookup(var.server_node.connection, "bastion_password", null)
+    bastion_private_key = lookup(var.server_node.connection, "bastion_private_key", null)
+    bastion_certificate = lookup(var.server_node.connection, "bastion_certificate", null)
   }
 
   # Drain and delete the removed node

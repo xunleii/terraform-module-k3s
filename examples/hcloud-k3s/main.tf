@@ -11,31 +11,31 @@ module k3s {
   drain_timeout = "30s"
 
   additional_flags = {
-    master = [
+    server = [
       "--disable-cloud-controller",
       "--flannel-iface ens10",
       "--kubelet-arg cloud-provider=external" # required to use https://github.com/hetznercloud/hcloud-cloud-controller-manager
     ]
-    minion = [
+    agent = [
       "--flannel-iface ens10",
       "--kubelet-arg cloud-provider=external" # required to use https://github.com/hetznercloud/hcloud-cloud-controller-manager
     ]
   }
 
-  master_node = {
-    name = "master"
-    ip   = hcloud_server_network.master_network.ip
+  server_node = {
+    name = "server"
+    ip   = hcloud_server_network.server_network.ip
     connection = {
-      host = hcloud_server.master.ipv4_address
+      host = hcloud_server.server.ipv4_address
     }
   }
 
-  minion_nodes = {
-    for i in range(length(hcloud_server.minions)) :
-    hcloud_server.minions[i].name => {
-      ip = hcloud_server_network.minions_network[i].ip
+  agent_nodes = {
+    for i in range(length(hcloud_server.agents)) :
+    hcloud_server.agents[i].name => {
+      ip = hcloud_server_network.agents_network[i].ip
       connection = {
-        host = hcloud_server.minions[i].ipv4_address
+        host = hcloud_server.agents[i].ipv4_address
       }
     }
   }
