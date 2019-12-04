@@ -2,6 +2,13 @@
 ## [Unreleased]
 
 
+<a name="v1.6.1"></a>
+## [v1.6.1] - 2019-12-04
+### Features
+- upload k3s installer on node
+- upload k3s version only if latest is chosen
+
+
 <a name="v1.6.0"></a>
 ## [v1.6.0] - 2019-12-04
 ### Code Refactoring
@@ -92,7 +99,8 @@
 - add module variables
 
 
-[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v1.6.0...HEAD
+[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v1.6.1...HEAD
+[v1.6.1]: https://github.com/xunleii/terraform-module-k3s/compare/v1.6.0...v1.6.1
 [v1.6.0]: https://github.com/xunleii/terraform-module-k3s/compare/v1.5.0...v1.6.0
 [v1.5.0]: https://github.com/xunleii/terraform-module-k3s/compare/v1.4.0...v1.5.0
 [v1.4.0]: https://github.com/xunleii/terraform-module-k3s/compare/v1.3.2...v1.4.0
