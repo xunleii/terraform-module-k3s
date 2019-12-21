@@ -1,6 +1,6 @@
 data "http" "k3s_version" {
   count = var.k3s_version == "latest" ? 1 : 0
-  url = "https://api.github.com/repos/rancher/k3s/releases/latest"
+  url   = "https://api.github.com/repos/rancher/k3s/releases/latest"
 }
 
 data "http" "k3s_installer" {

@@ -52,6 +52,7 @@ variable server_node {
 variable agent_nodes {
   description = "K3s agent nodes definitions. The key is used as node name during the k3s installation."
   type = map(object({
+    name       = string
     ip         = string
     connection = map(any)
   }))
