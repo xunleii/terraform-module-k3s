@@ -2,6 +2,12 @@
 ## [Unreleased]
 
 
+<a name="v1.6.2"></a>
+## [v1.6.2] - 2019-12-21
+### Features
+- use name in agent nodes
+
+
 <a name="v1.6.1"></a>
 ## [v1.6.1] - 2019-12-04
 ### Features
@@ -99,7 +105,8 @@
 - add module variables
 
 
-[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v1.6.1...HEAD
+[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v1.6.2...HEAD
+[v1.6.2]: https://github.com/xunleii/terraform-module-k3s/compare/v1.6.1...v1.6.2
 [v1.6.1]: https://github.com/xunleii/terraform-module-k3s/compare/v1.6.0...v1.6.1
 [v1.6.0]: https://github.com/xunleii/terraform-module-k3s/compare/v1.5.0...v1.6.0
 [v1.5.0]: https://github.com/xunleii/terraform-module-k3s/compare/v1.4.0...v1.5.0
