@@ -97,14 +97,14 @@ resource null_resource k3s_agents_installer {
 
   # Upload k3s file
   provisioner file {
-    content = data.http.k3s_installer.body
+    content     = data.http.k3s_installer.body
     destination = "/tmp/k3s-installer"
   }
 
   # Install K3S agent
   provisioner remote-exec {
     inline = [
-      "INSTALL_K3S_VERSION=${local.k3s_version} INSTALL_K3S_EXEC=agent sh /tmp/k3s-installer ${local.agent_install_flags} --node-ip ${each.value.ip} --node-name ${each.key}"
+      "INSTALL_K3S_VERSION=${local.k3s_version} INSTALL_K3S_EXEC=agent sh /tmp/k3s-installer ${local.agent_install_flags} --node-ip ${each.value.ip} --node-name ${each.value.name}"
     ]
   }
 }

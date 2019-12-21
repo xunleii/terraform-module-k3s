@@ -95,7 +95,7 @@ resource null_resource k3s_server_installer {
 
   # Upload k3s file
   provisioner file {
-    content = data.http.k3s_installer.body
+    content     = data.http.k3s_installer.body
     destination = "/tmp/k3s-installer"
   }
 
