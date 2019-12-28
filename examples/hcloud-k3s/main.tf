@@ -32,8 +32,8 @@ module k3s {
 
   agent_nodes = {
     for i in range(length(hcloud_server.agents)) :
-    hcloud_server.agents[i].name => {
-      name = hcloud_server.agents[i].name
+    "${hcloud_server.agents[i].name}_node" => {
+      name = "${hcloud_server.agents[i].name}"
       ip   = hcloud_server_network.agents_network[i].ip
       connection = {
         host = hcloud_server.agents[i].ipv4_address

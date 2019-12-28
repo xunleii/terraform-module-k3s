@@ -109,11 +109,20 @@ resource null_resource k3s_agents_installer {
   }
 }
 
+resource null_resource k3s_agent_cache {
+  for_each = var.agent_nodes
+
+  triggers = {
+    node_name = each.value.name
+  }
+}
+
 resource null_resource k3s_agents_uninstaller {
   for_each = var.agent_nodes
 
   triggers = {
     agent_init = null_resource.k3s_agents[each.key].id
+    node_cache = null_resource.k3s_agent_cache[each.key].id
   }
 
   connection {
@@ -150,9 +159,9 @@ resource null_resource k3s_agents_uninstaller {
   provisioner remote-exec {
     when = destroy
     inline = [
-      "kubectl drain ${each.key} --force --delete-local-data --ignore-daemonsets --timeout ${var.drain_timeout}",
-      "kubectl delete node ${each.key}",
-      "sed -i \"/${each.key}/d\" /var/lib/rancher/k3s/server/cred/node-passwd",
+      "kubectl drain ${null_resource.k3s_agent_cache[each.key].triggers.node_name} --force --delete-local-data --ignore-daemonsets --timeout ${var.drain_timeout}",
+      "kubectl delete node ${null_resource.k3s_agent_cache[each.key].triggers.node_name}",
+      "sed -i \"/${null_resource.k3s_agent_cache[each.key].triggers.node_name}/d\" /var/lib/rancher/k3s/server/cred/node-passwd",
     ]
   }
 }
