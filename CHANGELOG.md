@@ -2,6 +2,12 @@
 ## [Unreleased]
 
 
+<a name="v1.6.3"></a>
+## [v1.6.3] - 2019-12-28
+### Bug Fixes
+- use node_name field in node deletion
+
+
 <a name="v1.6.2"></a>
 ## [v1.6.2] - 2019-12-21
 ### Features
@@ -105,7 +111,8 @@
 - add module variables
 
 
-[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v1.6.2...HEAD
+[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v1.6.3...HEAD
+[v1.6.3]: https://github.com/xunleii/terraform-module-k3s/compare/v1.6.2...v1.6.3
 [v1.6.2]: https://github.com/xunleii/terraform-module-k3s/compare/v1.6.1...v1.6.2
 [v1.6.1]: https://github.com/xunleii/terraform-module-k3s/compare/v1.6.0...v1.6.1
 [v1.6.0]: https://github.com/xunleii/terraform-module-k3s/compare/v1.5.0...v1.6.0
