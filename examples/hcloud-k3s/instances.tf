@@ -54,7 +54,8 @@ resource hcloud_server agents {
   labels = {
     provisioner = "terraform",
     engine      = "k3s",
-    node_type   = "agent"
+    node_type   = "agent",
+    nodepool    = count.index % 3 == 0 ? "gpu" : "general",
   }
 }
 
