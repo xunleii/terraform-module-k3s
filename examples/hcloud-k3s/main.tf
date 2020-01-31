@@ -23,8 +23,10 @@ module k3s {
   }
 
   server_node = {
-    name = "server"
-    ip   = hcloud_server_network.server_network.ip
+    name   = "server"
+    ip     = hcloud_server_network.server_network.ip
+    labels = {}
+    taints = {}
     connection = {
       host = hcloud_server.server.ipv4_address
     }
@@ -35,6 +37,14 @@ module k3s {
     "${hcloud_server.agents[i].name}_node" => {
       name = "${hcloud_server.agents[i].name}"
       ip   = hcloud_server_network.agents_network[i].ip
+
+      labels = {
+        "node.kubernetes.io/pool" = hcloud_server.agents[i].labels.nodepool
+      }
+      taints = {
+        "dedicated" : hcloud_server.agents[i].labels.nodepool == "gpu" ? "gpu:NoSchedule" : null
+      }
+
       connection = {
         host = hcloud_server.agents[i].ipv4_address
       }

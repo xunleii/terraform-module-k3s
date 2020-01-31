@@ -104,7 +104,12 @@ resource null_resource k3s_agents_installer {
   # Install K3S agent
   provisioner remote-exec {
     inline = [
-      "INSTALL_K3S_VERSION=${local.k3s_version} INSTALL_K3S_EXEC=agent sh /tmp/k3s-installer ${local.agent_install_flags} --node-ip ${each.value.ip} --node-name ${each.value.name}"
+      <<EOT
+INSTALL_K3S_VERSION=${local.k3s_version} INSTALL_K3S_EXEC=agent sh /tmp/k3s-installer ${local.agent_install_flags} \
+${join(" ", [for label, value in each.value.labels : "--node-label '${label}=${value}'" if value != null])} \
+${join(" ", [for key, taint in each.value.taints : "--node-taint '${key}=${taint}'" if taint != null])} \
+--node-ip ${each.value.ip} --node-name ${each.value.name}
+      EOT
     ]
   }
 }
