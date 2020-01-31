@@ -39,6 +39,14 @@ module "k3s" {
       # address for the connection, use connection.host instead
       ip = "10.123.45.67"
 
+      # The node labels & taints can be set using theses fields
+      labels = {
+        "node.kubernetes.io/type" = "master"
+      }
+      taints = {
+        "node.k3s.io/type" = "server:NoSchedule"
+      }
+
       # Connection uses Terraform connection syntax
       connection = {
         host = "203.123.45.67"
@@ -51,6 +59,10 @@ module "k3s" {
       # in additional_flags will be ignored
       k3s-node-01 = {
           ip = "10.123.45.68"
+          labels = {
+            "node.kubernetes.io/pool" = "service-pool"
+          }
+          taints = {}
           connection = {
               type = "ssh"
               user = "root"
@@ -60,6 +72,25 @@ module "k3s" {
       },
       k3s-node-02 = {
           ip = "10.123.45.69"
+          labels = {
+            "node.kubernetes.io/pool" = "service-pool"
+          }
+          taints = {}
+          connection = {
+              type = "ssh"
+              user = "root"
+              bastion_host = "10.123.45.67"
+              bastion_user = "ubuntu"
+          }
+      },
+      k3s-node-03 = {
+          ip = "10.123.45.70"
+          labels = {
+            "node.kubernetes.io/pool" = "monitoring-pool"
+          }
+          taints = {
+            dedicated = "monitoring:NoSchedule"
+          }
           connection = {
               type = "ssh"
               user = "root"

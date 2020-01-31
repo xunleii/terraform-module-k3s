@@ -45,6 +45,8 @@ variable server_node {
   type = object({
     name       = string
     ip         = string
+    labels     = map(string)
+    taints     = map(string)
     connection = map(any)
   })
 }
@@ -54,6 +56,8 @@ variable agent_nodes {
   type = map(object({
     name       = string
     ip         = string
+    labels     = map(string)
+    taints     = map(string)
     connection = map(any)
   }))
   default = {}

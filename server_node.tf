@@ -7,7 +7,9 @@ locals {
     "--service-cidr ${var.cluster_cidr.services}",
     "--token ${random_password.k3s_cluster_secret.result}",
   ]
-  server_install_flags = join(" ", concat(var.additional_flags.server, local.server_default_flags))
+  server_labels_flags  = [for label, value in var.server_node.labels : "--node-label '${label}=${value}'" if value != null]
+  server_taints_flags  = [for key, taint in var.server_node.taints : "--node-taint '${key}=${taint}'" if taint != null]
+  server_install_flags = join(" ", concat(var.additional_flags.server, local.server_labels_flags, local.server_default_flags))
 }
 
 resource null_resource k3s_server {
