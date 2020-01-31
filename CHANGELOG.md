@@ -2,6 +2,12 @@
 ## [Unreleased]
 
 
+<a name="v1.7.0"></a>
+## [v1.7.0] - 2020-02-01
+### Features
+- add taints & labels
+
+
 <a name="v1.6.3"></a>
 ## [v1.6.3] - 2019-12-28
 ### Bug Fixes
@@ -111,7 +117,8 @@
 - add module variables
 
 
-[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v1.6.3...HEAD
+[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v1.7.0...HEAD
+[v1.7.0]: https://github.com/xunleii/terraform-module-k3s/compare/v1.6.3...v1.7.0
 [v1.6.3]: https://github.com/xunleii/terraform-module-k3s/compare/v1.6.2...v1.6.3
 [v1.6.2]: https://github.com/xunleii/terraform-module-k3s/compare/v1.6.1...v1.6.2
 [v1.6.1]: https://github.com/xunleii/terraform-module-k3s/compare/v1.6.0...v1.6.1
