@@ -54,10 +54,11 @@ module "k3s" {
       }
   }
   agent_nodes = {
-      # The node name will be automatically provided by 
-      # the module using the key... any usage of --node-name
-      # in additional_flags will be ignored
+      # The node name will be automatically provided by
+      # the module using the field name... any usage of
+      # --node-name in additional_flags will be ignored
       k3s-node-01 = {
+          name = "k3s-node-01"
           ip = "10.123.45.68"
           labels = {
             "node.kubernetes.io/pool" = "service-pool"
@@ -71,6 +72,7 @@ module "k3s" {
           }
       },
       k3s-node-02 = {
+          name = "k3s-node-02"
           ip = "10.123.45.69"
           labels = {
             "node.kubernetes.io/pool" = "service-pool"
@@ -84,6 +86,7 @@ module "k3s" {
           }
       },
       k3s-node-03 = {
+          name = "k3s-node-03"
           ip = "10.123.45.70"
           labels = {
             "node.kubernetes.io/pool" = "monitoring-pool"
