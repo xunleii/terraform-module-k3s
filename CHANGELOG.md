@@ -2,6 +2,12 @@
 ## [Unreleased]
 
 
+<a name="v1.7.1"></a>
+## [v1.7.1] - 2020-02-02
+### Documentation
+- fix README example
+
+
 <a name="v1.7.0"></a>
 ## [v1.7.0] - 2020-02-01
 ### Features
@@ -117,7 +123,8 @@
 - add module variables
 
 
-[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v1.7.0...HEAD
+[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v1.7.1...HEAD
+[v1.7.1]: https://github.com/xunleii/terraform-module-k3s/compare/v1.7.0...v1.7.1
 [v1.7.0]: https://github.com/xunleii/terraform-module-k3s/compare/v1.6.3...v1.7.0
 [v1.6.3]: https://github.com/xunleii/terraform-module-k3s/compare/v1.6.2...v1.6.3
 [v1.6.2]: https://github.com/xunleii/terraform-module-k3s/compare/v1.6.1...v1.6.2
