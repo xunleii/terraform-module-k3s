@@ -22,18 +22,6 @@ variable cluster_cidr {
   }
 }
 
-variable additional_flags {
-  description = "Add additional flags during the k3s installation (see https://rancher.com/docs/k3s/latest/en/installation/install-options/)."
-  type = object({
-    server = list(string)
-    agent  = list(string)
-  })
-  default = {
-    server = []
-    agent  = []
-  }
-}
-
 variable drain_timeout {
   description = "The length of time to wait before giving up the node draining. Infinite by default."
   type        = string
@@ -48,17 +36,19 @@ variable server_node {
     labels     = map(string)
     taints     = map(string)
     connection = map(any)
+    additional_flags = list(string)
   })
 }
 
 variable agent_nodes {
   description = "K3s agent nodes definitions. The key is used as node name during the k3s installation."
   type = map(object({
-    name       = string
-    ip         = string
-    labels     = map(string)
-    taints     = map(string)
-    connection = map(any)
+    name             = string
+    ip               = string
+    labels           = map(string)
+    taints           = map(string)
+    connection       = map(any)
+    additional_flags = list(string)
   }))
   default = {}
 }

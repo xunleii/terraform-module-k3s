@@ -9,12 +9,11 @@ locals {
   ]
   server_labels_flags  = [for label, value in var.server_node.labels : "--node-label '${label}=${value}'" if value != null]
   server_taints_flags  = [for key, taint in var.server_node.taints : "--node-taint '${key}=${taint}'" if taint != null]
-  server_install_flags = join(" ", concat(var.additional_flags.server, local.server_labels_flags, local.server_default_flags))
 }
 
 resource null_resource k3s_server {
   triggers = {
-    install_args = sha1(local.server_install_flags)
+    install_args = sha1(join(" ", concat(local.server_labels_flags, local.server_default_flags, var.server_node.additional_flags)))
   }
 
   connection {
@@ -104,7 +103,7 @@ resource null_resource k3s_server_installer {
   # Install K3S server
   provisioner "remote-exec" {
     inline = [
-      "INSTALL_K3S_VERSION=${local.k3s_version} sh /tmp/k3s-installer ${local.server_install_flags}",
+      "INSTALL_K3S_VERSION=${local.k3s_version} sh /tmp/k3s-installer ${join(" ", concat(local.server_default_flags, var.server_node.additional_flags))}",
       "until kubectl get nodes | grep -v '[WARN] No resources found'; do sleep 1; done"
     ]
   }

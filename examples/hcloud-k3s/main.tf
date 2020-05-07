@@ -10,18 +10,6 @@ module k3s {
   }
   drain_timeout = "30s"
 
-  additional_flags = {
-    server = [
-      "--disable-cloud-controller",
-      "--flannel-iface ens10",
-      "--kubelet-arg cloud-provider=external" # required to use https://github.com/hetznercloud/hcloud-cloud-controller-manager
-    ]
-    agent = [
-      "--flannel-iface ens10",
-      "--kubelet-arg cloud-provider=external" # required to use https://github.com/hetznercloud/hcloud-cloud-controller-manager
-    ]
-  }
-
   server_node = {
     name   = "server"
     ip     = hcloud_server_network.server_network.ip
@@ -30,6 +18,12 @@ module k3s {
     connection = {
       host = hcloud_server.server.ipv4_address
     }
+    additional_flags = [
+      "--disable-cloud-controller",
+      "--flannel-iface ens10",
+      "--kubelet-arg cloud-provider=external",                           # required to use https://github.com/hetznercloud/hcloud-cloud-controller-manager
+      "--kubelet-arg provider-id=hcloud://${hcloud_server.server.id}"
+    ]
   }
 
   agent_nodes = {
@@ -48,6 +42,12 @@ module k3s {
       connection = {
         host = hcloud_server.agents[i].ipv4_address
       }
+
+      additional_flags = [
+        "--flannel-iface ens10",
+        "--kubelet-arg cloud-provider=external",                         # required to use https://github.com/hetznercloud/hcloud-cloud-controller-manager
+        "--kubelet-arg provider-id=hcloud://${hcloud_server.agents[i].id}"
+      ]
     }
   }
 }
