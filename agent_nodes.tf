@@ -3,7 +3,6 @@ locals {
     "--server https://${var.server_node.ip}:6443",
     "--token ${random_password.k3s_cluster_secret.result}"
   ]
-  agent_install_flags = join(" ", concat(var.additional_flags.agent, local.agent_default_flags))
 }
 
 resource null_resource k3s_agents {
@@ -11,7 +10,7 @@ resource null_resource k3s_agents {
 
   triggers = {
     server_init  = null_resource.k3s_server.id
-    install_args = sha1(local.agent_install_flags)
+    install_args = sha1(join(" ", concat(local.agent_default_flags, each.value.additional_flags)))
     agent_ip     = each.value.ip
   }
   depends_on = [null_resource.k3s_server_installer]
@@ -105,7 +104,7 @@ resource null_resource k3s_agents_installer {
   provisioner remote-exec {
     inline = [
       <<EOT
-INSTALL_K3S_VERSION=${local.k3s_version} INSTALL_K3S_EXEC=agent sh /tmp/k3s-installer ${local.agent_install_flags} \
+INSTALL_K3S_VERSION=${local.k3s_version} INSTALL_K3S_EXEC=agent sh /tmp/k3s-installer ${join(" ", concat(local.agent_default_flags, each.value.additional_flags))} \
 ${join(" ", [for label, value in each.value.labels : "--node-label '${label}=${value}'" if value != null])} \
 ${join(" ", [for key, taint in each.value.taints : "--node-taint '${key}=${taint}'" if taint != null])} \
 --node-ip ${each.value.ip} --node-name ${each.value.name}
