@@ -1,5 +1,3 @@
-provider hcloud {}
-
 module k3s {
   source = "./../.."
 
@@ -16,16 +14,16 @@ module k3s {
     "--kubelet-arg cloud-provider=external" # required to use https://github.com/hetznercloud/hcloud-cloud-controller-manager
   ]
 
-  server = {
-    name = "server"
-    ip   = hcloud_server_network.server_network.ip
-    connection = {
-      host = hcloud_server.server.ipv4_address
+  servers = {
+    for i in range(length(hcloud_server.control_planes)) :
+    hcloud_server.control_planes[i].name => {
+      ip = hcloud_server_network.control_planes[i].ip
+      connection = {
+        host = hcloud_server.control_planes[i].ipv4_address
+      }
+      flags       = ["--disable-cloud-controller"]
+      annotations = { "node_id" : i }
     }
-
-    flags = [
-      "--disable-cloud-controller",
-    ]
   }
 
   agents = {

@@ -16,7 +16,7 @@ resource hcloud_network_subnet k3s_nodes {
 }
 
 data hcloud_image ubuntu {
-  name = "ubuntu-18.04"
+  name = "ubuntu-20.04"
 }
 
 resource hcloud_server server {
