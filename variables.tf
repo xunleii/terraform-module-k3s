@@ -4,13 +4,13 @@ variable k3s_version {
   default     = "latest"
 }
 
-variable cluster_name {
+variable name {
   description = "K3s cluster domain name (see https://rancher.com/docs/k3s/latest/en/installation/install-options/)."
   type        = string
   default     = "cluster.local"
 }
 
-variable cluster_cidr {
+variable cidr {
   description = "K3s network CIDRs (see https://rancher.com/docs/k3s/latest/en/installation/install-options/)."
   type = object({
     pods     = string
@@ -28,27 +28,19 @@ variable drain_timeout {
   default     = "0s"
 }
 
-variable server_node {
-  description = "K3s server node definition."
-  type = object({
-    name       = string
-    ip         = string
-    labels     = map(string)
-    taints     = map(string)
-    connection = map(any)
-    additional_flags = list(string)
-  })
+variable global_flags {
+  description = "Add additional installation flags, used by all nodes (see https://rancher.com/docs/k3s/latest/en/installation/install-options/)."
+  type = list(string)
+  default = []
 }
 
-variable agent_nodes {
-  description = "K3s agent nodes definitions. The key is used as node name during the k3s installation."
-  type = map(object({
-    name             = string
-    ip               = string
-    labels           = map(string)
-    taints           = map(string)
-    connection       = map(any)
-    additional_flags = list(string)
-  }))
+variable server {
+  description = "K3s server node definition."
+  type = any
+}
+
+variable agents {
+  description = "K3s agent nodes definitions. The key is used as node name if no name is provided."
+  type = map(any)
   default = {}
 }
