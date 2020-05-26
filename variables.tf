@@ -55,6 +55,10 @@ variable server {
     error_message = "Field server.flags must be a list of string."
   }
   validation {
+    condition     = ! can(var.server.annotations) || can(tomap(var.server.annotations))
+    error_message = "Field server.annotations must be a map of string."
+  }
+  validation {
     condition     = ! can(var.server.labels) || can(tomap(var.server.labels))
     error_message = "Field server.labels must be a map of string."
   }
