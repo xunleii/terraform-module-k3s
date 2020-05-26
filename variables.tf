@@ -34,37 +34,45 @@ variable global_flags {
   default     = []
 }
 
-variable server {
-  description = "K3s server node definition."
-  type        = any
+variable servers {
+  description = "K3s server nodes definition. The key is used as node name if no name is provided."
+  type        = map(any)
 
   validation {
-    condition     = can(var.server.name)
-    error_message = "Field server.name is required."
+    condition     = length(var.servers) > 0
+    error_message = "At least one server node must be provided."
   }
   validation {
-    condition     = can(var.server.ip)
-    error_message = "Field server.ip is required and must be an IP."
+    condition     = length(var.servers) % 2 == 1
+    error_message = "Servers must have an odd number of nodes."
   }
   validation {
-    condition     = ! can(var.server.connection) || can(tomap(var.server.connection))
-    error_message = "Field server.connection must be a valid Terraform connection."
+    condition     = can(values(var.servers)[*].ip)
+    error_message = "Field servers.<name>.ip is required."
   }
   validation {
-    condition     = ! can(var.server.flags) || can(tolist(var.server.flags))
-    error_message = "Field server.flags must be a list of string."
+    condition     = ! can(values(var.servers)[*].connection) || ! contains([for v in var.servers : can(tomap(v.connection))], false)
+    error_message = "Field servers.<name>.connection must be a valid Terraform connection."
   }
   validation {
-    condition     = ! can(var.server.annotations) || can(tomap(var.server.annotations))
-    error_message = "Field server.annotations must be a map of string."
+    condition     = ! can(values(var.servers)[*].flags) || ! contains([for v in var.servers : can(tolist(v.flags))], false)
+    error_message = "Field servers.<name>.flags must be a list of string."
   }
   validation {
-    condition     = ! can(var.server.labels) || can(tomap(var.server.labels))
-    error_message = "Field server.labels must be a map of string."
+    condition     = ! can(values(var.servers)[*].annotations) || ! contains([for v in var.servers : can(tomap(v.annotations))], false)
+    error_message = "Field servers.<name>.annotations must be a list of string."
   }
   validation {
-    condition     = ! can(var.server.taints) || can(tomap(var.server.taints))
-    error_message = "Field server.taints must be a map of string."
+    condition     = ! can(values(var.servers)[*].annotations) || ! contains([for v in var.servers : can(tomap(v.annotations))], false)
+    error_message = "Field servers.<name>.annotations must be a map of string."
+  }
+  validation {
+    condition     = ! can(values(var.servers)[*].labels) || ! contains([for v in var.servers : can(tomap(v.labels))], false)
+    error_message = "Field servers.<name>.labels must be a map of string."
+  }
+  validation {
+    condition     = ! can(values(var.servers)[*].taints) || ! contains([for v in var.servers : can(tomap(v.taints))], false)
+    error_message = "Field servers.<name>.taints must be a map of string."
   }
 }
 
@@ -72,4 +80,15 @@ variable agents {
   description = "K3s agent nodes definitions. The key is used as node name if no name is provided."
   type        = map(any)
   default     = {}
+}
+
+variable enabled_managed_fields {
+  description = "List of managed fields which must be managed by this module (can be annotation, label and/or taint)."
+  type        = list(string)
+  default     = ["annotation", "label", "taint"]
+}
+
+variable separator {
+  description = "Separator used to separates node name and field name (used to manage annotations, labels and taints)."
+  default     = "|"
 }
