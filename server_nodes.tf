@@ -3,6 +3,36 @@ locals {
   root_server_name = keys(var.servers)[0]
   root_server_ip   = values(var.servers)[0].ip
 
+  root_server_connection = {
+    type = try(var.servers[local.root_server_name].connection.type, "ssh")
+
+    host     = try(var.servers[local.root_server_name].connection.host, var.servers[local.root_server_name].ip)
+    user     = try(var.servers[local.root_server_name].connection.user, null)
+    password = try(var.servers[local.root_server_name].connection.password, null)
+    port     = try(var.servers[local.root_server_name].connection.port, null)
+    timeout  = try(var.servers[local.root_server_name].connection.timeout, null)
+
+    script_path    = try(var.servers[local.root_server_name].connection.script_path, null)
+    private_key    = try(var.servers[local.root_server_name].connection.private_key, null)
+    certificate    = try(var.servers[local.root_server_name].connection.certificate, null)
+    agent          = try(var.servers[local.root_server_name].connection.agent, null)
+    agent_identity = try(var.servers[local.root_server_name].connection.agent_identity, null)
+    host_key       = try(var.servers[local.root_server_name].connection.host_key, null)
+
+    https    = try(var.servers[local.root_server_name].connection.https, null)
+    insecure = try(var.servers[local.root_server_name].connection.insecure, null)
+    use_ntlm = try(var.servers[local.root_server_name].connection.use_ntlm, null)
+    cacert   = try(var.servers[local.root_server_name].connection.cacert, null)
+
+    bastion_host        = try(var.servers[local.root_server_name].connection.bastion_host, null)
+    bastion_host_key    = try(var.servers[local.root_server_name].connection.bastion_host_key, null)
+    bastion_port        = try(var.servers[local.root_server_name].connection.bastion_port, null)
+    bastion_user        = try(var.servers[local.root_server_name].connection.bastion_user, null)
+    bastion_password    = try(var.servers[local.root_server_name].connection.bastion_password, null)
+    bastion_private_key = try(var.servers[local.root_server_name].connection.bastion_private_key, null)
+    bastion_certificate = try(var.servers[local.root_server_name].connection.bastion_certificate, null)
+  }
+
   server_annotations_list = flatten([
     for nk, nv in var.servers : [
       // Because we need node name and annotation name when we remove the annotation resource, we need
@@ -146,33 +176,33 @@ resource null_resource k3s_servers_annotation {
   }
 
   connection {
-    type = try(var.servers[split(var.separator, each.key)[0]].connection.type, "ssh")
+    type = local.root_server_connection.type
 
-    host     = try(var.servers[split(var.separator, each.key)[0]].connection.host, data.null_data_source.servers_metadata[split(var.separator, each.key)[0]].outputs.ip)
-    user     = try(var.servers[split(var.separator, each.key)[0]].connection.user, null)
-    password = try(var.servers[split(var.separator, each.key)[0]].connection.password, null)
-    port     = try(var.servers[split(var.separator, each.key)[0]].connection.port, null)
-    timeout  = try(var.servers[split(var.separator, each.key)[0]].connection.timeout, null)
+    host     = local.root_server_connection.host
+    user     = local.root_server_connection.user
+    password = local.root_server_connection.password
+    port     = local.root_server_connection.port
+    timeout  = local.root_server_connection.timeout
 
-    script_path    = try(var.servers[split(var.separator, each.key)[0]].connection.script_path, null)
-    private_key    = try(var.servers[split(var.separator, each.key)[0]].connection.private_key, null)
-    certificate    = try(var.servers[split(var.separator, each.key)[0]].connection.certificate, null)
-    agent          = try(var.servers[split(var.separator, each.key)[0]].connection.agent, null)
-    agent_identity = try(var.servers[split(var.separator, each.key)[0]].connection.agent_identity, null)
-    host_key       = try(var.servers[split(var.separator, each.key)[0]].connection.host_key, null)
+    script_path    = local.root_server_connection.script_path
+    private_key    = local.root_server_connection.private_key
+    certificate    = local.root_server_connection.certificate
+    agent          = local.root_server_connection.agent
+    agent_identity = local.root_server_connection.agent_identity
+    host_key       = local.root_server_connection.host_key
 
-    https    = try(var.servers[split(var.separator, each.key)[0]].connection.https, null)
-    insecure = try(var.servers[split(var.separator, each.key)[0]].connection.insecure, null)
-    use_ntlm = try(var.servers[split(var.separator, each.key)[0]].connection.use_ntlm, null)
-    cacert   = try(var.servers[split(var.separator, each.key)[0]].connection.cacert, null)
+    https    = local.root_server_connection.https
+    insecure = local.root_server_connection.insecure
+    use_ntlm = local.root_server_connection.use_ntlm
+    cacert   = local.root_server_connection.cacert
 
-    bastion_host        = try(var.servers[split(var.separator, each.key)[0]].connection.bastion_host, null)
-    bastion_host_key    = try(var.servers[split(var.separator, each.key)[0]].connection.bastion_host_key, null)
-    bastion_port        = try(var.servers[split(var.separator, each.key)[0]].connection.bastion_port, null)
-    bastion_user        = try(var.servers[split(var.separator, each.key)[0]].connection.bastion_user, null)
-    bastion_password    = try(var.servers[split(var.separator, each.key)[0]].connection.bastion_password, null)
-    bastion_private_key = try(var.servers[split(var.separator, each.key)[0]].connection.bastion_private_key, null)
-    bastion_certificate = try(var.servers[split(var.separator, each.key)[0]].connection.bastion_certificate, null)
+    bastion_host        = local.root_server_connection.bastion_host
+    bastion_host_key    = local.root_server_connection.bastion_host_key
+    bastion_port        = local.root_server_connection.bastion_port
+    bastion_user        = local.root_server_connection.bastion_user
+    bastion_password    = local.root_server_connection.bastion_password
+    bastion_private_key = local.root_server_connection.bastion_private_key
+    bastion_certificate = local.root_server_connection.bastion_certificate
   }
 
   provisioner remote-exec {
@@ -200,33 +230,33 @@ resource null_resource k3s_servers_label {
   }
 
   connection {
-    type = try(var.servers[split(var.separator, each.key)[0]].connection.type, "ssh")
+    type = local.root_server_connection.type
 
-    host     = try(var.servers[split(var.separator, each.key)[0]].connection.host, data.null_data_source.servers_metadata[split(var.separator, each.key)[0]].outputs.ip)
-    user     = try(var.servers[split(var.separator, each.key)[0]].connection.user, null)
-    password = try(var.servers[split(var.separator, each.key)[0]].connection.password, null)
-    port     = try(var.servers[split(var.separator, each.key)[0]].connection.port, null)
-    timeout  = try(var.servers[split(var.separator, each.key)[0]].connection.timeout, null)
+    host     = local.root_server_connection.host
+    user     = local.root_server_connection.user
+    password = local.root_server_connection.password
+    port     = local.root_server_connection.port
+    timeout  = local.root_server_connection.timeout
 
-    script_path    = try(var.servers[split(var.separator, each.key)[0]].connection.script_path, null)
-    private_key    = try(var.servers[split(var.separator, each.key)[0]].connection.private_key, null)
-    certificate    = try(var.servers[split(var.separator, each.key)[0]].connection.certificate, null)
-    agent          = try(var.servers[split(var.separator, each.key)[0]].connection.agent, null)
-    agent_identity = try(var.servers[split(var.separator, each.key)[0]].connection.agent_identity, null)
-    host_key       = try(var.servers[split(var.separator, each.key)[0]].connection.host_key, null)
+    script_path    = local.root_server_connection.script_path
+    private_key    = local.root_server_connection.private_key
+    certificate    = local.root_server_connection.certificate
+    agent          = local.root_server_connection.agent
+    agent_identity = local.root_server_connection.agent_identity
+    host_key       = local.root_server_connection.host_key
 
-    https    = try(var.servers[split(var.separator, each.key)[0]].connection.https, null)
-    insecure = try(var.servers[split(var.separator, each.key)[0]].connection.insecure, null)
-    use_ntlm = try(var.servers[split(var.separator, each.key)[0]].connection.use_ntlm, null)
-    cacert   = try(var.servers[split(var.separator, each.key)[0]].connection.cacert, null)
+    https    = local.root_server_connection.https
+    insecure = local.root_server_connection.insecure
+    use_ntlm = local.root_server_connection.use_ntlm
+    cacert   = local.root_server_connection.cacert
 
-    bastion_host        = try(var.servers[split(var.separator, each.key)[0]].connection.bastion_host, null)
-    bastion_host_key    = try(var.servers[split(var.separator, each.key)[0]].connection.bastion_host_key, null)
-    bastion_port        = try(var.servers[split(var.separator, each.key)[0]].connection.bastion_port, null)
-    bastion_user        = try(var.servers[split(var.separator, each.key)[0]].connection.bastion_user, null)
-    bastion_password    = try(var.servers[split(var.separator, each.key)[0]].connection.bastion_password, null)
-    bastion_private_key = try(var.servers[split(var.separator, each.key)[0]].connection.bastion_private_key, null)
-    bastion_certificate = try(var.servers[split(var.separator, each.key)[0]].connection.bastion_certificate, null)
+    bastion_host        = local.root_server_connection.bastion_host
+    bastion_host_key    = local.root_server_connection.bastion_host_key
+    bastion_port        = local.root_server_connection.bastion_port
+    bastion_user        = local.root_server_connection.bastion_user
+    bastion_password    = local.root_server_connection.bastion_password
+    bastion_private_key = local.root_server_connection.bastion_private_key
+    bastion_certificate = local.root_server_connection.bastion_certificate
   }
 
   provisioner remote-exec {
@@ -254,33 +284,33 @@ resource null_resource k3s_servers_taint {
   }
 
   connection {
-    type = try(var.servers[split(var.separator, each.key)[0]].connection.type, "ssh")
+    type = local.root_server_connection.type
 
-    host     = try(var.servers[split(var.separator, each.key)[0]].connection.host, data.null_data_source.servers_metadata[split(var.separator, each.key)[0]].outputs.ip)
-    user     = try(var.servers[split(var.separator, each.key)[0]].connection.user, null)
-    password = try(var.servers[split(var.separator, each.key)[0]].connection.password, null)
-    port     = try(var.servers[split(var.separator, each.key)[0]].connection.port, null)
-    timeout  = try(var.servers[split(var.separator, each.key)[0]].connection.timeout, null)
+    host     = local.root_server_connection.host
+    user     = local.root_server_connection.user
+    password = local.root_server_connection.password
+    port     = local.root_server_connection.port
+    timeout  = local.root_server_connection.timeout
 
-    script_path    = try(var.servers[split(var.separator, each.key)[0]].connection.script_path, null)
-    private_key    = try(var.servers[split(var.separator, each.key)[0]].connection.private_key, null)
-    certificate    = try(var.servers[split(var.separator, each.key)[0]].connection.certificate, null)
-    agent          = try(var.servers[split(var.separator, each.key)[0]].connection.agent, null)
-    agent_identity = try(var.servers[split(var.separator, each.key)[0]].connection.agent_identity, null)
-    host_key       = try(var.servers[split(var.separator, each.key)[0]].connection.host_key, null)
+    script_path    = local.root_server_connection.script_path
+    private_key    = local.root_server_connection.private_key
+    certificate    = local.root_server_connection.certificate
+    agent          = local.root_server_connection.agent
+    agent_identity = local.root_server_connection.agent_identity
+    host_key       = local.root_server_connection.host_key
 
-    https    = try(var.servers[split(var.separator, each.key)[0]].connection.https, null)
-    insecure = try(var.servers[split(var.separator, each.key)[0]].connection.insecure, null)
-    use_ntlm = try(var.servers[split(var.separator, each.key)[0]].connection.use_ntlm, null)
-    cacert   = try(var.servers[split(var.separator, each.key)[0]].connection.cacert, null)
+    https    = local.root_server_connection.https
+    insecure = local.root_server_connection.insecure
+    use_ntlm = local.root_server_connection.use_ntlm
+    cacert   = local.root_server_connection.cacert
 
-    bastion_host        = try(var.servers[split(var.separator, each.key)[0]].connection.bastion_host, null)
-    bastion_host_key    = try(var.servers[split(var.separator, each.key)[0]].connection.bastion_host_key, null)
-    bastion_port        = try(var.servers[split(var.separator, each.key)[0]].connection.bastion_port, null)
-    bastion_user        = try(var.servers[split(var.separator, each.key)[0]].connection.bastion_user, null)
-    bastion_password    = try(var.servers[split(var.separator, each.key)[0]].connection.bastion_password, null)
-    bastion_private_key = try(var.servers[split(var.separator, each.key)[0]].connection.bastion_private_key, null)
-    bastion_certificate = try(var.servers[split(var.separator, each.key)[0]].connection.bastion_certificate, null)
+    bastion_host        = local.root_server_connection.bastion_host
+    bastion_host_key    = local.root_server_connection.bastion_host_key
+    bastion_port        = local.root_server_connection.bastion_port
+    bastion_user        = local.root_server_connection.bastion_user
+    bastion_password    = local.root_server_connection.bastion_password
+    bastion_private_key = local.root_server_connection.bastion_private_key
+    bastion_certificate = local.root_server_connection.bastion_certificate
   }
 
   provisioner remote-exec {
