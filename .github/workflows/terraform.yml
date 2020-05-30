@@ -1,6 +1,9 @@
 name: 'Terraform GitHub Actions'
 on:
-  - pull_request
+  pull_request:
+  push:
+    branches:
+    - master
 jobs:
   terraform:
     name: 'Terraform'
@@ -8,38 +11,18 @@ jobs:
     steps:
       - name: 'Checkout'
         uses: actions/checkout@master
-      - name: 'Terraform Format'
-        uses: hashicorp/terraform-github-actions@master
-        with:
-          tf_actions_version: 0.12.13
-          tf_actions_subcommand: 'fmt'
-          tf_actions_working_dir: 'examples/hcloud-k3s'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: 'Terraform Init'
-        uses: hashicorp/terraform-github-actions@master
-        with:
-          tf_actions_version: 0.12.13
-          tf_actions_subcommand: 'init'
-          tf_actions_working_dir: 'examples/hcloud-k3s'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: hashicorp/setup-terraform@v1
+        run: terraform init
+      - name: 'Terraform Format'
+        uses: hashicorp/setup-terraform@v1
+        run: terraform fmt -check
       - name: 'Terraform Validate'
-        uses: hashicorp/terraform-github-actions@master
-        with:
-          tf_actions_version: 0.12.13
-          tf_actions_subcommand: 'validate'
-          tf_actions_working_dir: 'examples/hcloud-k3s'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          HCLOUD_TOKEN: ${{ secrets.HCLOUD_TOKEN }}
+        uses: hashicorp/setup-terraform@v1
+        run: terraform validate
       - name: 'Terraform Plan'
-        uses: hashicorp/terraform-github-actions@master
-        with:
-          tf_actions_version: 0.12.13
-          tf_actions_subcommand: 'plan'
-          tf_actions_working_dir: 'examples/hcloud-k3s'
+        uses: hashicorp/setup-terraform@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HCLOUD_TOKEN: ${{ secrets.HCLOUD_TOKEN }}
           TF_VAR_ssh_key: ""
+        run: terraform plan
