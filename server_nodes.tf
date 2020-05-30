@@ -216,13 +216,14 @@ resource null_resource k3s_servers_annotation {
 
   depends_on = [null_resource.k3s_servers_install]
   triggers = {
-    server_name     = data.null_data_source.servers_metadata[split(var.separator, each.key)[0]].outputs.name
-    annotation_name = split(var.separator, each.key)[1]
-    connection_json = base64encode(jsonencode(local.root_server_connection))
-
+    server_name      = data.null_data_source.servers_metadata[split(var.separator, each.key)[0]].outputs.name
+    annotation_name  = split(var.separator, each.key)[1]
     on_install       = null_resource.k3s_servers_install[split(var.separator, each.key)[0]].id
     on_value_changes = each.value
+
+    connection_json = base64encode(jsonencode(local.root_server_connection))
   }
+  lifecycle { ignore_changes = [triggers["connection_json"]] }
 
   connection {
     type = jsondecode(base64decode(self.triggers.connection_json)).type
@@ -272,13 +273,14 @@ resource null_resource k3s_servers_label {
 
   depends_on = [null_resource.k3s_servers_install]
   triggers = {
-    server_name     = data.null_data_source.servers_metadata[split(var.separator, each.key)[0]].outputs.name
-    label_name      = split(var.separator, each.key)[1]
-    connection_json = base64encode(jsonencode(local.root_server_connection))
-
+    server_name      = data.null_data_source.servers_metadata[split(var.separator, each.key)[0]].outputs.name
+    label_name       = split(var.separator, each.key)[1]
     on_install       = null_resource.k3s_servers_install[split(var.separator, each.key)[0]].id
     on_value_changes = each.value
+
+    connection_json = base64encode(jsonencode(local.root_server_connection))
   }
+  lifecycle { ignore_changes = [triggers["connection_json"]] }
 
   connection {
     type = jsondecode(base64decode(self.triggers.connection_json)).type
@@ -328,13 +330,15 @@ resource null_resource k3s_servers_taint {
 
   depends_on = [null_resource.k3s_servers_install]
   triggers = {
-    server_name     = data.null_data_source.servers_metadata[split(var.separator, each.key)[0]].outputs.name
-    taint_name      = split(var.separator, each.key)[1]
-    connection_json = base64encode(jsonencode(local.root_server_connection))
-
+    server_name      = data.null_data_source.servers_metadata[split(var.separator, each.key)[0]].outputs.name
+    taint_name       = split(var.separator, each.key)[1]
+    connection_json  = base64encode(jsonencode(local.root_server_connection))
     on_install       = null_resource.k3s_servers_install[split(var.separator, each.key)[0]].id
     on_value_changes = each.value
+
+    connection_json = base64encode(jsonencode(local.root_server_connection))
   }
+  lifecycle { ignore_changes = [triggers["connection_json"]] }
 
   connection {
     type = jsondecode(base64decode(self.triggers.connection_json)).type

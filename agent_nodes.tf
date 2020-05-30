@@ -122,7 +122,7 @@ resource null_resource agent_drain {
 
   depends_on = [null_resource.k3s_agents_install]
   triggers = {
-    agent_name = data.null_data_source.agents_metadata[split(var.separator, each.key)[0]].outputs.name
+    agent_name      = data.null_data_source.agents_metadata[split(var.separator, each.key)[0]].outputs.name
     connection_json = base64encode(jsonencode(local.root_server_connection))
     drain_timeout   = var.drain_timeout
   }
@@ -171,13 +171,14 @@ resource null_resource k3s_agents_annotation {
 
   depends_on = [null_resource.k3s_agents_install]
   triggers = {
-    agent_name      = data.null_data_source.agents_metadata[split(var.separator, each.key)[0]].outputs.name
-    annotation_name = split(var.separator, each.key)[1]
-    connection_json = base64encode(jsonencode(local.root_server_connection))
-
+    agent_name       = data.null_data_source.agents_metadata[split(var.separator, each.key)[0]].outputs.name
+    annotation_name  = split(var.separator, each.key)[1]
     on_install       = null_resource.k3s_agents_install[split(var.separator, each.key)[0]].id
     on_value_changes = each.value
+
+    connection_json = base64encode(jsonencode(local.root_server_connection))
   }
+  lifecycle { ignore_changes = [triggers["connection_json"]] }
 
   connection {
     type = jsondecode(base64decode(self.triggers.connection_json)).type
@@ -227,13 +228,14 @@ resource null_resource k3s_agents_label {
 
   depends_on = [null_resource.k3s_agents_install]
   triggers = {
-    agent_name      = data.null_data_source.agents_metadata[split(var.separator, each.key)[0]].outputs.name
-    label_name      = split(var.separator, each.key)[1]
-    connection_json = base64encode(jsonencode(local.root_server_connection))
-
+    agent_name       = data.null_data_source.agents_metadata[split(var.separator, each.key)[0]].outputs.name
+    label_name       = split(var.separator, each.key)[1]
     on_install       = null_resource.k3s_agents_install[split(var.separator, each.key)[0]].id
     on_value_changes = each.value
+
+    connection_json = base64encode(jsonencode(local.root_server_connection))
   }
+  lifecycle { ignore_changes = [triggers["connection_json"]] }
 
   connection {
     type = jsondecode(base64decode(self.triggers.connection_json)).type
@@ -283,13 +285,14 @@ resource null_resource k3s_agents_taint {
 
   depends_on = [null_resource.k3s_agents_install]
   triggers = {
-    agent_name      = data.null_data_source.agents_metadata[split(var.separator, each.key)[0]].outputs.name
-    taint_name      = split(var.separator, each.key)[1]
-    connection_json = base64encode(jsonencode(local.root_server_connection))
-
+    agent_name       = data.null_data_source.agents_metadata[split(var.separator, each.key)[0]].outputs.name
+    taint_name       = split(var.separator, each.key)[1]
     on_install       = null_resource.k3s_agents_install[split(var.separator, each.key)[0]].id
     on_value_changes = each.value
+
+    connection_json = base64encode(jsonencode(local.root_server_connection))
   }
+  lifecycle { ignore_changes = [triggers["connection_json"]] }
 
   connection {
     type = jsondecode(base64decode(self.triggers.connection_json)).type
