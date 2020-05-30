@@ -112,6 +112,8 @@ locals {
 // Install k3s server
 resource null_resource k3s_servers_install {
   for_each = var.servers
+
+  depends_on = [var.depends_on_]
   triggers = {
     on_immutable_fields_changes = local.servers_metadata[each.key].immutable_fields_hash
   }
