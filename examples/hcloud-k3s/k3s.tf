@@ -8,12 +8,12 @@ module k3s {
     pods     = "10.42.0.0/16"
     services = "10.43.0.0/16"
   }
-  drain_timeout = "30s"
+  drain_timeout  = "30s"
   managed_fields = ["label", "taint"] // ignore annotations
 
   global_flags = [
     "--flannel-iface ens10",
-    "--kubelet-arg cloud-provider=external" # required to use https://github.com/hetznercloud/hcloud-cloud-controller-manager
+    "--kubelet-arg cloud-provider=external" // required to use https://github.com/hetznercloud/hcloud-cloud-controller-manager
   ]
 
   servers = {
@@ -24,7 +24,7 @@ module k3s {
         host = hcloud_server.control_planes[i].ipv4_address
       }
       flags       = ["--disable-cloud-controller"]
-      annotations = { "node_id" : i }
+      annotations = { "server_id" : i } // theses annotations will not be managed by this module
     }
   }
 
