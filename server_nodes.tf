@@ -1,77 +1,121 @@
 locals {
-  // Generate a map of all agents annotations in order to manage them through this module. This
+  // Some vars use to easily access to the first k3s server values
+  root_server_name = keys(var.servers)[0]
+  root_server_ip   = values(var.servers)[0].ip
+  root_server_connection = {
+    type = try(var.servers[local.root_server_name].connection.type, "ssh")
+
+    host     = try(var.servers[local.root_server_name].connection.host, var.servers[local.root_server_name].ip)
+    user     = try(var.servers[local.root_server_name].connection.user, null)
+    password = try(var.servers[local.root_server_name].connection.password, null)
+    port     = try(var.servers[local.root_server_name].connection.port, null)
+    timeout  = try(var.servers[local.root_server_name].connection.timeout, null)
+
+    script_path    = try(var.servers[local.root_server_name].connection.script_path, null)
+    private_key    = try(var.servers[local.root_server_name].connection.private_key, null)
+    certificate    = try(var.servers[local.root_server_name].connection.certificate, null)
+    agent          = try(var.servers[local.root_server_name].connection.agent, null)
+    agent_identity = try(var.servers[local.root_server_name].connection.agent_identity, null)
+    host_key       = try(var.servers[local.root_server_name].connection.host_key, null)
+
+    https    = try(var.servers[local.root_server_name].connection.https, null)
+    insecure = try(var.servers[local.root_server_name].connection.insecure, null)
+    use_ntlm = try(var.servers[local.root_server_name].connection.use_ntlm, null)
+    cacert   = try(var.servers[local.root_server_name].connection.cacert, null)
+
+    bastion_host        = try(var.servers[local.root_server_name].connection.bastion_host, null)
+    bastion_host_key    = try(var.servers[local.root_server_name].connection.bastion_host_key, null)
+    bastion_port        = try(var.servers[local.root_server_name].connection.bastion_port, null)
+    bastion_user        = try(var.servers[local.root_server_name].connection.bastion_user, null)
+    bastion_password    = try(var.servers[local.root_server_name].connection.bastion_password, null)
+    bastion_private_key = try(var.servers[local.root_server_name].connection.bastion_private_key, null)
+    bastion_certificate = try(var.servers[local.root_server_name].connection.bastion_certificate, null)
+  }
+
+  // Generate a map of all servers annotations in order to manage them through this module. This
   // generation is made in two steps:
   // - generate a list of objects representing all annotations, following this
   //   'template' {key = node_name|annotation_name, value = annotation_value}
   // - generate a map based on the generated list (using the field key as map key)
-  agent_annotations_list = flatten([
-    for nk, nv in var.agents : [
+  server_annotations_list = flatten([
+    for nk, nv in var.servers : [
       // Because we need node name and annotation name when we remove the annotation resource, we need
       // to share them through the annotation key (each.value are not avaible on destruction).
       for ak, av in try(nv.annotations, {}) : av == null ? { key : "" } : { key : "${nk}${var.separator}${ak}", value : av }
     ]
   ])
-  agent_annotations = local.managed_annotation_enabled ? { for o in local.agent_annotations_list : o.key => o.value if o.key != "" } : {}
+  server_annotations = local.managed_annotation_enabled ? { for o in local.server_annotations_list : o.key => o.value if o.key != "" } : {}
 
-  // Generate a map of all agents labels in order to manage them through this module. This
+  // Generate a map of all servers labels in order to manage them through this module. This
   // generation is made in two steps, following the same process than annotation's map.
-  agent_labels_list = flatten([
-    for nk, nv in var.agents : [
+  server_labels_list = flatten([
+    for nk, nv in var.servers : [
       // Because we need node name and label name when we remove the label resource, we need
       // to share them through the label key (each.value are not avaible on destruction).
       for lk, lv in try(nv.labels, {}) : lv == null ? { key : "" } : { key : "${nk}${var.separator}${lk}", value : lv }
     ]
   ])
-  agent_labels = local.managed_label_enabled ? { for o in local.agent_labels_list : o.key => o.value if o.key != "" } : {}
+  server_labels = local.managed_label_enabled ? { for o in local.server_labels_list : o.key => o.value if o.key != "" } : {}
 
-  // Generate a map of all agents taints in order to manage them through this module. This
+  // Generate a map of all servers taints in order to manage them through this module. This
   // generation is made in two steps, following the same process than annotation's map.
-  agent_taints_list = flatten([
-    for nk, nv in var.agents : [
+  server_taints_list = flatten([
+    for nk, nv in var.servers : [
       // Because we need node name and taint name when we remove the taint resource, we need
       // to share them through the taint key (each.value are not avaible on destruction).
       for tk, tv in try(nv.taints, {}) : tv == null ? { key : "" } : { key : "${nk}${var.separator}${tk}", value : tv }
     ]
   ])
-  agent_taints = local.managed_taint_enabled ? { for o in local.agent_taints_list : o.key => o.value if o.key != "" } : {}
+  server_taints = local.managed_taint_enabled ? { for o in local.server_taints_list : o.key => o.value if o.key != "" } : {}
 
-  // Generate a map of all calculed agent fields, used during k3s installation.
-  agents_metadata = {
-    for key, agent in var.agents :
+  // Generate a map of all calculed server fields, used during k3s installation.
+  servers_metadata = {
+    for key, server in var.servers :
     key => {
-      name = try(agent.name, key)
-      ip   = agent.ip
+      name = try(server.name, key)
+      ip   = server.ip
 
       flags = join(" ", compact(concat(
+        key == local.root_server_name ?
+        // For the first server node, add all configuration flags
         [
-          "--node-ip ${agent.ip}",
-          "--node-name '${try(agent.name, key)}'",
+          "--node-ip ${server.ip}",
+          "--node-name '${try(server.name, key)}'",
+          "--cluster-domain '${var.name}'",
+          "--cluster-cidr ${var.cidr.pods}",
+          "--service-cidr ${var.cidr.services}",
+          "--token ${random_password.k3s_cluster_secret.result}",
+          length(var.servers) > 1 ? "--cluster-init" : "",
+        ] :
+        // For other server nodes, use agent flags (because the first node manage the cluster configuration)
+        [
+          "--node-ip ${server.ip}",
+          "--node-name '${try(server.name, key)}'",
           "--server https://${local.root_server_ip}:6443",
           "--token ${random_password.k3s_cluster_secret.result}",
         ],
         var.global_flags,
-        try(agent.flags, []),
-        [for key, value in try(agent.labels, {}) : "--node-label '${key}=${value}'" if value != null],
-        [for key, value in try(agent.taints, {}) : "--node-taint '${key}=${value}'" if value != null]
+        try(server.flags, []),
+        [for key, value in try(server.labels, {}) : "--node-label '${key}=${value}'" if value != null],
+        [for key, value in try(server.taints, {}) : "--node-taint '${key}=${value}'" if value != null]
       )))
 
       immutable_fields_hash = sha1(join("", concat(
-        [var.name],
+        [var.name, var.cidr.pods, var.cidr.services, local.k3s_version],
         var.global_flags,
-        try(agent.flags, []),
+        try(server.flags, []),
       )))
     }
   }
 }
 
-// Install k3s agent
-resource null_resource agents_install {
-  for_each = var.agents
+// Install k3s server
+resource null_resource servers_install {
+  for_each = var.servers
 
-  depends_on = [null_resource.servers_install]
+  depends_on = [var.depends_on_]
   triggers = {
-    // Reinstall k3s only when specific fields changes (name or flags)
-    on_immutable_fields_changes = local.agents_metadata[each.key].immutable_fields_hash
+    on_immutable_fields_changes = local.servers_metadata[each.key].immutable_fields_hash
   }
 
   connection {
@@ -104,7 +148,7 @@ resource null_resource agents_install {
     bastion_certificate = try(each.value.connection.bastion_certificate, null)
   }
 
-  // Upload k3s install script
+  // Upload k3s file
   provisioner file {
     content     = data.http.k3s_installer.body
     destination = "/tmp/k3s-installer"
@@ -113,34 +157,31 @@ resource null_resource agents_install {
   // Remove old k3s installation
   provisioner remote-exec {
     inline = [
-      "if ! command -V k3s-agent-uninstall.sh > /dev/null; then exit; fi",
+      "if ! command -V k3s-uninstall.sh > /dev/null; then exit; fi",
       "echo >&2 [WARN] K3s seems already installed on this node and will be uninstalled.",
-      "k3s-agent-uninstall.sh",
+      "k3s-uninstall.sh",
     ]
   }
 
-  // Install k3s
-  provisioner remote-exec {
+  // Install k3s server
+  provisioner "remote-exec" {
     inline = [
-      "INSTALL_K3S_VERSION=${local.k3s_version} sh /tmp/k3s-installer agent ${local.agents_metadata[each.key].flags}",
-      "until systemctl is-active --quiet k3s-agent.service; do sleep 5; done"
+      "INSTALL_K3S_VERSION=${local.k3s_version} sh /tmp/k3s-installer server ${local.servers_metadata[each.key].flags}",
+      "until kubectl get nodes; do sleep 5; done"
     ]
   }
 }
 
 // Drain k3s node on destruction in order to safely move all workflows to another node.
-resource null_resource agent_drain {
-  for_each = var.agents
+resource null_resource server_drain {
+  for_each = var.servers
 
-  depends_on = [null_resource.agents_install]
+  depends_on = [null_resource.servers_install]
   triggers = {
-    // Because some fields must be used on destruction, we need to store them into the current
-    // object. The only way to do that is to use triggers to store theses fields.
-    agent_name      = local.agents_metadata[split(var.separator, each.key)[0]].name
+    server_name     = local.servers_metadata[split(var.separator, each.key)[0]].name
     connection_json = base64encode(jsonencode(local.root_server_connection))
     drain_timeout   = var.drain_timeout
   }
-  // Because we use triggers as memory area, we need to ignore all changes on it.
   lifecycle { ignore_changes = [triggers] }
 
   connection {
@@ -175,26 +216,23 @@ resource null_resource agent_drain {
 
   provisioner remote-exec {
     when   = destroy
-    inline = ["kubectl drain ${self.triggers.agent_name} --delete-local-data --force --ignore-daemonsets --timeout=${self.triggers.drain_timeout}"]
+    inline = ["kubectl drain ${self.triggers.server_name} --delete-local-data --force --ignore-daemonsets --timeout=${self.triggers.drain_timeout}"]
   }
 }
 
-// Add/remove manually annotation on k3s agent
-resource null_resource agents_annotation {
-  for_each = local.agent_annotations
+// Add/remove manually annotation on k3s server
+resource null_resource servers_annotation {
+  for_each = local.server_annotations
 
-  depends_on = [null_resource.agents_install]
+  depends_on = [null_resource.servers_install]
   triggers = {
-    agent_name       = local.agents_metadata[split(var.separator, each.key)[0]].name
+    server_name      = local.servers_metadata[split(var.separator, each.key)[0]].name
     annotation_name  = split(var.separator, each.key)[1]
-    on_install       = null_resource.agents_install[split(var.separator, each.key)[0]].id
+    on_install       = null_resource.servers_install[split(var.separator, each.key)[0]].id
     on_value_changes = each.value
 
-    // Because some fields must be used on destruction, we need to store them into the current
-    // object. The only way to do that is to use triggers to store theses fields.
     connection_json = base64encode(jsonencode(local.root_server_connection))
   }
-  // Because we dont care about connection modification, we ignore its changes.
   lifecycle { ignore_changes = [triggers["connection_json"]] }
 
   connection {
@@ -229,32 +267,29 @@ resource null_resource agents_annotation {
 
   provisioner remote-exec {
     inline = [
-    "kubectl annotate --overwrite node ${self.triggers.agent_name} ${self.triggers.annotation_name}=${self.triggers.on_value_changes}"]
+    "kubectl annotate --overwrite node ${self.triggers.server_name} ${self.triggers.annotation_name}=${self.triggers.on_value_changes}"]
   }
 
   provisioner remote-exec {
     when = destroy
     inline = [
-    "kubectl annotate node ${self.triggers.agent_name} ${self.triggers.annotation_name}-"]
+    "kubectl annotate node ${self.triggers.server_name} ${self.triggers.annotation_name}-"]
   }
 }
 
-// Add/remove manually label on k3s agent
-resource null_resource agents_label {
-  for_each = local.agent_labels
+// Add/remove manually label on k3s server
+resource null_resource servers_label {
+  for_each = local.server_labels
 
-  depends_on = [null_resource.agents_install]
+  depends_on = [null_resource.servers_install]
   triggers = {
-    agent_name       = local.agents_metadata[split(var.separator, each.key)[0]].name
+    server_name      = local.servers_metadata[split(var.separator, each.key)[0]].name
     label_name       = split(var.separator, each.key)[1]
-    on_install       = null_resource.agents_install[split(var.separator, each.key)[0]].id
+    on_install       = null_resource.servers_install[split(var.separator, each.key)[0]].id
     on_value_changes = each.value
 
-    // Because some fields must be used on destruction, we need to store them into the current
-    // object. The only way to do that is to use triggers to store theses fields.
     connection_json = base64encode(jsonencode(local.root_server_connection))
   }
-  // Because we dont care about connection modification, we ignore its changes.
   lifecycle { ignore_changes = [triggers["connection_json"]] }
 
   connection {
@@ -289,32 +324,30 @@ resource null_resource agents_label {
 
   provisioner remote-exec {
     inline = [
-    "kubectl label --overwrite node ${self.triggers.agent_name} ${self.triggers.label_name}=${self.triggers.on_value_changes}"]
+    "kubectl label --overwrite node ${self.triggers.server_name} ${self.triggers.label_name}=${self.triggers.on_value_changes}"]
   }
 
   provisioner remote-exec {
     when = destroy
     inline = [
-    "kubectl label node ${self.triggers.agent_name} ${self.triggers.label_name}-"]
+    "kubectl label node ${self.triggers.server_name} ${self.triggers.label_name}-"]
   }
 }
 
-// Add manually taint on k3s agent
-resource null_resource agents_taint {
-  for_each = local.agent_taints
+// Add/remove manually taint on k3s server
+resource null_resource servers_taint {
+  for_each = local.server_taints
 
-  depends_on = [null_resource.agents_install]
+  depends_on = [null_resource.servers_install]
   triggers = {
-    agent_name       = local.agents_metadata[split(var.separator, each.key)[0]].name
+    server_name      = local.servers_metadata[split(var.separator, each.key)[0]].name
     taint_name       = split(var.separator, each.key)[1]
-    on_install       = null_resource.agents_install[split(var.separator, each.key)[0]].id
+    connection_json  = base64encode(jsonencode(local.root_server_connection))
+    on_install       = null_resource.servers_install[split(var.separator, each.key)[0]].id
     on_value_changes = each.value
 
-    // Because some fields must be used on destruction, we need to store them into the current
-    // object. The only way to do that is to use triggers to store theses fields.
     connection_json = base64encode(jsonencode(local.root_server_connection))
   }
-  // Because we dont care about connection modification, we ignore its changes.
   lifecycle { ignore_changes = [triggers["connection_json"]] }
 
   connection {
@@ -348,11 +381,13 @@ resource null_resource agents_taint {
   }
 
   provisioner remote-exec {
-    inline = ["kubectl taint node ${self.triggers.agent_name} ${self.triggers.taint_name}=${self.triggers.on_value_changes} --overwrite"]
+    inline = [
+    "kubectl taint node ${self.triggers.server_name} ${self.triggers.taint_name}=${self.triggers.on_value_changes} --overwrite"]
   }
 
   provisioner remote-exec {
-    when   = destroy
-    inline = ["kubectl taint node ${self.triggers.agent_name} ${self.triggers.taint_name}-"]
+    when = destroy
+    inline = [
+    "kubectl taint node ${self.triggers.server_name} ${self.triggers.taint_name}-"]
   }
 }

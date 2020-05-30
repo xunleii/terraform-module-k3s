@@ -1,53 +1,22 @@
 provider hcloud {}
 
-module k3s {
-  source = "./../.."
+resource hcloud_ssh_key default {
+  name       = "K3S terraform module - Provisionning SSH key"
+  public_key = var.ssh_key
+}
 
-  k3s_version = "latest"
-  cluster_cidr = {
-    pods     = "10.42.0.0/16"
-    services = "10.43.0.0/16"
-  }
-  drain_timeout = "30s"
+resource hcloud_network k3s {
+  name     = "k3s-network"
+  ip_range = "10.0.0.0/8"
+}
 
-  server_node = {
-    name   = "server"
-    ip     = hcloud_server_network.server_network.ip
-    labels = {}
-    taints = {}
-    connection = {
-      host = hcloud_server.server.ipv4_address
-    }
-    additional_flags = [
-      "--disable-cloud-controller",
-      "--flannel-iface ens10",
-      "--kubelet-arg cloud-provider=external",                           # required to use https://github.com/hetznercloud/hcloud-cloud-controller-manager
-      "--kubelet-arg provider-id=hcloud://${hcloud_server.server.id}"
-    ]
-  }
+resource hcloud_network_subnet k3s_nodes {
+  type         = "server"
+  network_id   = hcloud_network.k3s.id
+  network_zone = "eu-central"
+  ip_range     = "10.254.1.0/24"
+}
 
-  agent_nodes = {
-    for i in range(length(hcloud_server.agents)) :
-    "${hcloud_server.agents[i].name}_node" => {
-      name = "${hcloud_server.agents[i].name}"
-      ip   = hcloud_server_network.agents_network[i].ip
-
-      labels = {
-        "node.kubernetes.io/pool" = hcloud_server.agents[i].labels.nodepool
-      }
-      taints = {
-        "dedicated" : hcloud_server.agents[i].labels.nodepool == "gpu" ? "gpu:NoSchedule" : null
-      }
-
-      connection = {
-        host = hcloud_server.agents[i].ipv4_address
-      }
-
-      additional_flags = [
-        "--flannel-iface ens10",
-        "--kubelet-arg cloud-provider=external",                         # required to use https://github.com/hetznercloud/hcloud-cloud-controller-manager
-        "--kubelet-arg provider-id=hcloud://${hcloud_server.agents[i].id}"
-      ]
-    }
-  }
+data hcloud_image ubuntu {
+  name = "ubuntu-20.04"
 }
