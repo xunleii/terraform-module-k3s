@@ -1,3 +1,3 @@
-output "test" {
-  value = module.k3s.test
+output "summary" {
+  value = module.k3s.summary
 }
