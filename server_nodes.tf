@@ -166,7 +166,7 @@ resource null_resource k3s_servers_install {
   // Install k3s server
   provisioner "remote-exec" {
     inline = [
-      "INSTALL_K3S_VERSION=${local.k3s_version} sh /tmp/k3s-installer ${local.servers_metadata[each.key].flags}",
+      "INSTALL_K3S_VERSION=${local.k3s_version} sh /tmp/k3s-installer server ${local.servers_metadata[each.key].flags}",
       "until kubectl get nodes; do sleep 5; done"
     ]
   }

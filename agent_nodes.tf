@@ -122,8 +122,8 @@ resource null_resource k3s_agents_install {
   // Install k3s
   provisioner remote-exec {
     inline = [
-      "INSTALL_K3S_VERSION=${local.k3s_version} sh /tmp/k3s-installer ${local.agents_metadata[each.key].flags}",
-      "until kubectl get nodes; do sleep 5; done"
+      "INSTALL_K3S_VERSION=${local.k3s_version} sh /tmp/k3s-installer agent ${local.agents_metadata[each.key].flags}",
+      "until systemctl is-active --quiet k3s-agent.service; do sleep 5; done"
     ]
   }
 }
