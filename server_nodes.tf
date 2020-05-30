@@ -157,7 +157,7 @@ resource null_resource k3s_servers_install {
   provisioner "remote-exec" {
     inline = [
       "INSTALL_K3S_VERSION=${local.k3s_version} sh /tmp/k3s-installer ${data.null_data_source.servers_metadata[each.key].outputs.flags}",
-      "until kubectl get nodes | grep -v '[WARN] No resources found'; do sleep 1; done"
+      "until kubectl get nodes; do sleep 5; done"
     ]
   }
 }
@@ -169,51 +169,53 @@ resource null_resource k3s_servers_annotation {
 
   depends_on = [null_resource.k3s_servers_install]
   triggers = {
-    server_name      = split(var.separator, each.key)[0]
-    annotation_name  = split(var.separator, each.key)[1]
+    server_name     = data.null_data_source.servers_metadata[split(var.separator, each.key)[0]].outputs.name
+    annotation_name = split(var.separator, each.key)[1]
+    connection_json = base64encode(jsonencode(local.root_server_connection))
+
     on_install       = null_resource.k3s_servers_install[split(var.separator, each.key)[0]].id
     on_value_changes = each.value
   }
 
   connection {
-    type = local.root_server_connection.type
+    type = jsondecode(base64decode(self.triggers.connection_json)).type
 
-    host     = local.root_server_connection.host
-    user     = local.root_server_connection.user
-    password = local.root_server_connection.password
-    port     = local.root_server_connection.port
-    timeout  = local.root_server_connection.timeout
+    host     = jsondecode(base64decode(self.triggers.connection_json)).host
+    user     = jsondecode(base64decode(self.triggers.connection_json)).user
+    password = jsondecode(base64decode(self.triggers.connection_json)).password
+    port     = jsondecode(base64decode(self.triggers.connection_json)).port
+    timeout  = jsondecode(base64decode(self.triggers.connection_json)).timeout
 
-    script_path    = local.root_server_connection.script_path
-    private_key    = local.root_server_connection.private_key
-    certificate    = local.root_server_connection.certificate
-    agent          = local.root_server_connection.agent
-    agent_identity = local.root_server_connection.agent_identity
-    host_key       = local.root_server_connection.host_key
+    script_path    = jsondecode(base64decode(self.triggers.connection_json)).script_path
+    private_key    = jsondecode(base64decode(self.triggers.connection_json)).private_key
+    certificate    = jsondecode(base64decode(self.triggers.connection_json)).certificate
+    agent          = jsondecode(base64decode(self.triggers.connection_json)).agent
+    agent_identity = jsondecode(base64decode(self.triggers.connection_json)).agent_identity
+    host_key       = jsondecode(base64decode(self.triggers.connection_json)).host_key
 
-    https    = local.root_server_connection.https
-    insecure = local.root_server_connection.insecure
-    use_ntlm = local.root_server_connection.use_ntlm
-    cacert   = local.root_server_connection.cacert
+    https    = jsondecode(base64decode(self.triggers.connection_json)).https
+    insecure = jsondecode(base64decode(self.triggers.connection_json)).insecure
+    use_ntlm = jsondecode(base64decode(self.triggers.connection_json)).use_ntlm
+    cacert   = jsondecode(base64decode(self.triggers.connection_json)).cacert
 
-    bastion_host        = local.root_server_connection.bastion_host
-    bastion_host_key    = local.root_server_connection.bastion_host_key
-    bastion_port        = local.root_server_connection.bastion_port
-    bastion_user        = local.root_server_connection.bastion_user
-    bastion_password    = local.root_server_connection.bastion_password
-    bastion_private_key = local.root_server_connection.bastion_private_key
-    bastion_certificate = local.root_server_connection.bastion_certificate
+    bastion_host        = jsondecode(base64decode(self.triggers.connection_json)).bastion_host
+    bastion_host_key    = jsondecode(base64decode(self.triggers.connection_json)).bastion_host_key
+    bastion_port        = jsondecode(base64decode(self.triggers.connection_json)).bastion_port
+    bastion_user        = jsondecode(base64decode(self.triggers.connection_json)).bastion_user
+    bastion_password    = jsondecode(base64decode(self.triggers.connection_json)).bastion_password
+    bastion_private_key = jsondecode(base64decode(self.triggers.connection_json)).bastion_private_key
+    bastion_certificate = jsondecode(base64decode(self.triggers.connection_json)).bastion_certificate
   }
 
   provisioner remote-exec {
     inline = [
-    "kubectl annotate --overwrite node ${data.null_data_source.servers_metadata[split(var.separator, each.key)[0]].outputs.name} ${split(var.separator, each.key)[1]}=${each.value}"]
+    "kubectl annotate --overwrite node ${self.triggers.server_name} ${self.triggers.annotation_name}=${self.triggers.on_value_changes}"]
   }
 
   provisioner remote-exec {
     when = destroy
     inline = [
-    "kubectl annotate node ${data.null_data_source.servers_metadata[split(var.separator, each.key)[0]].outputs.name} ${split(var.separator, each.key)[1]}-"]
+    "kubectl annotate node ${self.triggers.server_name} ${self.triggers.annotation_name}-"]
   }
 }
 
@@ -223,51 +225,53 @@ resource null_resource k3s_servers_label {
 
   depends_on = [null_resource.k3s_servers_install]
   triggers = {
-    server_name      = split(var.separator, each.key)[0]
-    label_name       = split(var.separator, each.key)[1]
+    server_name     = data.null_data_source.servers_metadata[split(var.separator, each.key)[0]].outputs.name
+    label_name      = split(var.separator, each.key)[1]
+    connection_json = base64encode(jsonencode(local.root_server_connection))
+
     on_install       = null_resource.k3s_servers_install[split(var.separator, each.key)[0]].id
     on_value_changes = each.value
   }
 
   connection {
-    type = local.root_server_connection.type
+    type = jsondecode(base64decode(self.triggers.connection_json)).type
 
-    host     = local.root_server_connection.host
-    user     = local.root_server_connection.user
-    password = local.root_server_connection.password
-    port     = local.root_server_connection.port
-    timeout  = local.root_server_connection.timeout
+    host     = jsondecode(base64decode(self.triggers.connection_json)).host
+    user     = jsondecode(base64decode(self.triggers.connection_json)).user
+    password = jsondecode(base64decode(self.triggers.connection_json)).password
+    port     = jsondecode(base64decode(self.triggers.connection_json)).port
+    timeout  = jsondecode(base64decode(self.triggers.connection_json)).timeout
 
-    script_path    = local.root_server_connection.script_path
-    private_key    = local.root_server_connection.private_key
-    certificate    = local.root_server_connection.certificate
-    agent          = local.root_server_connection.agent
-    agent_identity = local.root_server_connection.agent_identity
-    host_key       = local.root_server_connection.host_key
+    script_path    = jsondecode(base64decode(self.triggers.connection_json)).script_path
+    private_key    = jsondecode(base64decode(self.triggers.connection_json)).private_key
+    certificate    = jsondecode(base64decode(self.triggers.connection_json)).certificate
+    agent          = jsondecode(base64decode(self.triggers.connection_json)).agent
+    agent_identity = jsondecode(base64decode(self.triggers.connection_json)).agent_identity
+    host_key       = jsondecode(base64decode(self.triggers.connection_json)).host_key
 
-    https    = local.root_server_connection.https
-    insecure = local.root_server_connection.insecure
-    use_ntlm = local.root_server_connection.use_ntlm
-    cacert   = local.root_server_connection.cacert
+    https    = jsondecode(base64decode(self.triggers.connection_json)).https
+    insecure = jsondecode(base64decode(self.triggers.connection_json)).insecure
+    use_ntlm = jsondecode(base64decode(self.triggers.connection_json)).use_ntlm
+    cacert   = jsondecode(base64decode(self.triggers.connection_json)).cacert
 
-    bastion_host        = local.root_server_connection.bastion_host
-    bastion_host_key    = local.root_server_connection.bastion_host_key
-    bastion_port        = local.root_server_connection.bastion_port
-    bastion_user        = local.root_server_connection.bastion_user
-    bastion_password    = local.root_server_connection.bastion_password
-    bastion_private_key = local.root_server_connection.bastion_private_key
-    bastion_certificate = local.root_server_connection.bastion_certificate
+    bastion_host        = jsondecode(base64decode(self.triggers.connection_json)).bastion_host
+    bastion_host_key    = jsondecode(base64decode(self.triggers.connection_json)).bastion_host_key
+    bastion_port        = jsondecode(base64decode(self.triggers.connection_json)).bastion_port
+    bastion_user        = jsondecode(base64decode(self.triggers.connection_json)).bastion_user
+    bastion_password    = jsondecode(base64decode(self.triggers.connection_json)).bastion_password
+    bastion_private_key = jsondecode(base64decode(self.triggers.connection_json)).bastion_private_key
+    bastion_certificate = jsondecode(base64decode(self.triggers.connection_json)).bastion_certificate
   }
 
   provisioner remote-exec {
     inline = [
-    "kubectl label --overwrite node ${data.null_data_source.servers_metadata[split(var.separator, each.key)[0]].outputs.name} ${split(var.separator, each.key)[1]}=${each.value}"]
+    "kubectl label --overwrite node ${self.triggers.server_name} ${self.triggers.label_name}=${self.triggers.on_value_changes}"]
   }
 
   provisioner remote-exec {
     when = destroy
     inline = [
-    "kubectl label node ${data.null_data_source.servers_metadata[split(var.separator, each.key)[0]].outputs.name} ${split(var.separator, each.key)[1]}-"]
+    "kubectl label node ${self.triggers.server_name} ${self.triggers.label_name}-"]
   }
 }
 
@@ -277,50 +281,52 @@ resource null_resource k3s_servers_taint {
 
   depends_on = [null_resource.k3s_servers_install]
   triggers = {
-    server_name      = split(var.separator, each.key)[0]
-    taint_name       = split(var.separator, each.key)[1]
+    server_name     = data.null_data_source.servers_metadata[split(var.separator, each.key)[0]].outputs.name
+    taint_name      = split(var.separator, each.key)[1]
+    connection_json = base64encode(jsonencode(local.root_server_connection))
+
     on_install       = null_resource.k3s_servers_install[split(var.separator, each.key)[0]].id
     on_value_changes = each.value
   }
 
   connection {
-    type = local.root_server_connection.type
+    type = jsondecode(base64decode(self.triggers.connection_json)).type
 
-    host     = local.root_server_connection.host
-    user     = local.root_server_connection.user
-    password = local.root_server_connection.password
-    port     = local.root_server_connection.port
-    timeout  = local.root_server_connection.timeout
+    host     = jsondecode(base64decode(self.triggers.connection_json)).host
+    user     = jsondecode(base64decode(self.triggers.connection_json)).user
+    password = jsondecode(base64decode(self.triggers.connection_json)).password
+    port     = jsondecode(base64decode(self.triggers.connection_json)).port
+    timeout  = jsondecode(base64decode(self.triggers.connection_json)).timeout
 
-    script_path    = local.root_server_connection.script_path
-    private_key    = local.root_server_connection.private_key
-    certificate    = local.root_server_connection.certificate
-    agent          = local.root_server_connection.agent
-    agent_identity = local.root_server_connection.agent_identity
-    host_key       = local.root_server_connection.host_key
+    script_path    = jsondecode(base64decode(self.triggers.connection_json)).script_path
+    private_key    = jsondecode(base64decode(self.triggers.connection_json)).private_key
+    certificate    = jsondecode(base64decode(self.triggers.connection_json)).certificate
+    agent          = jsondecode(base64decode(self.triggers.connection_json)).agent
+    agent_identity = jsondecode(base64decode(self.triggers.connection_json)).agent_identity
+    host_key       = jsondecode(base64decode(self.triggers.connection_json)).host_key
 
-    https    = local.root_server_connection.https
-    insecure = local.root_server_connection.insecure
-    use_ntlm = local.root_server_connection.use_ntlm
-    cacert   = local.root_server_connection.cacert
+    https    = jsondecode(base64decode(self.triggers.connection_json)).https
+    insecure = jsondecode(base64decode(self.triggers.connection_json)).insecure
+    use_ntlm = jsondecode(base64decode(self.triggers.connection_json)).use_ntlm
+    cacert   = jsondecode(base64decode(self.triggers.connection_json)).cacert
 
-    bastion_host        = local.root_server_connection.bastion_host
-    bastion_host_key    = local.root_server_connection.bastion_host_key
-    bastion_port        = local.root_server_connection.bastion_port
-    bastion_user        = local.root_server_connection.bastion_user
-    bastion_password    = local.root_server_connection.bastion_password
-    bastion_private_key = local.root_server_connection.bastion_private_key
-    bastion_certificate = local.root_server_connection.bastion_certificate
+    bastion_host        = jsondecode(base64decode(self.triggers.connection_json)).bastion_host
+    bastion_host_key    = jsondecode(base64decode(self.triggers.connection_json)).bastion_host_key
+    bastion_port        = jsondecode(base64decode(self.triggers.connection_json)).bastion_port
+    bastion_user        = jsondecode(base64decode(self.triggers.connection_json)).bastion_user
+    bastion_password    = jsondecode(base64decode(self.triggers.connection_json)).bastion_password
+    bastion_private_key = jsondecode(base64decode(self.triggers.connection_json)).bastion_private_key
+    bastion_certificate = jsondecode(base64decode(self.triggers.connection_json)).bastion_certificate
   }
 
   provisioner remote-exec {
     inline = [
-    "kubectl taint node ${data.null_data_source.servers_metadata[split(var.separator, each.key)[0]].outputs.name} ${split(var.separator, each.key)[1]}=${each.value} --overwrite"]
+    "kubectl taint node ${self.triggers.server_name} ${self.triggers.taint_name}=${self.triggers.on_value_changes} --overwrite"]
   }
 
   provisioner remote-exec {
     when = destroy
     inline = [
-    "kubectl taint node ${data.null_data_source.servers_metadata[split(var.separator, each.key)[0]].outputs.name} ${split(var.separator, each.key)[1]}-"]
+    "kubectl taint node ${self.triggers.server_name} ${self.triggers.taint_name}-"]
   }
 }
