@@ -162,6 +162,53 @@ resource null_resource k3s_servers_install {
   }
 }
 
+resource null_resource server_drain {
+  for_each = var.servers
+
+  depends_on = [null_resource.k3s_servers_install]
+  triggers = {
+    server_name     = data.null_data_source.servers_metadata[split(var.separator, each.key)[0]].outputs.name
+    connection_json = base64encode(jsonencode(local.root_server_connection))
+    drain_timeout   = var.drain_timeout
+  }
+  lifecycle { ignore_changes = [triggers] }
+
+  connection {
+    type = jsondecode(base64decode(self.triggers.connection_json)).type
+
+    host     = jsondecode(base64decode(self.triggers.connection_json)).host
+    user     = jsondecode(base64decode(self.triggers.connection_json)).user
+    password = jsondecode(base64decode(self.triggers.connection_json)).password
+    port     = jsondecode(base64decode(self.triggers.connection_json)).port
+    timeout  = jsondecode(base64decode(self.triggers.connection_json)).timeout
+
+    script_path    = jsondecode(base64decode(self.triggers.connection_json)).script_path
+    private_key    = jsondecode(base64decode(self.triggers.connection_json)).private_key
+    certificate    = jsondecode(base64decode(self.triggers.connection_json)).certificate
+    agent          = jsondecode(base64decode(self.triggers.connection_json)).agent
+    agent_identity = jsondecode(base64decode(self.triggers.connection_json)).agent_identity
+    host_key       = jsondecode(base64decode(self.triggers.connection_json)).host_key
+
+    https    = jsondecode(base64decode(self.triggers.connection_json)).https
+    insecure = jsondecode(base64decode(self.triggers.connection_json)).insecure
+    use_ntlm = jsondecode(base64decode(self.triggers.connection_json)).use_ntlm
+    cacert   = jsondecode(base64decode(self.triggers.connection_json)).cacert
+
+    bastion_host        = jsondecode(base64decode(self.triggers.connection_json)).bastion_host
+    bastion_host_key    = jsondecode(base64decode(self.triggers.connection_json)).bastion_host_key
+    bastion_port        = jsondecode(base64decode(self.triggers.connection_json)).bastion_port
+    bastion_user        = jsondecode(base64decode(self.triggers.connection_json)).bastion_user
+    bastion_password    = jsondecode(base64decode(self.triggers.connection_json)).bastion_password
+    bastion_private_key = jsondecode(base64decode(self.triggers.connection_json)).bastion_private_key
+    bastion_certificate = jsondecode(base64decode(self.triggers.connection_json)).bastion_certificate
+  }
+
+  provisioner remote-exec {
+    when   = destroy
+    inline = ["kubectl drain ${self.triggers.server_name} --delete-local-data --force --ignore-daemonsets --timeout=${self.triggers.drain_timeout}"]
+  }
+}
+
 # - Server annotation, label and taint management
 # Add manually annotation on k3s server (not updated when k3s restart with new annotations)
 resource null_resource k3s_servers_annotation {
