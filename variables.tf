@@ -85,6 +85,35 @@ variable agents {
   description = "K3s agent nodes definitions. The key is used as node name if no name is provided."
   type        = map(any)
   default     = {}
+
+  validation {
+    condition     = can(values(var.agents)[*].ip)
+    error_message = "Field agents.<name>.ip is required."
+  }
+  validation {
+    condition     = ! can(values(var.agents)[*].connection) || ! contains([for v in var.agents : can(tomap(v.connection))], false)
+    error_message = "Field agents.<name>.connection must be a valid Terraform connection."
+  }
+  validation {
+    condition     = ! can(values(var.agents)[*].flags) || ! contains([for v in var.agents : can(tolist(v.flags))], false)
+    error_message = "Field agents.<name>.flags must be a list of string."
+  }
+  validation {
+    condition     = ! can(values(var.agents)[*].annotations) || ! contains([for v in var.agents : can(tomap(v.annotations))], false)
+    error_message = "Field agents.<name>.annotations must be a list of string."
+  }
+  validation {
+    condition     = ! can(values(var.agents)[*].annotations) || ! contains([for v in var.agents : can(tomap(v.annotations))], false)
+    error_message = "Field agents.<name>.annotations must be a map of string."
+  }
+  validation {
+    condition     = ! can(values(var.agents)[*].labels) || ! contains([for v in var.agents : can(tomap(v.labels))], false)
+    error_message = "Field agents.<name>.labels must be a map of string."
+  }
+  validation {
+    condition     = ! can(values(var.agents)[*].taints) || ! contains([for v in var.agents : can(tomap(v.taints))], false)
+    error_message = "Field agents.<name>.taints must be a map of string."
+  }
 }
 
 variable managed_fields {
