@@ -82,8 +82,8 @@ variable agents {
   default     = {}
 }
 
-variable enabled_managed_fields {
-  description = "List of managed fields which must be managed by this module (can be annotation, label and/or taint)."
+variable managed_fields {
+  description = "List of fields which must be managed by this module (can be annotation, label and/or taint)."
   type        = list(string)
   default     = ["annotation", "label", "taint"]
 }

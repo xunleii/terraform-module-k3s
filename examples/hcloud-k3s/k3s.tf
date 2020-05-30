@@ -8,6 +8,7 @@ module k3s {
     services = "10.43.0.0/16"
   }
   drain_timeout = "30s"
+  managed_fields = ["label", "taint"] // ignore annotations
 
   global_flags = [
     "--flannel-iface ens10",

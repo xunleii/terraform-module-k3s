@@ -7,7 +7,7 @@ locals {
       for ak, av in try(nv.annotations, {}) : av == null ? { key : "" } : { key : "${nk}${var.separator}${ak}", value : av }
     ]
   ])
-  agent_annotations = contains(var.enabled_managed_fields, "annotation") ? { for o in local.agent_annotations_list : o.key => o.value if o.key != "" } : {}
+  agent_annotations = local.managed_annotation_enabled ? { for o in local.agent_annotations_list : o.key => o.value if o.key != "" } : {}
 
   agent_labels_list = flatten([
     for nk, nv in var.agents : [
@@ -16,7 +16,7 @@ locals {
       for lk, lv in try(nv.labels, {}) : lv == null ? { key : "" } : { key : "${nk}${var.separator}${lk}", value : lv }
     ]
   ])
-  agent_labels = contains(var.enabled_managed_fields, "label") ? { for o in local.agent_labels_list : o.key => o.value if o.key != "" } : {}
+  agent_labels = local.managed_label_enabled ? { for o in local.agent_labels_list : o.key => o.value if o.key != "" } : {}
 
   agent_taints_list = flatten([
     for nk, nv in var.agents : [
@@ -25,7 +25,7 @@ locals {
       for tk, tv in try(nv.taints, {}) : tv == null ? { key : "" } : { key : "${nk}${var.separator}${tk}", value : tv }
     ]
   ])
-  agent_taints = contains(var.enabled_managed_fields, "taint") ? { for o in local.agent_taints_list : o.key => o.value if o.key != "" } : {}
+  agent_taints = local.managed_taint_enabled ? { for o in local.agent_taints_list : o.key => o.value if o.key != "" } : {}
 }
 
 data null_data_source agents_metadata {
