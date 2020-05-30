@@ -2,11 +2,9 @@ terraform {
   required_version = "~> 0.12"
   experiments      = [variable_validation]
   required_providers {
-    http     = "~> 1.1"
-    local    = "~> 1.4"
+    http     = "~> 1.2"
     null     = "~> 2.1"
     random   = "~> 2.2"
-    template = "~> 2.1"
   }
 }
 
