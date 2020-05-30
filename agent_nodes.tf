@@ -65,10 +65,10 @@ locals {
 }
 
 // Install k3s agent
-resource null_resource k3s_agents_install {
+resource null_resource agents_install {
   for_each = var.agents
 
-  depends_on = [null_resource.k3s_servers_install]
+  depends_on = [null_resource.servers_install]
   triggers = {
     // Reinstall k3s only when specific fields changes (name or flags)
     on_immutable_fields_changes = local.agents_metadata[each.key].immutable_fields_hash
@@ -132,7 +132,7 @@ resource null_resource k3s_agents_install {
 resource null_resource agent_drain {
   for_each = var.agents
 
-  depends_on = [null_resource.k3s_agents_install]
+  depends_on = [null_resource.agents_install]
   triggers = {
     // Because some fields must be used on destruction, we need to store them into the current
     // object. The only way to do that is to use triggers to store theses fields.
@@ -180,14 +180,14 @@ resource null_resource agent_drain {
 }
 
 // Add/remove manually annotation on k3s agent
-resource null_resource k3s_agents_annotation {
+resource null_resource agents_annotation {
   for_each = local.agent_annotations
 
-  depends_on = [null_resource.k3s_agents_install]
+  depends_on = [null_resource.agents_install]
   triggers = {
     agent_name       = local.agents_metadata[split(var.separator, each.key)[0]].name
     annotation_name  = split(var.separator, each.key)[1]
-    on_install       = null_resource.k3s_agents_install[split(var.separator, each.key)[0]].id
+    on_install       = null_resource.agents_install[split(var.separator, each.key)[0]].id
     on_value_changes = each.value
 
     // Because some fields must be used on destruction, we need to store them into the current
@@ -240,14 +240,14 @@ resource null_resource k3s_agents_annotation {
 }
 
 // Add/remove manually label on k3s agent
-resource null_resource k3s_agents_label {
+resource null_resource agents_label {
   for_each = local.agent_labels
 
-  depends_on = [null_resource.k3s_agents_install]
+  depends_on = [null_resource.agents_install]
   triggers = {
     agent_name       = local.agents_metadata[split(var.separator, each.key)[0]].name
     label_name       = split(var.separator, each.key)[1]
-    on_install       = null_resource.k3s_agents_install[split(var.separator, each.key)[0]].id
+    on_install       = null_resource.agents_install[split(var.separator, each.key)[0]].id
     on_value_changes = each.value
 
     // Because some fields must be used on destruction, we need to store them into the current
@@ -300,14 +300,14 @@ resource null_resource k3s_agents_label {
 }
 
 // Add manually taint on k3s agent
-resource null_resource k3s_agents_taint {
+resource null_resource agents_taint {
   for_each = local.agent_taints
 
-  depends_on = [null_resource.k3s_agents_install]
+  depends_on = [null_resource.agents_install]
   triggers = {
     agent_name       = local.agents_metadata[split(var.separator, each.key)[0]].name
     taint_name       = split(var.separator, each.key)[1]
-    on_install       = null_resource.k3s_agents_install[split(var.separator, each.key)[0]].id
+    on_install       = null_resource.agents_install[split(var.separator, each.key)[0]].id
     on_value_changes = each.value
 
     // Because some fields must be used on destruction, we need to store them into the current

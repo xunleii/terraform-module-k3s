@@ -110,7 +110,7 @@ locals {
 }
 
 // Install k3s server
-resource null_resource k3s_servers_install {
+resource null_resource servers_install {
   for_each = var.servers
 
   depends_on = [var.depends_on_]
@@ -176,7 +176,7 @@ resource null_resource k3s_servers_install {
 resource null_resource server_drain {
   for_each = var.servers
 
-  depends_on = [null_resource.k3s_servers_install]
+  depends_on = [null_resource.servers_install]
   triggers = {
     server_name     = local.servers_metadata[split(var.separator, each.key)[0]].name
     connection_json = base64encode(jsonencode(local.root_server_connection))
@@ -221,14 +221,14 @@ resource null_resource server_drain {
 }
 
 // Add/remove manually annotation on k3s server
-resource null_resource k3s_servers_annotation {
+resource null_resource servers_annotation {
   for_each = local.server_annotations
 
-  depends_on = [null_resource.k3s_servers_install]
+  depends_on = [null_resource.servers_install]
   triggers = {
     server_name      = local.servers_metadata[split(var.separator, each.key)[0]].name
     annotation_name  = split(var.separator, each.key)[1]
-    on_install       = null_resource.k3s_servers_install[split(var.separator, each.key)[0]].id
+    on_install       = null_resource.servers_install[split(var.separator, each.key)[0]].id
     on_value_changes = each.value
 
     connection_json = base64encode(jsonencode(local.root_server_connection))
@@ -278,14 +278,14 @@ resource null_resource k3s_servers_annotation {
 }
 
 // Add/remove manually label on k3s server
-resource null_resource k3s_servers_label {
+resource null_resource servers_label {
   for_each = local.server_labels
 
-  depends_on = [null_resource.k3s_servers_install]
+  depends_on = [null_resource.servers_install]
   triggers = {
     server_name      = local.servers_metadata[split(var.separator, each.key)[0]].name
     label_name       = split(var.separator, each.key)[1]
-    on_install       = null_resource.k3s_servers_install[split(var.separator, each.key)[0]].id
+    on_install       = null_resource.servers_install[split(var.separator, each.key)[0]].id
     on_value_changes = each.value
 
     connection_json = base64encode(jsonencode(local.root_server_connection))
@@ -335,15 +335,15 @@ resource null_resource k3s_servers_label {
 }
 
 // Add/remove manually taint on k3s server
-resource null_resource k3s_servers_taint {
+resource null_resource servers_taint {
   for_each = local.server_taints
 
-  depends_on = [null_resource.k3s_servers_install]
+  depends_on = [null_resource.servers_install]
   triggers = {
     server_name      = local.servers_metadata[split(var.separator, each.key)[0]].name
     taint_name       = split(var.separator, each.key)[1]
     connection_json  = base64encode(jsonencode(local.root_server_connection))
-    on_install       = null_resource.k3s_servers_install[split(var.separator, each.key)[0]].id
+    on_install       = null_resource.servers_install[split(var.separator, each.key)[0]].id
     on_value_changes = each.value
 
     connection_json = base64encode(jsonencode(local.root_server_connection))
