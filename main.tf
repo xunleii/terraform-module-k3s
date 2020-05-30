@@ -10,6 +10,7 @@ terraform {
   }
 }
 
+// Generate the k3s token used by all nodes to join the cluster
 resource "random_password" "k3s_cluster_secret" {
   length  = 48
   special = false

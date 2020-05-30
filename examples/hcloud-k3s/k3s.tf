@@ -1,6 +1,7 @@
 module k3s {
   source = "./../.."
 
+  depends_on_ = hcloud_server.agents
   k3s_version = "latest"
   name        = "cluster.local"
   cidr = {

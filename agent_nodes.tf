@@ -1,5 +1,9 @@
-// - Agent metadata cache
 locals {
+  // Generate a map of all agents annotations in order to manage them through this module. This
+  // generation is made in two steps:
+  // - generate a list of objects representing all annotations, following this
+  //   'template' {key = node_name|annotation_name, value = annotation_value}
+  // - generate a map based on the generated list (using the field key as map key)
   agent_annotations_list = flatten([
     for nk, nv in var.agents : [
       // Because we need node name and annotation name when we remove the annotation resource, we need
@@ -9,6 +13,8 @@ locals {
   ])
   agent_annotations = local.managed_annotation_enabled ? { for o in local.agent_annotations_list : o.key => o.value if o.key != "" } : {}
 
+  // Generate a map of all agents labels in order to manage them through this module. This
+  // generation is made in two steps, following the same process than annotation's map.
   agent_labels_list = flatten([
     for nk, nv in var.agents : [
       // Because we need node name and label name when we remove the label resource, we need
@@ -18,6 +24,8 @@ locals {
   ])
   agent_labels = local.managed_label_enabled ? { for o in local.agent_labels_list : o.key => o.value if o.key != "" } : {}
 
+  // Generate a map of all agents taints in order to manage them through this module. This
+  // generation is made in two steps, following the same process than annotation's map.
   agent_taints_list = flatten([
     for nk, nv in var.agents : [
       // Because we need node name and taint name when we remove the taint resource, we need
@@ -26,41 +34,44 @@ locals {
     ]
   ])
   agent_taints = local.managed_taint_enabled ? { for o in local.agent_taints_list : o.key => o.value if o.key != "" } : {}
-}
 
-data null_data_source agents_metadata {
-  for_each = var.agents
+  // Generate a map of all calculed agent fields, used during k3s installation.
+  agents_metadata = {
+    for key, agent in var.agents :
+    key => {
+      name = try(agent.name, key)
+      ip   = agent.ip
 
-  inputs = {
-    name = try(each.value.name, each.key)
-    ip   = each.value.ip
+      flags = join(" ", compact(concat(
+        [
+          "--node-ip ${agent.ip}",
+          "--node-name '${try(agent.name, key)}'",
+          "--server https://${local.root_server_ip}:6443",
+          "--token ${random_password.k3s_cluster_secret.result}",
+        ],
+        var.global_flags,
+        try(agent.flags, []),
+        [for key, value in try(agent.labels, {}) : "--node-label '${key}=${value}'" if value != null],
+        [for key, value in try(agent.taints, {}) : "--node-taint '${key}=${value}'" if value != null]
+      )))
 
-    flags = join(" ", compact(concat(
-      [
-        "--node-ip ${each.value.ip}",
-        "--node-name '${try(each.value.name, each.key)}'",
-        "--server https://${local.root_server_ip}:6443",
-        "--token ${random_password.k3s_cluster_secret.result}",
-      ],
-      var.global_flags,
-      try(each.value.flags, []),
-      [for key, value in try(each.value.labels, {}) : "--node-label '${key}=${value}'" if value != null],
-      [for key, value in try(each.value.taints, {}) : "--node-taint '${key}=${value}'" if value != null]
-    )))
-
-    immutable_fields_hash = sha1(join("", concat(
-      [var.name, var.cidr.pods, var.cidr.services],
-      var.global_flags,
-      try(each.value.flags, []),
-    )))
+      immutable_fields_hash = sha1(join("", concat(
+        [var.name],
+        var.global_flags,
+        try(agent.flags, []),
+      )))
+    }
   }
 }
 
-// - Agent installation
+// Install k3s agent
 resource null_resource k3s_agents_install {
   for_each = var.agents
+
+  depends_on = [null_resource.k3s_servers_install]
   triggers = {
-    on_immutable_fields_changes = data.null_data_source.agents_metadata[each.key].outputs.immutable_fields_hash
+    // Reinstall k3s only when specific fields changes (name or flags)
+    on_immutable_fields_changes = local.agents_metadata[each.key].immutable_fields_hash
   }
 
   connection {
@@ -93,13 +104,13 @@ resource null_resource k3s_agents_install {
     bastion_certificate = try(each.value.connection.bastion_certificate, null)
   }
 
-  # Upload k3s file
+  // Upload k3s install script
   provisioner file {
     content     = data.http.k3s_installer.body
     destination = "/tmp/k3s-installer"
   }
 
-  # Remove old k3s installation
+  // Remove old k3s installation
   provisioner remote-exec {
     inline = [
       "if ! command -V k3s-agent-uninstall.sh > /dev/null; then exit; fi",
@@ -108,24 +119,28 @@ resource null_resource k3s_agents_install {
     ]
   }
 
-  # Install k3s server
+  // Install k3s
   provisioner remote-exec {
     inline = [
-      "INSTALL_K3S_VERSION=${local.k3s_version} sh /tmp/k3s-installer ${data.null_data_source.agents_metadata[each.key].outputs.flags}",
+      "INSTALL_K3S_VERSION=${local.k3s_version} sh /tmp/k3s-installer ${local.agents_metadata[each.key].flags}",
       "until kubectl get nodes; do sleep 5; done"
     ]
   }
 }
 
+// Drain k3s node on destruction in order to safely move all workflows to another node.
 resource null_resource agent_drain {
   for_each = var.agents
 
   depends_on = [null_resource.k3s_agents_install]
   triggers = {
-    agent_name      = data.null_data_source.agents_metadata[split(var.separator, each.key)[0]].outputs.name
+    // Because some fields must be used on destruction, we need to store them into the current
+    // object. The only way to do that is to use triggers to store theses fields.
+    agent_name      = local.agents_metadata[split(var.separator, each.key)[0]].name
     connection_json = base64encode(jsonencode(local.root_server_connection))
     drain_timeout   = var.drain_timeout
   }
+  // Because we use triggers as memory area, we need to ignore all changes on it.
   lifecycle { ignore_changes = [triggers] }
 
   connection {
@@ -164,20 +179,22 @@ resource null_resource agent_drain {
   }
 }
 
-# - Agent annotation, label and taint management
-# Add manually annotation on k3s agent (not updated when k3s restart with new annotations)
+// Add/remove manually annotation on k3s agent
 resource null_resource k3s_agents_annotation {
   for_each = local.agent_annotations
 
   depends_on = [null_resource.k3s_agents_install]
   triggers = {
-    agent_name       = data.null_data_source.agents_metadata[split(var.separator, each.key)[0]].outputs.name
+    agent_name       = local.agents_metadata[split(var.separator, each.key)[0]].name
     annotation_name  = split(var.separator, each.key)[1]
     on_install       = null_resource.k3s_agents_install[split(var.separator, each.key)[0]].id
     on_value_changes = each.value
 
+    // Because some fields must be used on destruction, we need to store them into the current
+    // object. The only way to do that is to use triggers to store theses fields.
     connection_json = base64encode(jsonencode(local.root_server_connection))
   }
+  // Because we dont care about connection modification, we ignore its changes.
   lifecycle { ignore_changes = [triggers["connection_json"]] }
 
   connection {
@@ -222,19 +239,22 @@ resource null_resource k3s_agents_annotation {
   }
 }
 
-# Add manually label on k3s agent (not updated when k3s restart with new labels)
+// Add/remove manually label on k3s agent
 resource null_resource k3s_agents_label {
   for_each = local.agent_labels
 
   depends_on = [null_resource.k3s_agents_install]
   triggers = {
-    agent_name       = data.null_data_source.agents_metadata[split(var.separator, each.key)[0]].outputs.name
+    agent_name       = local.agents_metadata[split(var.separator, each.key)[0]].name
     label_name       = split(var.separator, each.key)[1]
     on_install       = null_resource.k3s_agents_install[split(var.separator, each.key)[0]].id
     on_value_changes = each.value
 
+    // Because some fields must be used on destruction, we need to store them into the current
+    // object. The only way to do that is to use triggers to store theses fields.
     connection_json = base64encode(jsonencode(local.root_server_connection))
   }
+  // Because we dont care about connection modification, we ignore its changes.
   lifecycle { ignore_changes = [triggers["connection_json"]] }
 
   connection {
@@ -279,19 +299,22 @@ resource null_resource k3s_agents_label {
   }
 }
 
-# Add manually taint on k3s agent (not updated when k3s restart with new taints)
+// Add manually taint on k3s agent
 resource null_resource k3s_agents_taint {
   for_each = local.agent_taints
 
   depends_on = [null_resource.k3s_agents_install]
   triggers = {
-    agent_name       = data.null_data_source.agents_metadata[split(var.separator, each.key)[0]].outputs.name
+    agent_name       = local.agents_metadata[split(var.separator, each.key)[0]].name
     taint_name       = split(var.separator, each.key)[1]
     on_install       = null_resource.k3s_agents_install[split(var.separator, each.key)[0]].id
     on_value_changes = each.value
 
+    // Because some fields must be used on destruction, we need to store them into the current
+    // object. The only way to do that is to use triggers to store theses fields.
     connection_json = base64encode(jsonencode(local.root_server_connection))
   }
+  // Because we dont care about connection modification, we ignore its changes.
   lifecycle { ignore_changes = [triggers["connection_json"]] }
 
   connection {
@@ -325,13 +348,11 @@ resource null_resource k3s_agents_taint {
   }
 
   provisioner remote-exec {
-    inline = [
-    "kubectl taint node ${self.triggers.agent_name} ${self.triggers.taint_name}=${self.triggers.on_value_changes} --overwrite"]
+    inline = ["kubectl taint node ${self.triggers.agent_name} ${self.triggers.taint_name}=${self.triggers.on_value_changes} --overwrite"]
   }
 
   provisioner remote-exec {
-    when = destroy
-    inline = [
-    "kubectl taint node ${self.triggers.agent_name} ${self.triggers.taint_name}-"]
+    when   = destroy
+    inline = ["kubectl taint node ${self.triggers.agent_name} ${self.triggers.taint_name}-"]
   }
 }

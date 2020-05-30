@@ -1,8 +1,7 @@
-// - Server metadata cache
 locals {
+  // Some vars use to easily access to the first k3s server values
   root_server_name = keys(var.servers)[0]
   root_server_ip   = values(var.servers)[0].ip
-
   root_server_connection = {
     type = try(var.servers[local.root_server_name].connection.type, "ssh")
 
@@ -33,6 +32,11 @@ locals {
     bastion_certificate = try(var.servers[local.root_server_name].connection.bastion_certificate, null)
   }
 
+  // Generate a map of all servers annotations in order to manage them through this module. This
+  // generation is made in two steps:
+  // - generate a list of objects representing all annotations, following this
+  //   'template' {key = node_name|annotation_name, value = annotation_value}
+  // - generate a map based on the generated list (using the field key as map key)
   server_annotations_list = flatten([
     for nk, nv in var.servers : [
       // Because we need node name and annotation name when we remove the annotation resource, we need
@@ -42,6 +46,8 @@ locals {
   ])
   server_annotations = local.managed_annotation_enabled ? { for o in local.server_annotations_list : o.key => o.value if o.key != "" } : {}
 
+  // Generate a map of all servers labels in order to manage them through this module. This
+  // generation is made in two steps, following the same process than annotation's map.
   server_labels_list = flatten([
     for nk, nv in var.servers : [
       // Because we need node name and label name when we remove the label resource, we need
@@ -51,6 +57,8 @@ locals {
   ])
   server_labels = local.managed_label_enabled ? { for o in local.server_labels_list : o.key => o.value if o.key != "" } : {}
 
+  // Generate a map of all servers taints in order to manage them through this module. This
+  // generation is made in two steps, following the same process than annotation's map.
   server_taints_list = flatten([
     for nk, nv in var.servers : [
       // Because we need node name and taint name when we remove the taint resource, we need
@@ -59,53 +67,53 @@ locals {
     ]
   ])
   server_taints = local.managed_taint_enabled ? { for o in local.server_taints_list : o.key => o.value if o.key != "" } : {}
-}
 
-data null_data_source servers_metadata {
-  for_each = var.servers
+  // Generate a map of all calculed server fields, used during k3s installation.
+  servers_metadata = {
+    for key, server in var.servers :
+    key => {
+      name = try(server.name, key)
+      ip   = server.ip
 
-  inputs = {
-    name = try(each.value.name, each.key)
-    ip   = each.value.ip
+      flags = join(" ", compact(concat(
+        key == local.root_server_name ?
+        // For the first server node, add all configuration flags
+        [
+          "--node-ip ${server.ip}",
+          "--node-name '${try(server.name, key)}'",
+          "--cluster-domain '${var.name}'",
+          "--cluster-cidr ${var.cidr.pods}",
+          "--service-cidr ${var.cidr.services}",
+          "--token ${random_password.k3s_cluster_secret.result}",
+          length(var.servers) > 1 ? "--cluster-init" : "",
+        ] :
+        // For other server nodes, use agent flags (because the first node manage the cluster configuration)
+        [
+          "--node-ip ${server.ip}",
+          "--node-name '${try(server.name, key)}'",
+          "--server https://${local.root_server_ip}:6443",
+          "--token ${random_password.k3s_cluster_secret.result}",
+        ],
+        var.global_flags,
+        try(server.flags, []),
+        [for key, value in try(server.labels, {}) : "--node-label '${key}=${value}'" if value != null],
+        [for key, value in try(server.taints, {}) : "--node-taint '${key}=${value}'" if value != null]
+      )))
 
-    flags = join(" ", compact(concat(
-      each.key == local.root_server_name ?
-      // For the first server node, add all configuration flags
-      [
-        "--node-ip ${each.value.ip}",
-        "--node-name '${try(each.value.name, each.key)}'",
-        "--cluster-domain '${var.name}'",
-        "--cluster-cidr ${var.cidr.pods}",
-        "--service-cidr ${var.cidr.services}",
-        "--token ${random_password.k3s_cluster_secret.result}",
-        length(var.servers) > 1 ? "--cluster-init" : "",
-      ] :
-      // For other server nodes, use agent flags (because the first node manage the cluster configuration)
-      [
-        "--node-ip ${each.value.ip}",
-        "--node-name '${try(each.value.name, each.key)}'",
-        "--server https://${local.root_server_ip}:6443",
-        "--token ${random_password.k3s_cluster_secret.result}",
-      ],
-      var.global_flags,
-      try(each.value.flags, []),
-      [for key, value in try(each.value.labels, {}) : "--node-label '${key}=${value}'" if value != null],
-      [for key, value in try(each.value.taints, {}) : "--node-taint '${key}=${value}'" if value != null]
-    )))
-
-    immutable_fields_hash = sha1(join("", concat(
-      [var.name, var.cidr.pods, var.cidr.services],
-      var.global_flags,
-      try(each.value.flags, []),
-    )))
+      immutable_fields_hash = sha1(join("", concat(
+        [var.name, var.cidr.pods, var.cidr.services, local.k3s_version],
+        var.global_flags,
+        try(server.flags, []),
+      )))
+    }
   }
 }
 
-// - Server installation
+// Install k3s server
 resource null_resource k3s_servers_install {
   for_each = var.servers
   triggers = {
-    on_immutable_fields_changes = data.null_data_source.servers_metadata[each.key].outputs.immutable_fields_hash
+    on_immutable_fields_changes = local.servers_metadata[each.key].immutable_fields_hash
   }
 
   connection {
@@ -138,13 +146,13 @@ resource null_resource k3s_servers_install {
     bastion_certificate = try(each.value.connection.bastion_certificate, null)
   }
 
-  # Upload k3s file
+  // Upload k3s file
   provisioner file {
     content     = data.http.k3s_installer.body
     destination = "/tmp/k3s-installer"
   }
 
-  # Remove old k3s installation
+  // Remove old k3s installation
   provisioner remote-exec {
     inline = [
       "if ! command -V k3s-uninstall.sh > /dev/null; then exit; fi",
@@ -153,21 +161,22 @@ resource null_resource k3s_servers_install {
     ]
   }
 
-  # Install k3s server
+  // Install k3s server
   provisioner "remote-exec" {
     inline = [
-      "INSTALL_K3S_VERSION=${local.k3s_version} sh /tmp/k3s-installer ${data.null_data_source.servers_metadata[each.key].outputs.flags}",
+      "INSTALL_K3S_VERSION=${local.k3s_version} sh /tmp/k3s-installer ${local.servers_metadata[each.key].flags}",
       "until kubectl get nodes; do sleep 5; done"
     ]
   }
 }
 
+// Drain k3s node on destruction in order to safely move all workflows to another node.
 resource null_resource server_drain {
   for_each = var.servers
 
   depends_on = [null_resource.k3s_servers_install]
   triggers = {
-    server_name     = data.null_data_source.servers_metadata[split(var.separator, each.key)[0]].outputs.name
+    server_name     = local.servers_metadata[split(var.separator, each.key)[0]].name
     connection_json = base64encode(jsonencode(local.root_server_connection))
     drain_timeout   = var.drain_timeout
   }
@@ -209,14 +218,13 @@ resource null_resource server_drain {
   }
 }
 
-# - Server annotation, label and taint management
-# Add manually annotation on k3s server (not updated when k3s restart with new annotations)
+// Add/remove manually annotation on k3s server
 resource null_resource k3s_servers_annotation {
   for_each = local.server_annotations
 
   depends_on = [null_resource.k3s_servers_install]
   triggers = {
-    server_name      = data.null_data_source.servers_metadata[split(var.separator, each.key)[0]].outputs.name
+    server_name      = local.servers_metadata[split(var.separator, each.key)[0]].name
     annotation_name  = split(var.separator, each.key)[1]
     on_install       = null_resource.k3s_servers_install[split(var.separator, each.key)[0]].id
     on_value_changes = each.value
@@ -267,13 +275,13 @@ resource null_resource k3s_servers_annotation {
   }
 }
 
-# Add manually label on k3s server (not updated when k3s restart with new labels)
+// Add/remove manually label on k3s server
 resource null_resource k3s_servers_label {
   for_each = local.server_labels
 
   depends_on = [null_resource.k3s_servers_install]
   triggers = {
-    server_name      = data.null_data_source.servers_metadata[split(var.separator, each.key)[0]].outputs.name
+    server_name      = local.servers_metadata[split(var.separator, each.key)[0]].name
     label_name       = split(var.separator, each.key)[1]
     on_install       = null_resource.k3s_servers_install[split(var.separator, each.key)[0]].id
     on_value_changes = each.value
@@ -324,13 +332,13 @@ resource null_resource k3s_servers_label {
   }
 }
 
-# Add manually taint on k3s server (not updated when k3s restart with new taints)
+// Add/remove manually taint on k3s server
 resource null_resource k3s_servers_taint {
   for_each = local.server_taints
 
   depends_on = [null_resource.k3s_servers_install]
   triggers = {
-    server_name      = data.null_data_source.servers_metadata[split(var.separator, each.key)[0]].outputs.name
+    server_name      = local.servers_metadata[split(var.separator, each.key)[0]].name
     taint_name       = split(var.separator, each.key)[1]
     connection_json  = base64encode(jsonencode(local.root_server_connection))
     on_install       = null_resource.k3s_servers_install[split(var.separator, each.key)[0]].id

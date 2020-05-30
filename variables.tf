@@ -1,3 +1,8 @@
+variable "depends_on_" {
+  description = "Resouce dependency of this module."
+  default     = null
+}
+
 variable k3s_version {
   description = "Specify the k3s version."
   type        = string
