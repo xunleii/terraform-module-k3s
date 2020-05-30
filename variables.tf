@@ -65,10 +65,6 @@ variable servers {
   }
   validation {
     condition     = ! can(values(var.servers)[*].annotations) || ! contains([for v in var.servers : can(tomap(v.annotations))], false)
-    error_message = "Field servers.<name>.annotations must be a list of string."
-  }
-  validation {
-    condition     = ! can(values(var.servers)[*].annotations) || ! contains([for v in var.servers : can(tomap(v.annotations))], false)
     error_message = "Field servers.<name>.annotations must be a map of string."
   }
   validation {
@@ -97,10 +93,6 @@ variable agents {
   validation {
     condition     = ! can(values(var.agents)[*].flags) || ! contains([for v in var.agents : can(tolist(v.flags))], false)
     error_message = "Field agents.<name>.flags must be a list of string."
-  }
-  validation {
-    condition     = ! can(values(var.agents)[*].annotations) || ! contains([for v in var.agents : can(tomap(v.annotations))], false)
-    error_message = "Field agents.<name>.annotations must be a list of string."
   }
   validation {
     condition     = ! can(values(var.agents)[*].annotations) || ! contains([for v in var.agents : can(tomap(v.annotations))], false)
