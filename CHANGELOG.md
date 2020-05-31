@@ -2,6 +2,12 @@
 ## [Unreleased]
 
 
+<a name="v2.0.1"></a>
+## [v2.0.1] - 2020-05-31
+### Bug Fixes
+- do not uninstall k3s during upgrade
+
+
 <a name="v2.0.0"></a>
 ## [v2.0.0] - 2020-05-31
 ### Bug Fixes
@@ -152,7 +158,8 @@
 - add module variables
 
 
-[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v2.0.1...HEAD
+[v2.0.1]: https://github.com/xunleii/terraform-module-k3s/compare/v2.0.0...v2.0.1
 [v2.0.0]: https://github.com/xunleii/terraform-module-k3s/compare/v1.7.0...v2.0.0
 [v1.7.0]: https://github.com/xunleii/terraform-module-k3s/compare/v1.6.3...v1.7.0
 [v1.6.3]: https://github.com/xunleii/terraform-module-k3s/compare/v1.6.2...v1.6.3
