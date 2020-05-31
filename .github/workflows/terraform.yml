@@ -1,28 +1,62 @@
-name: 'Terraform GitHub Actions'
+name: Terraform GitHub Actions
 on:
   pull_request:
-  push:
-    branches:
-    - master
 jobs:
-  terraform:
-    name: 'Terraform'
+  terraform-fmt:
+    name: Terraform Format
     runs-on: ubuntu-latest
     steps:
-      - name: 'Checkout'
+      - name: Checkout
         uses: actions/checkout@master
-      - name: 'Terraform Init'
+      - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
-        run: terraform init
-      - name: 'Terraform Format'
-        uses: hashicorp/setup-terraform@v1
-        run: terraform fmt -check
-      - name: 'Terraform Validate'
-        uses: hashicorp/setup-terraform@v1
-        run: terraform validate
-      - name: 'Terraform Plan'
-        uses: hashicorp/setup-terraform@v1
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt -check -recursive -diff -no-color
+        continue-on-error: true
+
+      - uses: actions/github-script@0.9.0
+        if: steps.fmt.outputs.exitcode != 0
         env:
-          HCLOUD_TOKEN: ${{ secrets.HCLOUD_TOKEN }}
-          TF_VAR_ssh_key: ""
-        run: terraform plan
+          DIFF: "terraform\n${{ steps.fmt.outputs.stdout }}"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Format and Style \`${{ steps.fmt.outcome }}\`
+            \`\`\`${process.env.DIFF}\`\`\`  
+               
+            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workflow: \`${{ github.workflow }}\`*`;
+
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+            throw "failed to run `terraform fmt -check -recursive -diff`"
+
+  # terraform-plan:
+  #   name: Terraform plan examples/hcloud-k3s
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@master
+  #     - name: Setup Terraform
+  #       uses: hashicorp/setup-terraform@v1
+
+  #     - name: Terraform Init
+  #       run: terraform init
+  #       working-directory: examples/hcloud-k3s
+
+  #     - name: Terraform Validate
+  #       env:
+  #         HCLOUD_TOKEN: ${{ secrets.HCLOUD_TOKEN }}
+  #       run: terraform validate
+  #       working-directory: examples/hcloud-k3s
+  #     - name: Terraform Plan
+  #       uses: hashicorp/setup-terraform@v1
+  #       env:
+  #         HCLOUD_TOKEN: ${{ secrets.HCLOUD_TOKEN }}
+  #         TF_VAR_ssh_key: ""
+  #       run: terraform plan
+  #       working-directory: examples/hcloud-k3s
