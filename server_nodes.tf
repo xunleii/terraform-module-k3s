@@ -101,7 +101,7 @@ locals {
       )))
 
       immutable_fields_hash = sha1(join("", concat(
-        [var.name, var.cidr.pods, var.cidr.services, local.k3s_version],
+        [var.name, var.cidr.pods, var.cidr.services],
         var.global_flags,
         try(server.flags, []),
       )))
@@ -115,7 +115,8 @@ resource null_resource servers_install {
 
   depends_on = [var.depends_on_]
   triggers = {
-    on_immutable_fields_changes = local.servers_metadata[each.key].immutable_fields_hash
+    on_immutable_changes = local.servers_metadata[each.key].immutable_fields_hash
+    on_new_version       = local.k3s_version
   }
 
   connection {
@@ -154,15 +155,6 @@ resource null_resource servers_install {
     destination = "/tmp/k3s-installer"
   }
 
-  // Remove old k3s installation
-  provisioner remote-exec {
-    inline = [
-      "if ! command -V k3s-uninstall.sh > /dev/null; then exit; fi",
-      "echo >&2 [WARN] K3s seems already installed on this node and will be uninstalled.",
-      "k3s-uninstall.sh",
-    ]
-  }
-
   // Install k3s server
   provisioner "remote-exec" {
     inline = [
@@ -173,7 +165,7 @@ resource null_resource servers_install {
 }
 
 // Drain k3s node on destruction in order to safely move all workflows to another node.
-resource null_resource server_drain {
+resource null_resource servers_drain {
   for_each = var.servers
 
   depends_on = [null_resource.servers_install]
@@ -228,7 +220,6 @@ resource null_resource servers_annotation {
   triggers = {
     server_name      = local.servers_metadata[split(var.separator, each.key)[0]].name
     annotation_name  = split(var.separator, each.key)[1]
-    on_install       = null_resource.servers_install[split(var.separator, each.key)[0]].id
     on_value_changes = each.value
 
     connection_json = base64encode(jsonencode(local.root_server_connection))
@@ -285,7 +276,6 @@ resource null_resource servers_label {
   triggers = {
     server_name      = local.servers_metadata[split(var.separator, each.key)[0]].name
     label_name       = split(var.separator, each.key)[1]
-    on_install       = null_resource.servers_install[split(var.separator, each.key)[0]].id
     on_value_changes = each.value
 
     connection_json = base64encode(jsonencode(local.root_server_connection))
@@ -343,7 +333,6 @@ resource null_resource servers_taint {
     server_name      = local.servers_metadata[split(var.separator, each.key)[0]].name
     taint_name       = split(var.separator, each.key)[1]
     connection_json  = base64encode(jsonencode(local.root_server_connection))
-    on_install       = null_resource.servers_install[split(var.separator, each.key)[0]].id
     on_value_changes = each.value
 
     connection_json = base64encode(jsonencode(local.root_server_connection))

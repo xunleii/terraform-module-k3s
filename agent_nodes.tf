@@ -70,8 +70,8 @@ resource null_resource agents_install {
 
   depends_on = [null_resource.servers_install]
   triggers = {
-    // Reinstall k3s only when specific fields changes (name or flags)
-    on_immutable_fields_changes = local.agents_metadata[each.key].immutable_fields_hash
+    on_immutable_changes = local.agents_metadata[each.key].immutable_fields_hash
+    on_new_version       = local.k3s_version
   }
 
   connection {
@@ -110,15 +110,6 @@ resource null_resource agents_install {
     destination = "/tmp/k3s-installer"
   }
 
-  // Remove old k3s installation
-  provisioner remote-exec {
-    inline = [
-      "if ! command -V k3s-agent-uninstall.sh > /dev/null; then exit; fi",
-      "echo >&2 [WARN] K3s seems already installed on this node and will be uninstalled.",
-      "k3s-agent-uninstall.sh",
-    ]
-  }
-
   // Install k3s
   provisioner remote-exec {
     inline = [
@@ -129,7 +120,7 @@ resource null_resource agents_install {
 }
 
 // Drain k3s node on destruction in order to safely move all workflows to another node.
-resource null_resource agent_drain {
+resource null_resource agents_drain {
   for_each = var.agents
 
   depends_on = [null_resource.agents_install]
@@ -187,7 +178,6 @@ resource null_resource agents_annotation {
   triggers = {
     agent_name       = local.agents_metadata[split(var.separator, each.key)[0]].name
     annotation_name  = split(var.separator, each.key)[1]
-    on_install       = null_resource.agents_install[split(var.separator, each.key)[0]].id
     on_value_changes = each.value
 
     // Because some fields must be used on destruction, we need to store them into the current
@@ -247,7 +237,6 @@ resource null_resource agents_label {
   triggers = {
     agent_name       = local.agents_metadata[split(var.separator, each.key)[0]].name
     label_name       = split(var.separator, each.key)[1]
-    on_install       = null_resource.agents_install[split(var.separator, each.key)[0]].id
     on_value_changes = each.value
 
     // Because some fields must be used on destruction, we need to store them into the current
@@ -307,7 +296,6 @@ resource null_resource agents_taint {
   triggers = {
     agent_name       = local.agents_metadata[split(var.separator, each.key)[0]].name
     taint_name       = split(var.separator, each.key)[1]
-    on_install       = null_resource.agents_install[split(var.separator, each.key)[0]].id
     on_value_changes = each.value
 
     // Because some fields must be used on destruction, we need to store them into the current
