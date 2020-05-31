@@ -2,10 +2,39 @@
 ## [Unreleased]
 
 
-<a name="v1.7.1"></a>
-## [v1.7.1] - 2020-02-02
+<a name="v2.0.0"></a>
+## [v2.0.0] - 2020-05-31
+### Bug Fixes
+- format main.tf file
+- use new TF Action for Terraform Format
+- remove useless validation
+- force agent or server mode during install
+- store connection value directly into objects
+
+### Code Refactoring
+- add missing linereturn
+- update/remove useless requirement
+- clean example
+- remove k3s_ prefix
+- rename 'enabled_managed_field' in 'managed_fields'
+
 ### Documentation
+- update README
+- add dependency variable
+- document all TF files
 - fix README example
+
+### Features
+- add validation for agent nodes
+- add summary output
+- ignore 'connection_json' changes
+- add node drain mechanism
+- use root server to manage annotation/label/taint
+- add agent node management
+- add multi servers feature
+- add server annotation management
+- add server node management
+- update module variables
 
 
 <a name="v1.7.0"></a>
@@ -123,8 +152,8 @@
 - add module variables
 
 
-[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v1.7.1...HEAD
-[v1.7.1]: https://github.com/xunleii/terraform-module-k3s/compare/v1.7.0...v1.7.1
+[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v2.0.0...HEAD
+[v2.0.0]: https://github.com/xunleii/terraform-module-k3s/compare/v1.7.0...v2.0.0
 [v1.7.0]: https://github.com/xunleii/terraform-module-k3s/compare/v1.6.3...v1.7.0
 [v1.6.3]: https://github.com/xunleii/terraform-module-k3s/compare/v1.6.2...v1.6.3
 [v1.6.2]: https://github.com/xunleii/terraform-module-k3s/compare/v1.6.1...v1.6.2
