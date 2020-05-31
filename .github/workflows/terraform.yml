@@ -14,16 +14,13 @@ jobs:
         id: fmt
         run: terraform fmt -check -recursive -diff -no-color
         continue-on-error: true
-
       - uses: actions/github-script@0.9.0
         if: steps.fmt.outputs.exitcode != 0
-        env:
-          DIFF: "terraform\n${{ steps.fmt.outputs.stdout }}"
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const output = `#### Terraform Format and Style \`${{ steps.fmt.outcome }}\`
-            \`\`\`${process.env.DIFF}\`\`\`  
+            \`\`\`diff\n${{ steps.fmt.outputs.stdout }}\`\`\`  
                
             *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workflow: \`${{ github.workflow }}\`*`;
 
@@ -35,28 +32,98 @@ jobs:
             })
             throw "failed to run `terraform fmt -check -recursive -diff`"
 
-  # terraform-plan:
-  #   name: Terraform plan examples/hcloud-k3s
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@master
-  #     - name: Setup Terraform
-  #       uses: hashicorp/setup-terraform@v1
+  terraform-plan:
+    name: Terraform plan examples/hcloud-k3s
+    needs: terraform-fmt
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
 
-  #     - name: Terraform Init
-  #       run: terraform init
-  #       working-directory: examples/hcloud-k3s
+      - name: Terraform Init
+        id: init
+        run: terraform init -no-color
+        working-directory: examples/hcloud-k3s
+        continue-on-error: true
+      - uses: actions/github-script@0.9.0
+        if: steps.init.outputs.exitcode != 0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Init \`${{ steps.init.outcome }}\`
+            \`\`\`${{ steps.init.outputs.stderr }}\`\`\`  
+               
+            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workdir: \`examples/hcloud-k3s\`, Workflow: \`${{ github.workflow }}\`*`;
 
-  #     - name: Terraform Validate
-  #       env:
-  #         HCLOUD_TOKEN: ${{ secrets.HCLOUD_TOKEN }}
-  #       run: terraform validate
-  #       working-directory: examples/hcloud-k3s
-  #     - name: Terraform Plan
-  #       uses: hashicorp/setup-terraform@v1
-  #       env:
-  #         HCLOUD_TOKEN: ${{ secrets.HCLOUD_TOKEN }}
-  #         TF_VAR_ssh_key: ""
-  #       run: terraform plan
-  #       working-directory: examples/hcloud-k3s
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+            throw "failed to run `terraform init`"
+
+      - name: Terraform Validate
+        id: validate
+        env:
+          HCLOUD_TOKEN: ${{ secrets.HCLOUD_TOKEN }}
+        run: terraform validate -no-color
+        working-directory: examples/hcloud-k3s
+        continue-on-error: true
+      - uses: actions/github-script@0.9.0
+        if: steps.validate.outputs.exitcode != 0
+        env:
+          STDOUT: "terraform\n${{ steps.validate.outputs.stdout }}"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Init \`${{ steps.init.outcome }}\`
+            #### Terraform Validate \`${{ steps.validate.outcome }}\`
+            \`\`\`${{ steps.validate.outputs.stderr }}\`\`\`  
+               
+            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workdir: \`examples/hcloud-k3s\`, Workflow: \`${{ github.workflow }}\`*`;
+
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+            throw "failed to run `terraform validate`"
+
+      - name: Terraform Plan
+        id: plan
+        env:
+          HCLOUD_TOKEN: ${{ secrets.HCLOUD_TOKEN }}
+          TF_VAR_ssh_key: ""
+        run: terraform plan -input=false -no-color
+        working-directory: examples/hcloud-k3s
+        continue-on-error: true
+      - uses: actions/github-script@0.9.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Init \`${{ steps.init.outcome }}\`
+            #### Terraform Validate \`${{ steps.validate.outcome }}\`
+            #### Terraform Plan \`${{ steps.plan.outcome }}\`
+
+            <details><summary>Show Plan</summary>
+
+            \`\`\`terraform\n${{ steps.plan.outputs.stdout }}${{ steps.plan.outputs.stderr }}\`\`\`  
+
+            </details>
+
+            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workdir: \`examples/hcloud-k3s\`, Workflow: \`${{ github.workflow }}\`*`;
+
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+
+            if (${{ steps.plan.outputs.exitcode }} != 0) {
+              throw "failed to run `terraform plan`"
+            }
