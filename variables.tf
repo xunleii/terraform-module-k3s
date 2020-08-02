@@ -4,7 +4,7 @@ variable "depends_on_" {
 }
 
 variable k3s_version {
-  description = "Specify the k3s version."
+  description = "Specify the k3s version. You can choose from the following release channels or pin the version directly"
   type        = string
   default     = "latest"
 }
