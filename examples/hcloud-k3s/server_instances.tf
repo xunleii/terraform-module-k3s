@@ -14,9 +14,8 @@ resource hcloud_server control_planes {
 }
 
 resource hcloud_server_network control_planes {
-  count = var.servers_num
-
-  network_id = hcloud_network.k3s.id
-  server_id  = hcloud_server.control_planes[count.index].id
-  ip         = cidrhost(hcloud_network_subnet.k3s_nodes.ip_range, 1 + count.index)
+  count     = var.servers_num
+  subnet_id = hcloud_network_subnet.k3s_nodes.id
+  server_id = hcloud_server.control_planes[count.index].id
+  ip        = cidrhost(hcloud_network_subnet.k3s_nodes.ip_range, 1 + count.index)
 }
