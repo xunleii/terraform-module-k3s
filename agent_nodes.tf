@@ -114,7 +114,7 @@ resource null_resource agents_install {
   provisioner remote-exec {
     inline = [
       "INSTALL_K3S_VERSION=${local.k3s_version} sh /tmp/k3s-installer agent ${local.agents_metadata[each.key].flags}",
-      "until systemctl is-active --quiet k3s-agent.service; do sleep 5; done"
+      "until systemctl is-active --quiet k3s-agent.service; do sleep 1; done"
     ]
   }
 }
@@ -219,6 +219,7 @@ resource null_resource agents_annotation {
 
   provisioner remote-exec {
     inline = [
+      "until kubectl get node ${self.triggers.agent_name}; do sleep 1; done",
     "kubectl annotate --overwrite node ${self.triggers.agent_name} ${self.triggers.annotation_name}=${self.triggers.on_value_changes}"]
   }
 
@@ -278,6 +279,7 @@ resource null_resource agents_label {
 
   provisioner remote-exec {
     inline = [
+      "until kubectl get node ${self.triggers.agent_name}; do sleep 1; done",
     "kubectl label --overwrite node ${self.triggers.agent_name} ${self.triggers.label_name}=${self.triggers.on_value_changes}"]
   }
 
@@ -336,7 +338,9 @@ resource null_resource agents_taint {
   }
 
   provisioner remote-exec {
-    inline = ["kubectl taint node ${self.triggers.agent_name} ${self.triggers.taint_name}=${self.triggers.on_value_changes} --overwrite"]
+    inline = [
+      "until kubectl get node ${self.triggers.agent_name}; do sleep 1; done",
+    "kubectl taint node ${self.triggers.agent_name} ${self.triggers.taint_name}=${self.triggers.on_value_changes} --overwrite"]
   }
 
   provisioner remote-exec {
