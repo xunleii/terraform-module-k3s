@@ -1,12 +1,13 @@
 # terraform-module-k3s
 
-[![MIT Licensed](https://img.shields.io/badge/license-MIT-green.svg)](https://tldrlegal.com/license/mit-license)
+![Terraform Version](https://img.shields.io/badge/terraform-≥_0.13-blueviolet)
+[![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/xunleii/terraform-module-k3s?label=registry)](https://registry.terraform.io/modules/xunleii/k3s)
+[![GitHub issues](https://img.shields.io/github/issues/xunleii/terraform-module-k3s)](https://github.com/xunleii/terraform-module-k3s/issues)
 [![Open Source Helpers](https://www.codetriage.com/xunleii/terraform-module-k3s/badges/users.svg)](https://www.codetriage.com/xunleii/terraform-module-k3s)
+[![MIT Licensed](https://img.shields.io/badge/license-MIT-green.svg)](https://tldrlegal.com/license/mit-license)
 
 Terraform module which creates a [k3s](https://k3s.io/) cluster, with multi-server 
 and annotations/labels/taints management features. 
-> :warning: **This module only works with k3s version greater than v1.0.0**  
-> :warning: **This module use experimental features of Terraform (validation)**  
 
 ## Usage
 
