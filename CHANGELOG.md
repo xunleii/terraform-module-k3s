@@ -2,6 +2,17 @@
 ## [Unreleased]
 
 
+<a name="v2.1.0"></a>
+## [v2.1.0] - 2020-08-26
+### Bug Fixes
+- use k3s update channels for latest releases instead of github
+- replace network_id with subnet_id
+- use k3s update channels for latest releases instead of github
+
+### Documentation
+- update README
+
+
 <a name="v2.0.1"></a>
 ## [v2.0.1] - 2020-05-31
 ### Bug Fixes
@@ -158,7 +169,8 @@
 - add module variables
 
 
-[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v2.0.1...HEAD
+[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v2.1.0...HEAD
+[v2.1.0]: https://github.com/xunleii/terraform-module-k3s/compare/v2.0.1...v2.1.0
 [v2.0.1]: https://github.com/xunleii/terraform-module-k3s/compare/v2.0.0...v2.0.1
 [v2.0.0]: https://github.com/xunleii/terraform-module-k3s/compare/v1.7.0...v2.0.0
 [v1.7.0]: https://github.com/xunleii/terraform-module-k3s/compare/v1.6.3...v1.7.0
