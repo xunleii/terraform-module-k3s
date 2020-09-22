@@ -44,7 +44,7 @@ module "k3s" {
       labels = {"node.kubernetes.io/type" = "master"}
       taints = {"node.k3s.io/type" = "server:NoSchedule"}
     }
-    server_two: {
+    server_two = {
       ip = "10.123.45.68"
       connection = {
         host = "203.123.45.68" // bastion node
@@ -55,7 +55,7 @@ module "k3s" {
       labels = {"node.kubernetes.io/type" = "master"}
       taints = {"node.k3s.io/type" = "server:NoSchedule"}
     }
-    server_three: {
+    server_three = {
       ip = "10.123.45.69"
       connection = {
         host = "203.123.45.69" // bastion node
