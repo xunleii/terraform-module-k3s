@@ -26,18 +26,8 @@ module "k3s" {
   manage_fields = ["label", "taint"]  
 
   global_flags = [
-    "--flannel-backend=none"
+    "--tls-san k3s.my.domain.com"
   ]
-
-  additional_flags = {
-    server = [
-        "--flannel-backend=none",
-        "--tls-san k3s.my.domain.com"
-    ]
-    agent = [
-      "--flannel-backend=none",
-    ]
-  }
   
   servers = {
     # The node name will be automatically provided by
@@ -49,7 +39,7 @@ module "k3s" {
         host = "203.123.45.67" // public node IP
         user = "ubuntu"
       }
-      flags = ["--tls-san k3s.my.domain.com"]
+      flags = ["--flannel-backend=none"]
 
       labels = {"node.kubernetes.io/type" = "master"}
       taints = {"node.k3s.io/type" = "server:NoSchedule"}
@@ -60,7 +50,7 @@ module "k3s" {
         host = "203.123.45.68" // bastion node
         user = "ubuntu"
       }
-      flags = ["--tls-san k3s.my.domain.com"]
+      flags = ["--flannel-backend=none"]
 
       labels = {"node.kubernetes.io/type" = "master"}
       taints = {"node.k3s.io/type" = "server:NoSchedule"}
@@ -71,7 +61,7 @@ module "k3s" {
         host = "203.123.45.69" // bastion node
         user = "ubuntu"
       }
-      flags = ["--tls-san k3s.my.domain.com"]
+      flags = ["--flannel-backend=none"]
 
       labels = {"node.kubernetes.io/type" = "master"}
       taints = {"node.k3s.io/type" = "server:NoSchedule"}
