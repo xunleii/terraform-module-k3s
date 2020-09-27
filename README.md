@@ -23,7 +23,7 @@ module "k3s" {
     services = "10.1.0.0/16"
   }
   drain_timeout = "30s"
-  manage_fields = ["label", "taint"]  
+  managed_fields = ["label", "taint"]  
 
   global_flags = [
     "--tls-san k3s.my.domain.com"
