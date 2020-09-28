@@ -3,6 +3,9 @@ output "kubernetes" {
     cluster_ca_certificate = local.cluster_ca_certificate
     client_certificate     = local.cluster_ca_certificate
     client_key             = local.client_key
+    api_endpoint           = "https://${local.root_server_connection.host}:6443"
+    password               = null
+    username               = null
   }
   sensitive = true
 }
