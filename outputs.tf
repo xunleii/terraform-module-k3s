@@ -1,38 +1,38 @@
-output "kubernetes" {  
+output "kubernetes" {
   value = {
     cluster_ca_certificate = local.cluster_ca_certificate
-    client_certificate =  local.cluster_ca_certificate
+    client_certificate     = local.cluster_ca_certificate
     client_key             = local.client_key
   }
   sensitive = true
 }
 
-output kube_config {  
+output kube_config {
   value = yamlencode({
     apiVersion = "v1"
     clusters = [{
-      cluster = { 
+      cluster = {
         certificate-authority-data = base64encode(local.cluster_ca_certificate)
-        server = "https://${local.root_server_connection.host}:6443"
+        server                     = "https://${local.root_server_connection.host}:6443"
       }
       name = var.name
     }]
     contexts = [{
-      context = { 
+      context = {
         cluster = var.name
-        user: "master-user"
+        user : "master-user"
       }
       name = var.name
     }]
     current-context = var.name
-    kind = "Config"
-    preferences = {}
+    kind            = "Config"
+    preferences     = {}
     users = [{
-      user = {         
-        client-certificate-data: base64encode(local.client_certificate)
-        client-key-data: base64encode(local.client_key)
+      user = {
+        client-certificate-data : base64encode(local.client_certificate)
+        client-key-data : base64encode(local.client_key)
       }
-      name: "master-user"
+      name : "master-user"
     }]
   })
   sensitive = true
