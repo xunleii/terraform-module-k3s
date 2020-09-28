@@ -148,7 +148,8 @@ module "k3s" {
 | Name | Description | Type |
 |------|-------------|------|
 | summary | A summary of the current cluster state (version, server and agent list with all annotations, labels, ...) | string |
-
+| kube_config | A yaml encoded kubeconfig file | string |
+| kubernetes | A kubernetes object with cluster_ca_certificate, client_certificate and client_key properties | object |
 ## More information
 
 ### Security warning
@@ -160,20 +161,6 @@ This means that used password or private key will be **clearly readable** in thi
 **Please do not use
 this module if you need to pass private key or password in the connection block, even if your TF state is
 securely stored**.
-
-### Kubeconfig
-
-This module is not in charge of generating a Kubeconfig, mainly because Terraform doesn't allow us 
-to get file remotely. You need to get it manually (with `external` data for example).
-
-##### *Example:*
-``` hcl-terraform
-resource null_resource kubeconfig {
-  provisioner "local-exec" {
-    command = "scp ubuntu@203.123.45.67:/etc/rancher/k3s/k3s.yaml kubeconfig"
-  }
-}
-```
 
 ## License
 
