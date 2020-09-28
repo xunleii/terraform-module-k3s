@@ -15,6 +15,12 @@ variable name {
   default     = "cluster.local"
 }
 
+variable generate_ca_certificates {
+  description = "If true, this module will generate the CA certificates (see https://github.com/rancher/k3s/issues/1868#issuecomment-639690634). Otherwise rancher will generate it. This is required to generate kubeconfig"
+  type        = bool
+  default     = true
+}
+
 variable cidr {
   description = "K3s network CIDRs (see https://rancher.com/docs/k3s/latest/en/installation/install-options/)."
   type = object({

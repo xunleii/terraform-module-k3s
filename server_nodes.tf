@@ -111,6 +111,8 @@ locals {
 
 // Install k3s server
 resource null_resource k8s_ca_certificates_install {
+  count       = var.generate_ca_certificates ? 1 : 0
+
   connection {
     type = try(local.root_server_connection.type, "ssh")
 

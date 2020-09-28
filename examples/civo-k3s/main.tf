@@ -45,6 +45,7 @@ module k3s {
 
   drain_timeout  = "60s"
   managed_fields = ["label"]
+  generate_ca_certificates = true
 
   global_flags = [for instance in civo_instance.node_instances : "--tls-san ${instance.public_ip}"]
 

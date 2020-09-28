@@ -115,6 +115,7 @@ module "k3s" {
 | depends_on_ | Like [resource.depends_on](https://www.terraform.io/docs/configuration/resources.html#resource-dependencies), but with only one target |  |  | false |
 | k3s_version | k3s version to be use | string | `"latest"` | false |
 | name | k3s cluster name | string | `"cluster.local"` | false |
+| generate_ca_certificates | If true, this module will generate the CA certificates (see https://github.com/rancher/k3s/issues/1868#issuecomment-639690634). Otherwise rancher will generate it. This is required to generate kubeconfig | bool | true | false 
 | cidr | k3s [CIDR definitions](https://rancher.com/docs/k3s/latest/en/installation/install-options/server-config/#networking) | object |  | false |
 | cidr.pods | Network CIDR to use for pod IPs (`--cluster-cidr`) | string (ip) | `"10.42.0.0/16"` | false |
 | cidr.service | Network CIDR to use for services IPs (`--service-cidr`) | string (ip) | `"10.43.0.0/16"` | false |

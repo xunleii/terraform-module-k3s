@@ -11,7 +11,7 @@ output "kubernetes" {
 }
 
 output kube_config {
-  value = yamlencode({
+  value = var.generate_ca_certificates == false ? null : yamlencode({
     apiVersion = "v1"
     clusters = [{
       cluster = {
