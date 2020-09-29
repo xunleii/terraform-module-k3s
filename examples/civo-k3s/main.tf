@@ -43,9 +43,27 @@ module k3s {
 
   name = "civo_k3s"
 
-  drain_timeout  = "60s"
-  managed_fields = ["label"]
-  generate_ca_certificates = true
+  drain_timeout            = "60s"
+  managed_fields           = ["label"]
+  generate_ca_certificates = false
+  kubernetes_certificates = [
+    {
+      "file_name"    = "client-ca.crt"
+      "file_content" = file("client-ca.crt")
+    },
+    {
+      "file_name"    = "client-ca.key"
+      "file_content" = file("client-ca.key")
+    },
+    {
+      "file_name"    = "server-ca.crt"
+      "file_content" = file("server-ca.crt")
+    },
+    {
+      "file_name"    = "server-ca.key"
+      "file_content" = file("server-ca.key")
+    },
+  ]
 
   global_flags = [for instance in civo_instance.node_instances : "--tls-san ${instance.public_ip}"]
 
@@ -58,7 +76,7 @@ module k3s {
     instance.hostname => {
       ip = instance.private_ip
       connection = {
-        timeout  = "60"
+        timeout  = "60s"
         type     = "ssh"
         host     = instance.public_ip
         password = instance.initial_password

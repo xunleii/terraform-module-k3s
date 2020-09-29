@@ -116,6 +116,7 @@ module "k3s" {
 | k3s_version | k3s version to be use | string | `"latest"` | false |
 | name | k3s cluster name | string | `"cluster.local"` | false |
 | generate_ca_certificates | If true, this module will generate the CA certificates (see https://github.com/rancher/k3s/issues/1868#issuecomment-639690634). Otherwise rancher will generate it. This is required to generate kubeconfig | bool | true | false 
+| kubernetes_certificates | A list of maps of cerificate-name.[crt/key] : cerficate-value to copied to /var/lib/rancher/k3s/server/tls, if this option is used generate_ca_certificates will be treat as false | list({"filen_name" : "file_name", "file_content" : "file_content" }) | [] | false 
 | cidr | k3s [CIDR definitions](https://rancher.com/docs/k3s/latest/en/installation/install-options/server-config/#networking) | object |  | false |
 | cidr.pods | Network CIDR to use for pod IPs (`--cluster-cidr`) | string (ip) | `"10.42.0.0/16"` | false |
 | cidr.service | Network CIDR to use for services IPs (`--service-cidr`) | string (ip) | `"10.43.0.0/16"` | false |

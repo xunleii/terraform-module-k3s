@@ -21,6 +21,17 @@ variable generate_ca_certificates {
   default     = true
 }
 
+variable kubernetes_certificates {
+  description = "A list of maps of cerificate-name.[crt/key] : cerficate-value to copied to /var/lib/rancher/k3s/server/tls, if this option is used generate_ca_certificates will be treat as false"
+  type = list(
+    object({
+      file_name = string,
+      file_content = string
+     })
+  )  
+  default     = []
+}
+
 variable cidr {
   description = "K3s network CIDRs (see https://rancher.com/docs/k3s/latest/en/installation/install-options/)."
   type = object({

@@ -111,7 +111,7 @@ locals {
 
 // Install k3s server
 resource null_resource k8s_ca_certificates_install {
-  count       = var.generate_ca_certificates ? 1 : 0
+  count = length(local.certificates_files)
 
   connection {
     type = try(local.root_server_connection.type, "ssh")
@@ -142,40 +142,14 @@ resource null_resource k8s_ca_certificates_install {
     bastion_private_key = try(local.root_server_connection.bastion_private_key, null)
     bastion_certificate = try(local.root_server_connection.bastion_certificate, null)
   }
-
-
+  
   provisioner "remote-exec" {
     inline = ["mkdir -p /var/lib/rancher/k3s/server/tls/"]
   }
 
   provisioner "file" {
-    content     = tls_private_key.kubernetes_ca[0].private_key_pem
-    destination = "/var/lib/rancher/k3s/server/tls/${local.certificates_types[0]}.key"
-  }
-
-  provisioner "file" {
-    content     = tls_self_signed_cert.kubernetes_ca_certs[0].cert_pem
-    destination = "/var/lib/rancher/k3s/server/tls/${local.certificates_types[0]}.crt"
-  }
-
-  provisioner "file" {
-    content     = tls_private_key.kubernetes_ca[1].private_key_pem
-    destination = "/var/lib/rancher/k3s/server/tls/${local.certificates_types[1]}.key"
-  }
-
-  provisioner "file" {
-    content     = tls_self_signed_cert.kubernetes_ca_certs[1].cert_pem
-    destination = "/var/lib/rancher/k3s/server/tls/${local.certificates_types[1]}.crt"
-  }
-
-  provisioner "file" {
-    content     = tls_private_key.kubernetes_ca[2].private_key_pem
-    destination = "/var/lib/rancher/k3s/server/tls/${local.certificates_types[2]}.key"
-  }
-
-  provisioner "file" {
-    content     = tls_self_signed_cert.kubernetes_ca_certs[2].cert_pem
-    destination = "/var/lib/rancher/k3s/server/tls/${local.certificates_types[2]}.crt"
+    content     = local.certificates_files[count.index].file_content
+    destination = "/var/lib/rancher/k3s/server/tls/${local.certificates_files[count.index].file_name}"
   }
 }
 

@@ -1,15 +1,25 @@
 locals {
+  should_generate_certificates = var.generate_ca_certificates && length(var.kubernetes_certificates) == 0  
   certificates_names = var.generate_ca_certificates ? ["client-ca", "server-ca", "request-header-key-ca"] : []
   certificates_types = { for s in local.certificates_names : index(local.certificates_names, s) => s }
   certificates_by_type = { for s in local.certificates_names : s =>
     tls_self_signed_cert.kubernetes_ca_certs[index(local.certificates_names, s)].cert_pem
   }
   certificates_files = flatten(
-    [for s in local.certificates_names :
-      [
-        { "/var/lib/rancher/k3s/server/tls/${s}.key" = tls_private_key.kubernetes_ca[index(local.certificates_names, s)].private_key_pem },
-        { "/var/lib/rancher/k3s/server/tls/${s}.crt" = tls_self_signed_cert.kubernetes_ca_certs[index(local.certificates_names, s)].cert_pem }
+    [      
+      [for s in local.certificates_names :
+        flatten([
+          { 
+            "file_name" = "${s}.key" 
+            "file_content" = tls_private_key.kubernetes_ca[index(local.certificates_names, s)].private_key_pem 
+          },
+          { 
+            "file_name" = "${s}.crt" 
+            "file_content" = tls_self_signed_cert.kubernetes_ca_certs[index(local.certificates_names, s)].cert_pem
+          }
+        ])
       ]
+      ,var.kubernetes_certificates 
     ]
   )
   cluster_ca_certificate = var.generate_ca_certificates ? local.certificates_by_type["server-ca"] : null
