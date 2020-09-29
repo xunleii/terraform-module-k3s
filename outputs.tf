@@ -1,7 +1,7 @@
 output "kubernetes" {
   value = {
     cluster_ca_certificate = local.cluster_ca_certificate
-    client_certificate     = local.cluster_ca_certificate
+    client_certificate     = local.client_certificate     
     client_key             = local.client_key
     api_endpoint           = "https://${local.root_server_connection.host}:6443"
     password               = null
