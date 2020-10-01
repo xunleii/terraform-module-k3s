@@ -23,7 +23,7 @@ module "k3s" {
     services = "10.1.0.0/16"
   }
   drain_timeout = "30s"
-  manage_fields = ["label", "taint"]  
+  managed_fields = ["label", "taint"]  
 
   global_flags = [
     "--tls-san k3s.my.domain.com"
@@ -115,6 +115,8 @@ module "k3s" {
 | depends_on_ | Like [resource.depends_on](https://www.terraform.io/docs/configuration/resources.html#resource-dependencies), but with only one target |  |  | false |
 | k3s_version | k3s version to be use | string | `"latest"` | false |
 | name | k3s cluster name | string | `"cluster.local"` | false |
+| generate_ca_certificates | If true, this module will generate the CA certificates (see https://github.com/rancher/k3s/issues/1868#issuecomment-639690634). Otherwise rancher will generate it. This is required to generate kubeconfig | bool | true | false 
+| kubernetes_certificates | A list of maps of cerificate-name.[crt/key] : cerficate-value to copied to /var/lib/rancher/k3s/server/tls, if this option is used generate_ca_certificates will be treat as false | list({"filen_name" : "file_name", "file_content" : "file_content" }) | [] | false 
 | cidr | k3s [CIDR definitions](https://rancher.com/docs/k3s/latest/en/installation/install-options/server-config/#networking) | object |  | false |
 | cidr.pods | Network CIDR to use for pod IPs (`--cluster-cidr`) | string (ip) | `"10.42.0.0/16"` | false |
 | cidr.service | Network CIDR to use for services IPs (`--service-cidr`) | string (ip) | `"10.43.0.0/16"` | false |
@@ -148,7 +150,8 @@ module "k3s" {
 | Name | Description | Type |
 |------|-------------|------|
 | summary | A summary of the current cluster state (version, server and agent list with all annotations, labels, ...) | string |
-
+| kube_config | A yaml encoded kubeconfig file | string |
+| kubernetes | A kubernetes object with cluster_ca_certificate, client_certificate and client_key properties | object |
 ## More information
 
 ### Security warning
@@ -160,20 +163,6 @@ This means that used password or private key will be **clearly readable** in thi
 **Please do not use
 this module if you need to pass private key or password in the connection block, even if your TF state is
 securely stored**.
-
-### Kubeconfig
-
-This module is not in charge of generating a Kubeconfig, mainly because Terraform doesn't allow us 
-to get file remotely. You need to get it manually (with `external` data for example).
-
-##### *Example:*
-``` hcl-terraform
-resource null_resource kubeconfig {
-  provisioner "local-exec" {
-    command = "scp ubuntu@203.123.45.67:/etc/rancher/k3s/k3s.yaml kubeconfig"
-  }
-}
-```
 
 ## License
 
