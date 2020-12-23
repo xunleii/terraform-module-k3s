@@ -124,7 +124,7 @@ module "k3s" {
 | managed_fields | List of fields which must be managed by this module (can be annotation, label and/or taint) | list(string) | `["annotation", "label", "taint"]` | false |
 | global_flags | Additional [installation flags](https://rancher.com/docs/k3s/latest/en/installation/install-options/) used by all nodes | list(string) | `[]` | false |
 | servers | k3s server nodes definition | map([NodeType](#Node-Type)) |  | true |
-| agents | k3s server nodes definition | map([NodeType](#Node-Type)) | `{}` | false |
+| agents | k3s agents nodes definition | map([NodeType](#Node-Type)) | `{}` | false |
 
 > NOTES:  
 > &nbsp;&nbsp; servers must have an odd number of nodes  
