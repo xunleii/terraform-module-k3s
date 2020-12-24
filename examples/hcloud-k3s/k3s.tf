@@ -1,4 +1,4 @@
-module k3s {
+module "k3s" {
   source = "./../.."
 
   depends_on_ = hcloud_server.agents

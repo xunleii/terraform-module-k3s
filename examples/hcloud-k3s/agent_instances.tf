@@ -1,4 +1,4 @@
-resource hcloud_server agents {
+resource "hcloud_server" "agents" {
   count = var.agents_num
   name  = "k3s-agent-${count.index}"
 
@@ -14,7 +14,7 @@ resource hcloud_server agents {
   }
 }
 
-resource hcloud_server_network agents_network {
+resource "hcloud_server_network" "agents_network" {
   count     = length(hcloud_server.agents)
   server_id = hcloud_server.agents[count.index].id
   subnet_id = hcloud_network_subnet.k3s_nodes.id
