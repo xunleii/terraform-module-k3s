@@ -20,8 +20,8 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const output = `#### Terraform Format and Style \`${{ steps.fmt.outcome }}\`
-            \`\`\`diff\n${{ steps.fmt.outputs.stdout }}\`\`\`  
-               
+            \`\`\`diff\n` + ${{ toJSON(steps.fmt.outputs.stdout) }} + `\`\`\`
+
             *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workflow: \`${{ github.workflow }}\`*`;
 
             github.issues.createComment({
@@ -53,8 +53,8 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const output = `#### Terraform Init \`${{ steps.init.outcome }}\`
-            \`\`\`${{ steps.init.outputs.stderr }}\`\`\`  
-               
+            \`\`\`` + ${{ toJson(steps.init.outputs.stderr) }} + `\`\`\`
+
             *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workdir: \`examples/hcloud-k3s\`, Workflow: \`${{ github.workflow }}\`*`;
 
             github.issues.createComment({
@@ -81,8 +81,8 @@ jobs:
           script: |
             const output = `#### Terraform Init \`${{ steps.init.outcome }}\`
             #### Terraform Validate \`${{ steps.validate.outcome }}\`
-            \`\`\`${{ steps.validate.outputs.stderr }}\`\`\`  
-               
+            \`\`\`` + ${{ toJson(steps.validate.outputs.stderr) }} + `\`\`\`
+
             *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workdir: \`examples/hcloud-k3s\`, Workflow: \`${{ github.workflow }}\`*`;
 
             github.issues.createComment({
@@ -111,7 +111,7 @@ jobs:
 
             <details><summary>Show Plan</summary>
 
-            \`\`\`terraform\n${{ steps.plan.outputs.stdout }}${{ steps.plan.outputs.stderr }}\`\`\`  
+            \`\`\`terraform\n` + ${{ toJson(steps.plan.outputs.stdout) }} + ${{ toJson(steps.plan.outputs.stderr) }} + `\`\`\`
 
             </details>
 

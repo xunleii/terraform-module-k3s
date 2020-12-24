@@ -11,7 +11,7 @@ provider "civo" {
   token = var.civo_token
 }
 
-variable civo_token {
+variable "civo_token" {
   type        = string
   description = "Civo api token"
 }
@@ -37,7 +37,7 @@ resource "civo_instance" "node_instances" {
   template = element(data.civo_template.ubuntu.templates, 0).id
 }
 
-module k3s {
+module "k3s" {
   source      = "./../.."
   k3s_version = "v1.19.2+k3s1"
 

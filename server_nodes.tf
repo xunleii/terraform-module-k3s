@@ -110,7 +110,7 @@ locals {
 }
 
 // Install k3s server
-resource null_resource k8s_ca_certificates_install {
+resource "null_resource" "k8s_ca_certificates_install" {
   count = length(local.certificates_files)
 
   connection {
@@ -142,7 +142,7 @@ resource null_resource k8s_ca_certificates_install {
     bastion_private_key = try(local.root_server_connection.bastion_private_key, null)
     bastion_certificate = try(local.root_server_connection.bastion_certificate, null)
   }
-  
+
   provisioner "remote-exec" {
     inline = ["mkdir -p /var/lib/rancher/k3s/server/tls/"]
   }
@@ -153,7 +153,7 @@ resource null_resource k8s_ca_certificates_install {
   }
 }
 
-resource null_resource servers_install {
+resource "null_resource" "servers_install" {
   for_each = var.servers
 
   depends_on = [var.depends_on_, null_resource.k8s_ca_certificates_install]
@@ -193,7 +193,7 @@ resource null_resource servers_install {
   }
 
   // Upload k3s file
-  provisioner file {
+  provisioner "file" {
     content     = data.http.k3s_installer.body
     destination = "/tmp/k3s-installer"
   }
@@ -208,7 +208,7 @@ resource null_resource servers_install {
 }
 
 // Drain k3s node on destruction in order to safely move all workflows to another node.
-resource null_resource servers_drain {
+resource "null_resource" "servers_drain" {
   for_each = var.servers
 
   depends_on = [null_resource.servers_install]
@@ -249,14 +249,14 @@ resource null_resource servers_drain {
     bastion_certificate = jsondecode(base64decode(self.triggers.connection_json)).bastion_certificate
   }
 
-  provisioner remote-exec {
+  provisioner "remote-exec" {
     when   = destroy
     inline = ["kubectl drain ${self.triggers.server_name} --delete-local-data --force --ignore-daemonsets --timeout=${self.triggers.drain_timeout}"]
   }
 }
 
 // Add/remove manually annotation on k3s server
-resource null_resource servers_annotation {
+resource "null_resource" "servers_annotation" {
   for_each = local.server_annotations
 
   depends_on = [null_resource.servers_install]
@@ -299,12 +299,12 @@ resource null_resource servers_annotation {
     bastion_certificate = jsondecode(base64decode(self.triggers.connection_json)).bastion_certificate
   }
 
-  provisioner remote-exec {
+  provisioner "remote-exec" {
     inline = [
     "kubectl annotate --overwrite node ${self.triggers.server_name} ${self.triggers.annotation_name}=${self.triggers.on_value_changes}"]
   }
 
-  provisioner remote-exec {
+  provisioner "remote-exec" {
     when = destroy
     inline = [
     "kubectl annotate node ${self.triggers.server_name} ${self.triggers.annotation_name}-"]
@@ -312,7 +312,7 @@ resource null_resource servers_annotation {
 }
 
 // Add/remove manually label on k3s server
-resource null_resource servers_label {
+resource "null_resource" "servers_label" {
   for_each = local.server_labels
 
   depends_on = [null_resource.servers_install]
@@ -355,12 +355,12 @@ resource null_resource servers_label {
     bastion_certificate = jsondecode(base64decode(self.triggers.connection_json)).bastion_certificate
   }
 
-  provisioner remote-exec {
+  provisioner "remote-exec" {
     inline = [
     "kubectl label --overwrite node ${self.triggers.server_name} ${self.triggers.label_name}=${self.triggers.on_value_changes}"]
   }
 
-  provisioner remote-exec {
+  provisioner "remote-exec" {
     when = destroy
     inline = [
     "kubectl label node ${self.triggers.server_name} ${self.triggers.label_name}-"]
@@ -368,7 +368,7 @@ resource null_resource servers_label {
 }
 
 // Add/remove manually taint on k3s server
-resource null_resource servers_taint {
+resource "null_resource" "servers_taint" {
   for_each = local.server_taints
 
   depends_on = [null_resource.servers_install]
@@ -412,12 +412,12 @@ resource null_resource servers_taint {
     bastion_certificate = jsondecode(base64decode(self.triggers.connection_json)).bastion_certificate
   }
 
-  provisioner remote-exec {
+  provisioner "remote-exec" {
     inline = [
     "kubectl taint node ${self.triggers.server_name} ${self.triggers.taint_name}=${self.triggers.on_value_changes} --overwrite"]
   }
 
-  provisioner remote-exec {
+  provisioner "remote-exec" {
     when = destroy
     inline = [
     "kubectl taint node ${self.triggers.server_name} ${self.triggers.taint_name}-"]

@@ -65,7 +65,7 @@ locals {
 }
 
 // Install k3s agent
-resource null_resource agents_install {
+resource "null_resource" "agents_install" {
   for_each = var.agents
 
   depends_on = [null_resource.servers_install]
@@ -105,13 +105,13 @@ resource null_resource agents_install {
   }
 
   // Upload k3s install script
-  provisioner file {
+  provisioner "file" {
     content     = data.http.k3s_installer.body
     destination = "/tmp/k3s-installer"
   }
 
   // Install k3s
-  provisioner remote-exec {
+  provisioner "remote-exec" {
     inline = [
       "INSTALL_K3S_VERSION=${local.k3s_version} sh /tmp/k3s-installer agent ${local.agents_metadata[each.key].flags}",
       "until systemctl is-active --quiet k3s-agent.service; do sleep 1; done"
@@ -120,7 +120,7 @@ resource null_resource agents_install {
 }
 
 // Drain k3s node on destruction in order to safely move all workflows to another node.
-resource null_resource agents_drain {
+resource "null_resource" "agents_drain" {
   for_each = var.agents
 
   depends_on = [null_resource.agents_install]
@@ -164,14 +164,14 @@ resource null_resource agents_drain {
     bastion_certificate = jsondecode(base64decode(self.triggers.connection_json)).bastion_certificate
   }
 
-  provisioner remote-exec {
+  provisioner "remote-exec" {
     when   = destroy
     inline = ["kubectl drain ${self.triggers.agent_name} --delete-local-data --force --ignore-daemonsets --timeout=${self.triggers.drain_timeout}"]
   }
 }
 
 // Add/remove manually annotation on k3s agent
-resource null_resource agents_annotation {
+resource "null_resource" "agents_annotation" {
   for_each = local.agent_annotations
 
   depends_on = [null_resource.agents_install]
@@ -217,13 +217,13 @@ resource null_resource agents_annotation {
     bastion_certificate = jsondecode(base64decode(self.triggers.connection_json)).bastion_certificate
   }
 
-  provisioner remote-exec {
+  provisioner "remote-exec" {
     inline = [
       "until kubectl get node ${self.triggers.agent_name}; do sleep 1; done",
     "kubectl annotate --overwrite node ${self.triggers.agent_name} ${self.triggers.annotation_name}=${self.triggers.on_value_changes}"]
   }
 
-  provisioner remote-exec {
+  provisioner "remote-exec" {
     when = destroy
     inline = [
     "kubectl annotate node ${self.triggers.agent_name} ${self.triggers.annotation_name}-"]
@@ -231,7 +231,7 @@ resource null_resource agents_annotation {
 }
 
 // Add/remove manually label on k3s agent
-resource null_resource agents_label {
+resource "null_resource" "agents_label" {
   for_each = local.agent_labels
 
   depends_on = [null_resource.agents_install]
@@ -277,13 +277,13 @@ resource null_resource agents_label {
     bastion_certificate = jsondecode(base64decode(self.triggers.connection_json)).bastion_certificate
   }
 
-  provisioner remote-exec {
+  provisioner "remote-exec" {
     inline = [
       "until kubectl get node ${self.triggers.agent_name}; do sleep 1; done",
     "kubectl label --overwrite node ${self.triggers.agent_name} ${self.triggers.label_name}=${self.triggers.on_value_changes}"]
   }
 
-  provisioner remote-exec {
+  provisioner "remote-exec" {
     when = destroy
     inline = [
     "kubectl label node ${self.triggers.agent_name} ${self.triggers.label_name}-"]
@@ -291,7 +291,7 @@ resource null_resource agents_label {
 }
 
 // Add manually taint on k3s agent
-resource null_resource agents_taint {
+resource "null_resource" "agents_taint" {
   for_each = local.agent_taints
 
   depends_on = [null_resource.agents_install]
@@ -337,13 +337,13 @@ resource null_resource agents_taint {
     bastion_certificate = jsondecode(base64decode(self.triggers.connection_json)).bastion_certificate
   }
 
-  provisioner remote-exec {
+  provisioner "remote-exec" {
     inline = [
       "until kubectl get node ${self.triggers.agent_name}; do sleep 1; done",
     "kubectl taint node ${self.triggers.agent_name} ${self.triggers.taint_name}=${self.triggers.on_value_changes} --overwrite"]
   }
 
-  provisioner remote-exec {
+  provisioner "remote-exec" {
     when   = destroy
     inline = ["kubectl taint node ${self.triggers.agent_name} ${self.triggers.taint_name}-"]
   }
