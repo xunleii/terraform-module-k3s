@@ -2,6 +2,17 @@
 ## [Unreleased]
 
 
+<a name="v2.2.0"></a>
+## [v2.2.0] - 2020-12-24
+### Bug Fixes
+- remove useless interpolation syntax
+- lint module with TF 0.14.x
+- avoid JS interpretation on TF vars
+
+### Documentation
+- use : instead of = in README
+
+
 <a name="v2.1.0"></a>
 ## [v2.1.0] - 2020-08-26
 ### Bug Fixes
@@ -169,7 +180,8 @@
 - add module variables
 
 
-[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v2.2.0...HEAD
+[v2.2.0]: https://github.com/xunleii/terraform-module-k3s/compare/v2.1.0...v2.2.0
 [v2.1.0]: https://github.com/xunleii/terraform-module-k3s/compare/v2.0.1...v2.1.0
 [v2.0.1]: https://github.com/xunleii/terraform-module-k3s/compare/v2.0.0...v2.0.1
 [v2.0.0]: https://github.com/xunleii/terraform-module-k3s/compare/v1.7.0...v2.0.0
