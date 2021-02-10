@@ -33,7 +33,7 @@ module "k3s" {
     # The node name will be automatically provided by
     # the module using the field name... any usage of
     # --node-name in additional_flags will be ignored
-    server_one = {
+    server-one = {
       ip = "10.123.45.67" // internal node IP
       connection = {
         host = "203.123.45.67" // public node IP
@@ -44,7 +44,7 @@ module "k3s" {
       labels = {"node.kubernetes.io/type" = "master"}
       taints = {"node.k3s.io/type" = "server:NoSchedule"}
     }
-    server_two = {
+    server-two = {
       ip = "10.123.45.68"
       connection = {
         host = "203.123.45.68" // bastion node
@@ -55,7 +55,7 @@ module "k3s" {
       labels = {"node.kubernetes.io/type" = "master"}
       taints = {"node.k3s.io/type" = "server:NoSchedule"}
     }
-    server_three = {
+    server-three = {
       ip = "10.123.45.69"
       connection = {
         host = "203.123.45.69" // bastion node
@@ -72,7 +72,7 @@ module "k3s" {
       # The node name will be automatically provided by
       # the module using the field name... any usage of
       # --node-name in additional_flags will be ignored
-      agent_one = {
+      agent-one = {
           ip = "10.123.45.70"
           connection = {
               user = "root"
@@ -82,7 +82,7 @@ module "k3s" {
 
           labels = {"node.kubernetes.io/pool" = "service-pool"}
       },
-      agent_two = {
+      agent-two = {
           ip = "10.123.45.71"
           connection = {
               user = "root"
@@ -92,7 +92,7 @@ module "k3s" {
 
           labels = {"node.kubernetes.io/pool" = "service-pool"}
       },
-      agent_three = {
+      agent-three = {
           name = "gpu-agent-one"
           ip = "10.123.45.72"
           connection = {
