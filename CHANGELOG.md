@@ -2,8 +2,15 @@
 ## [Unreleased]
 
 
+<a name="v2.2.1"></a>
+## [v2.2.1] - 2021-02-10
+### Bug Fixes
+- change README node name
+- post-pone node labeling after installation
+
+
 <a name="v2.2.0"></a>
-## [v2.2.0] - 2020-12-24
+## [v2.2.0] - 2021-01-03
 ### Bug Fixes
 - remove useless interpolation syntax
 - lint module with TF 0.14.x
@@ -180,7 +187,8 @@
 - add module variables
 
 
-[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v2.2.0...HEAD
+[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v2.2.1...HEAD
+[v2.2.1]: https://github.com/xunleii/terraform-module-k3s/compare/v2.2.0...v2.2.1
 [v2.2.0]: https://github.com/xunleii/terraform-module-k3s/compare/v2.1.0...v2.2.0
 [v2.1.0]: https://github.com/xunleii/terraform-module-k3s/compare/v2.0.1...v2.1.0
 [v2.0.1]: https://github.com/xunleii/terraform-module-k3s/compare/v2.0.0...v2.0.1
