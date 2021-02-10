@@ -51,7 +51,6 @@ locals {
         ],
         var.global_flags,
         try(agent.flags, []),
-        [for key, value in try(agent.labels, {}) : "--node-label '${key}=${value}'" if value != null],
         [for key, value in try(agent.taints, {}) : "--node-taint '${key}=${value}'" if value != null]
       )))
 
