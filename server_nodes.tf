@@ -96,7 +96,6 @@ locals {
         ],
         var.global_flags,
         try(server.flags, []),
-        [for key, value in try(server.labels, {}) : "--node-label '${key}=${value}'" if value != null],
         [for key, value in try(server.taints, {}) : "--node-taint '${key}=${value}'" if value != null]
       )))
 
