@@ -42,3 +42,46 @@ module "k3s" {
     }
   }
 }
+
+provider "kubernetes" {
+  host                   = module.k3s.kubernetes.api_endpoint
+  cluster_ca_certificate = module.k3s.kubernetes.cluster_ca_certificate
+  client_certificate     = module.k3s.kubernetes.client_certificate
+  client_key             = module.k3s.kubernetes.client_key
+}
+
+resource "kubernetes_service_account" "bootstrap" {
+  depends_on = [module.k3s.kubernetes_ready]
+
+  metadata {
+    name      = "bootstrap"
+    namespace = "default"
+  }
+}
+
+resource "kubernetes_cluster_role_binding" "boostrap" {
+  depends_on = [module.k3s.kubernetes_ready]
+
+  metadata {
+    name = "bootstrap"
+  }
+
+  subject {
+    kind      = "ServiceAccount"
+    name      = "bootstrap"
+    namespace = "default"
+  }
+
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "admin"
+  }
+}
+
+data "kubernetes_secret" "sa_credentials" {
+  metadata {
+    name      = kubernetes_service_account.bootstrap.default_secret_name
+    namespace = "default"
+  }
+}
