@@ -1,4 +1,5 @@
 output "kubernetes" {
+  description = "Authentication credentials of Kubernetes (full administrator)."
   value = {
     cluster_ca_certificate = local.cluster_ca_certificate
     client_certificate     = local.client_certificate
@@ -11,6 +12,7 @@ output "kubernetes" {
 }
 
 output "kube_config" {
+  description = "Genereated kubeconfig."
   value = var.generate_ca_certificates == false ? null : yamlencode({
     apiVersion = "v1"
     clusters = [{
@@ -41,8 +43,8 @@ output "kube_config" {
   sensitive = true
 }
 
-// Return a "summary" of the current k3s cluster (version & nodes)
 output "summary" {
+  description = "Current state of k3s (version & nodes)."
   value = {
     version : local.k3s_version
     servers : [
@@ -64,4 +66,9 @@ output "summary" {
       }
     ]
   }
+}
+
+output "kubernetes_ready" {
+  description = "Dependency endpoint to synchronize k3s installation and provisioning."
+  value       = null_resource.kubernetes_ready
 }
