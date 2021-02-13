@@ -2,6 +2,12 @@
 ## [Unreleased]
 
 
+<a name="v2.2.2"></a>
+## [v2.2.2] - 2021-02-13
+### Features
+- add dependency endpoint to allow sychronizing k3s install & provisionning
+
+
 <a name="v2.2.1"></a>
 ## [v2.2.1] - 2021-02-10
 ### Bug Fixes
@@ -187,7 +193,8 @@
 - add module variables
 
 
-[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v2.2.1...HEAD
+[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v2.2.2...HEAD
+[v2.2.2]: https://github.com/xunleii/terraform-module-k3s/compare/v2.2.1...v2.2.2
 [v2.2.1]: https://github.com/xunleii/terraform-module-k3s/compare/v2.2.0...v2.2.1
 [v2.2.0]: https://github.com/xunleii/terraform-module-k3s/compare/v2.1.0...v2.2.0
 [v2.1.0]: https://github.com/xunleii/terraform-module-k3s/compare/v2.0.1...v2.1.0
