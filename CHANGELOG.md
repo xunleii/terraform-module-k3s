@@ -2,6 +2,12 @@
 ## [Unreleased]
 
 
+<a name="v2.2.3"></a>
+## [v2.2.3] - 2021-02-17
+### Bug Fixes
+- add *_drain to kubernetes_ready
+
+
 <a name="v2.2.2"></a>
 ## [v2.2.2] - 2021-02-13
 ### Features
@@ -193,7 +199,8 @@
 - add module variables
 
 
-[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v2.2.2...HEAD
+[Unreleased]: https://github.com/xunleii/terraform-module-k3s/compare/v2.2.3...HEAD
+[v2.2.3]: https://github.com/xunleii/terraform-module-k3s/compare/v2.2.2...v2.2.3
 [v2.2.2]: https://github.com/xunleii/terraform-module-k3s/compare/v2.2.1...v2.2.2
 [v2.2.1]: https://github.com/xunleii/terraform-module-k3s/compare/v2.2.0...v2.2.1
 [v2.2.0]: https://github.com/xunleii/terraform-module-k3s/compare/v2.1.0...v2.2.0
