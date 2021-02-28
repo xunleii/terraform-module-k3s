@@ -143,12 +143,10 @@ resource "null_resource" "k8s_ca_certificates_install" {
   }
 
   provisioner "remote-exec" {
-    inline = ["mkdir -p /var/lib/rancher/k3s/server/tls/"]
-  }
-
-  provisioner "file" {
-    content     = local.certificates_files[count.index].file_content
-    destination = "/var/lib/rancher/k3s/server/tls/${local.certificates_files[count.index].file_name}"
+    inline = [
+      "sudo mkdir -p /var/lib/rancher/k3s/server/tls/",
+      "echo '${local.certificates_files[count.index].file_content}' | sudo tee /var/lib/rancher/k3s/server/tls/${local.certificates_files[count.index].file_name} > /dev/null"
+    ]
   }
 }
 
@@ -249,8 +247,10 @@ resource "null_resource" "servers_drain" {
   }
 
   provisioner "remote-exec" {
-    when   = destroy
-    inline = ["kubectl drain ${self.triggers.server_name} --delete-local-data --force --ignore-daemonsets --timeout=${self.triggers.drain_timeout}"]
+    when = destroy
+    inline = [
+      "kubectl drain ${self.triggers.server_name} --delete-local-data --force --ignore-daemonsets --timeout=${self.triggers.drain_timeout}"
+    ]
   }
 }
 
@@ -300,13 +300,15 @@ resource "null_resource" "servers_annotation" {
 
   provisioner "remote-exec" {
     inline = [
-    "kubectl annotate --overwrite node ${self.triggers.server_name} ${self.triggers.annotation_name}=${self.triggers.on_value_changes}"]
+      "kubectl annotate --overwrite node ${self.triggers.server_name} ${self.triggers.annotation_name}=${self.triggers.on_value_changes}"
+    ]
   }
 
   provisioner "remote-exec" {
     when = destroy
     inline = [
-    "kubectl annotate node ${self.triggers.server_name} ${self.triggers.annotation_name}-"]
+      "kubectl annotate node ${self.triggers.server_name} ${self.triggers.annotation_name}-"
+    ]
   }
 }
 
@@ -356,13 +358,15 @@ resource "null_resource" "servers_label" {
 
   provisioner "remote-exec" {
     inline = [
-    "kubectl label --overwrite node ${self.triggers.server_name} ${self.triggers.label_name}=${self.triggers.on_value_changes}"]
+      "kubectl label --overwrite node ${self.triggers.server_name} ${self.triggers.label_name}=${self.triggers.on_value_changes}"
+    ]
   }
 
   provisioner "remote-exec" {
     when = destroy
     inline = [
-    "kubectl label node ${self.triggers.server_name} ${self.triggers.label_name}-"]
+      "kubectl label node ${self.triggers.server_name} ${self.triggers.label_name}-"
+    ]
   }
 }
 
@@ -413,12 +417,14 @@ resource "null_resource" "servers_taint" {
 
   provisioner "remote-exec" {
     inline = [
-    "kubectl taint node ${self.triggers.server_name} ${self.triggers.taint_name}=${self.triggers.on_value_changes} --overwrite"]
+      "kubectl taint node ${self.triggers.server_name} ${self.triggers.taint_name}=${self.triggers.on_value_changes} --overwrite"
+    ]
   }
 
   provisioner "remote-exec" {
     when = destroy
     inline = [
-    "kubectl taint node ${self.triggers.server_name} ${self.triggers.taint_name}-"]
+      "kubectl taint node ${self.triggers.server_name} ${self.triggers.taint_name}-"
+    ]
   }
 }
