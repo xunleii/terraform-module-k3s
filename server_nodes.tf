@@ -144,8 +144,13 @@ resource "null_resource" "k8s_ca_certificates_install" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo mkdir -p /var/lib/rancher/k3s/server/tls/",
-      "echo '${local.certificates_files[count.index].file_content}' | sudo tee /var/lib/rancher/k3s/server/tls/${local.certificates_files[count.index].file_name} > /dev/null"
+      <<-EOT
+      # --- use sudo if we are not already root ---
+      [ $(id -u) -eq 0 ] || exec sudo -n $0 $@
+
+      mkdir -p /var/lib/rancher/k3s/server/tls/
+      echo '${local.certificates_files[count.index].file_content}' > /var/lib/rancher/k3s/server/tls/${local.certificates_files[count.index].file_name}
+      EOT
     ]
   }
 }
