@@ -4,7 +4,7 @@ Configuration in this directory creates a k3s cluster resources including networ
 
 ## Preparations
 
-Make sure your SSH-Agent is running, and if not, start it and add your ssh-key:
+Make sure your [SSH-Agent](https://docs.github.com/en/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#adding-your-ssh-key-to-the-ssh-agent) is running (it is neccessary for Terraform), and if not, start it and add your ssh-key:
 
 ```bash
 # example, with active ssh-agent
