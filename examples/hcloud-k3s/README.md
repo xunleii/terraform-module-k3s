@@ -8,15 +8,16 @@ Make sure your [SSH-Agent](https://docs.github.com/en/github/authenticating-to-g
 
 ```bash
 # example, with active ssh-agent
-ssh-add -L
-ssh-rsa AAAAB4NzaC4Xc2FA2A...Me3IABDICy+WANsg5Mc= /home/user/.ssh/id_rsa
-ssh-rsa AAAAB4NzaC4Xc2FA2A...VpJaZ5EawNpQaPvqEw== /home/user/.ssh/another_user_key
+$ ssh-add -L
+> ssh-rsa AAAAB4NzaC4Xc2FA2A...Me3IABDICy+WANsg5Mc= /home/user/.ssh/id_rsa
+> ssh-rsa AAAAB4NzaC4Xc2FA2A...VpJaZ5EawNpQaPvqEw== /home/user/.ssh/another_user_key
 # if nothing is loaded
 # start the ssh-agent in the background
 $ eval `ssh-agent -s`
 > Agent pid 59566
 # add your SSH private key to the ssh-agent
-ssh-add ~./ssh/path-to-sshkey
+$ ssh-add ~./ssh/path-to-sshkey
+> Identity added: ~./ssh/path-to-sshkey (~./ssh/path-to-sshkey)
 ```
 
 ## Usage
