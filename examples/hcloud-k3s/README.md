@@ -2,12 +2,9 @@
 
 Configuration in this directory creates a k3s cluster resources including network, subnet and instances.
 
+## Preparations
 
-## Usage
-
-To run this example you need to execute:
-
-make sure your SSH-Agent is running, and if not, start it and add your ssh-key:
+Make sure your SSH-Agent is running, and if not, start it and add your ssh-key:
 
 ```bash
 # example, with active ssh-agent
@@ -18,11 +15,14 @@ ssh-rsa AAAAB4NzaC4Xc2FA2A...VpJaZ5EawNpQaPvqEw== /home/user/.ssh/another_user_k
 # start the ssh-agent in the background
 $ eval `ssh-agent -s`
 > Agent pid 59566
-# add your SSH private key to the ssh-agent 
+# add your SSH private key to the ssh-agent
 ssh-add ~./ssh/path-to-sshkey
 ```
 
-then you can simply set up a k3s cluster by running
+## Usage
+
+After checking/enabling ssh-agent, to run this example you need to execute:
+
 ```bash
 $ terraform init
 $ terraform plan
