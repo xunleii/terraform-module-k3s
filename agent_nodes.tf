@@ -164,8 +164,10 @@ resource "null_resource" "agents_drain" {
   }
 
   provisioner "remote-exec" {
-    when   = destroy
-    inline = ["kubectl drain ${self.triggers.agent_name} --delete-local-data --force --ignore-daemonsets --timeout=${self.triggers.drain_timeout}"]
+    when = destroy
+    inline = [
+      "kubectl drain ${self.triggers.agent_name} --delete-local-data --force --ignore-daemonsets --timeout=${self.triggers.drain_timeout}"
+    ]
   }
 }
 
@@ -219,13 +221,15 @@ resource "null_resource" "agents_annotation" {
   provisioner "remote-exec" {
     inline = [
       "until kubectl get node ${self.triggers.agent_name}; do sleep 1; done",
-    "kubectl annotate --overwrite node ${self.triggers.agent_name} ${self.triggers.annotation_name}=${self.triggers.on_value_changes}"]
+      "kubectl annotate --overwrite node ${self.triggers.agent_name} ${self.triggers.annotation_name}=${self.triggers.on_value_changes}"
+    ]
   }
 
   provisioner "remote-exec" {
     when = destroy
     inline = [
-    "kubectl annotate node ${self.triggers.agent_name} ${self.triggers.annotation_name}-"]
+      "kubectl annotate node ${self.triggers.agent_name} ${self.triggers.annotation_name}-"
+    ]
   }
 }
 
@@ -279,13 +283,15 @@ resource "null_resource" "agents_label" {
   provisioner "remote-exec" {
     inline = [
       "until kubectl get node ${self.triggers.agent_name}; do sleep 1; done",
-    "kubectl label --overwrite node ${self.triggers.agent_name} ${self.triggers.label_name}=${self.triggers.on_value_changes}"]
+      "kubectl label --overwrite node ${self.triggers.agent_name} ${self.triggers.label_name}=${self.triggers.on_value_changes}"
+    ]
   }
 
   provisioner "remote-exec" {
     when = destroy
     inline = [
-    "kubectl label node ${self.triggers.agent_name} ${self.triggers.label_name}-"]
+      "kubectl label node ${self.triggers.agent_name} ${self.triggers.label_name}-"
+    ]
   }
 }
 
@@ -339,11 +345,14 @@ resource "null_resource" "agents_taint" {
   provisioner "remote-exec" {
     inline = [
       "until kubectl get node ${self.triggers.agent_name}; do sleep 1; done",
-    "kubectl taint node ${self.triggers.agent_name} ${self.triggers.taint_name}=${self.triggers.on_value_changes} --overwrite"]
+      "kubectl taint node ${self.triggers.agent_name} ${self.triggers.taint_name}=${self.triggers.on_value_changes} --overwrite"
+    ]
   }
 
   provisioner "remote-exec" {
-    when   = destroy
-    inline = ["kubectl taint node ${self.triggers.agent_name} ${self.triggers.taint_name}-"]
+    when = destroy
+    inline = [
+      "kubectl taint node ${self.triggers.agent_name} ${self.triggers.taint_name}-"
+    ]
   }
 }
