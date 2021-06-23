@@ -1,5 +1,5 @@
 # terraform-module-k3s
-![Terraform Version](https://img.shields.io/badge/terraform-≥_0.13-blueviolet)
+![Terraform Version](https://img.shields.io/badge/terraform-≈_1.0-blueviolet)
 [![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/xunleii/terraform-module-k3s?label=registry)](https://registry.terraform.io/modules/xunleii/k3s)
 [![GitHub issues](https://img.shields.io/github/issues/xunleii/terraform-module-k3s)](https://github.com/xunleii/terraform-module-k3s/issues)
 [![Open Source Helpers](https://www.codetriage.com/xunleii/terraform-module-k3s/badges/users.svg)](https://www.codetriage.com/xunleii/terraform-module-k3s)
@@ -132,7 +132,7 @@ module "k3s" {
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.0 |
 | <a name="requirement_http"></a> [http](#requirement\_http) | ~> 1.2 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | ~> 2.1 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | ~> 2.2 |
