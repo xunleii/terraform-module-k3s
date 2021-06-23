@@ -81,7 +81,7 @@ locals {
         [
           "--node-ip ${server.ip}",
           "--node-name '${try(server.name, key)}'",
-          "--cluster-domain '${var.name}'",
+          "--cluster-domain '${var.cluster_domain}'",
           "--cluster-cidr ${var.cidr.pods}",
           "--service-cidr ${var.cidr.services}",
           "--token ${random_password.k3s_cluster_secret.result}",
@@ -100,7 +100,7 @@ locals {
       )))
 
       immutable_fields_hash = sha1(join("", concat(
-        [var.name, var.cidr.pods, var.cidr.services],
+        [var.cluster_domain, var.cidr.pods, var.cidr.services],
         var.global_flags,
         try(server.flags, []),
       )))
