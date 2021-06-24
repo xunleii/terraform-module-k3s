@@ -10,6 +10,17 @@ variable "k3s_version" {
 }
 
 variable "name" {
+  description = "K3s cluster domain name (see https://rancher.com/docs/k3s/latest/en/installation/install-options/). This input is deprecated and will be remove in the next major release. Use `cluster_domain` instead."
+  type        = string
+  default     = "!!!DEPRECATED!!!"
+
+  validation {
+    condition     = var.name == "!!!DEPRECATED!!!"
+    error_message = "Variable `name` is deprecated, use `cluster_domain` instead. It will be removed at the next major release."
+  }
+}
+
+variable "cluster_domain" {
   description = "K3s cluster domain name (see https://rancher.com/docs/k3s/latest/en/installation/install-options/)."
   type        = string
   default     = "cluster.local"

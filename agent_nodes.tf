@@ -55,7 +55,7 @@ locals {
       )))
 
       immutable_fields_hash = sha1(join("", concat(
-        [var.name],
+        [var.cluster_domain],
         var.global_flags,
         try(agent.flags, []),
       )))

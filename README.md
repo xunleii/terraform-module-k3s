@@ -1,34 +1,28 @@
 # terraform-module-k3s
-
-![Terraform Version](https://img.shields.io/badge/terraform-≥_0.13-blueviolet)
+![Terraform Version](https://img.shields.io/badge/terraform-≈_1.0-blueviolet)
 [![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/xunleii/terraform-module-k3s?label=registry)](https://registry.terraform.io/modules/xunleii/k3s)
 [![GitHub issues](https://img.shields.io/github/issues/xunleii/terraform-module-k3s)](https://github.com/xunleii/terraform-module-k3s/issues)
 [![Open Source Helpers](https://www.codetriage.com/xunleii/terraform-module-k3s/badges/users.svg)](https://www.codetriage.com/xunleii/terraform-module-k3s)
 [![MIT Licensed](https://img.shields.io/badge/license-MIT-green.svg)](https://tldrlegal.com/license/mit-license)
 
-Terraform module which creates a [k3s](https://k3s.io/) cluster, with multi-server 
-and annotations/labels/taints management features. 
+Terraform module which creates a [k3s](https://k3s.io/) cluster, with multi-server
+and annotations/labels/taints management features.
 
 ## Usage
-
-``` hcl-terraform
+``` hcl
 module "k3s" {
   source  = "xunleii/k3s/module"
-
   k3s_version = "v1.0.0"
-
   name = "my.k3s.local"
   cidr = {
     pods = "10.0.0.0/16"
     services = "10.1.0.0/16"
   }
   drain_timeout = "30s"
-  managed_fields = ["label", "taint"]  
-
+  managed_fields = ["label", "taint"]
   global_flags = [
     "--tls-san k3s.my.domain.com"
   ]
-  
   servers = {
     # The node name will be automatically provided by
     # the module using the field name... any usage of
@@ -40,7 +34,6 @@ module "k3s" {
         user = "ubuntu"
       }
       flags = ["--flannel-backend=none"]
-
       labels = {"node.kubernetes.io/type" = "master"}
       taints = {"node.k3s.io/type" = "server:NoSchedule"}
     }
@@ -51,7 +44,6 @@ module "k3s" {
         user = "ubuntu"
       }
       flags = ["--flannel-backend=none"]
-
       labels = {"node.kubernetes.io/type" = "master"}
       taints = {"node.k3s.io/type" = "server:NoSchedule"}
     }
@@ -62,12 +54,10 @@ module "k3s" {
         user = "ubuntu"
       }
       flags = ["--flannel-backend=none"]
-
       labels = {"node.kubernetes.io/type" = "master"}
       taints = {"node.k3s.io/type" = "server:NoSchedule"}
     }
   }
-
   agents = {
       # The node name will be automatically provided by
       # the module using the field name... any usage of
@@ -79,7 +69,6 @@ module "k3s" {
               bastion_host = "203.123.45.67" // server_one node used as bastion
               bastion_user = "ubuntu"
           }
-
           labels = {"node.kubernetes.io/pool" = "service-pool"}
       },
       agent-two = {
@@ -89,7 +78,6 @@ module "k3s" {
               bastion_host = "203.123.45.67"
               bastion_user = "ubuntu"
           }
-
           labels = {"node.kubernetes.io/pool" = "service-pool"}
       },
       agent-three = {
@@ -100,70 +88,67 @@ module "k3s" {
               bastion_host = "203.123.45.67"
               bastion_user = "ubuntu"
           }
-
           labels = {"node.kubernetes.io/pool" = "gpu-pool"}
           taints = {dedicated = "gpu:NoSchedule"}
       },
   }
 }
 ```
-
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|----------|
-| depends_on_ | Like [resource.depends_on](https://www.terraform.io/docs/configuration/resources.html#resource-dependencies), but with only one target |  |  | false |
-| k3s_version | k3s version to be use | string | `"latest"` | false |
-| name | k3s cluster name | string | `"cluster.local"` | false |
-| generate_ca_certificates | If true, this module will generate the CA certificates (see https://github.com/rancher/k3s/issues/1868#issuecomment-639690634). Otherwise rancher will generate it. This is required to generate kubeconfig | bool | true | false 
-| kubernetes_certificates | A list of maps of cerificate-name.[crt/key] : cerficate-value to copied to /var/lib/rancher/k3s/server/tls, if this option is used generate_ca_certificates will be treat as false | list({"filen_name" : "file_name", "file_content" : "file_content" }) | [] | false 
-| cidr | k3s [CIDR definitions](https://rancher.com/docs/k3s/latest/en/installation/install-options/server-config/#networking) | object |  | false |
-| cidr.pods | Network CIDR to use for pod IPs (`--cluster-cidr`) | string (ip) | `"10.42.0.0/16"` | false |
-| cidr.service | Network CIDR to use for services IPs (`--service-cidr`) | string (ip) | `"10.43.0.0/16"` | false |
-| drain_timeout | Length of time to wait before giving up the node draining | string | `"0s"` *(infinite)* | false |
-| managed_fields | List of fields which must be managed by this module (can be annotation, label and/or taint) | list(string) | `["annotation", "label", "taint"]` | false |
-| global_flags | Additional [installation flags](https://rancher.com/docs/k3s/latest/en/installation/install-options/) used by all nodes | list(string) | `[]` | false |
-| servers | k3s server nodes definition | map([NodeType](#Node-Type)) |  | true |
-| agents | k3s agent nodes definition | map([NodeType](#Node-Type)) | `{}` | false |
+|------|-------------|------|---------|:--------:|
+| <a name="input_servers"></a> [servers](#input\_servers) | K3s server nodes definition. The key is used as node name if no name is provided. | `map(any)` | n/a | yes |
+| <a name="input_agents"></a> [agents](#input\_agents) | K3s agent nodes definitions. The key is used as node name if no name is provided. | `map(any)` | `{}` | no |
+| <a name="input_cidr"></a> [cidr](#input\_cidr) | K3s network CIDRs (see https://rancher.com/docs/k3s/latest/en/installation/install-options/). | <pre>object({<br>    pods     = string<br>    services = string<br>  })</pre> | <pre>{<br>  "pods": "10.42.0.0/16",<br>  "services": "10.43.0.0/16"<br>}</pre> | no |
+| <a name="input_cluster_domain"></a> [cluster\_domain](#input\_cluster\_domain) | K3s cluster domain name (see https://rancher.com/docs/k3s/latest/en/installation/install-options/). | `string` | `"cluster.local"` | no |
+| <a name="input_depends_on_"></a> [depends\_on\_](#input\_depends\_on\_) | Resouce dependency of this module. | `any` | `null` | no |
+| <a name="input_drain_timeout"></a> [drain\_timeout](#input\_drain\_timeout) | The length of time to wait before giving up the node draining. Infinite by default. | `string` | `"0s"` | no |
+| <a name="input_generate_ca_certificates"></a> [generate\_ca\_certificates](#input\_generate\_ca\_certificates) | If true, this module will generate the CA certificates (see https://github.com/rancher/k3s/issues/1868#issuecomment-639690634). Otherwise rancher will generate it. This is required to generate kubeconfig | `bool` | `true` | no |
+| <a name="input_global_flags"></a> [global\_flags](#input\_global\_flags) | Add additional installation flags, used by all nodes (see https://rancher.com/docs/k3s/latest/en/installation/install-options/). | `list(string)` | `[]` | no |
+| <a name="input_k3s_version"></a> [k3s\_version](#input\_k3s\_version) | Specify the k3s version. You can choose from the following release channels or pin the version directly | `string` | `"latest"` | no |
+| <a name="input_kubernetes_certificates"></a> [kubernetes\_certificates](#input\_kubernetes\_certificates) | A list of maps of cerificate-name.[crt/key] : cerficate-value to copied to /var/lib/rancher/k3s/server/tls, if this option is used generate\_ca\_certificates will be treat as false | <pre>list(<br>    object({<br>      file_name    = string,<br>      file_content = string<br>    })<br>  )</pre> | `[]` | no |
+| <a name="input_managed_fields"></a> [managed\_fields](#input\_managed\_fields) | List of fields which must be managed by this module (can be annotation, label and/or taint). | `list(string)` | <pre>[<br>  "annotation",<br>  "label",<br>  "taint"<br>]</pre> | no |
+| <a name="input_name"></a> [name](#input\_name) | K3s cluster domain name (see https://rancher.com/docs/k3s/latest/en/installation/install-options/). This input is deprecated and will be remove in the next major release. Use `cluster_domain` instead. | `string` | `"cluster.local"` | no |
+| <a name="input_separator"></a> [separator](#input\_separator) | Separator used to separates node name and field name (used to manage annotations, labels and taints). | `string` | `"|"` | no |
 
-> NOTES:  
-> &nbsp;&nbsp; servers must have an odd number of nodes  
-> &nbsp;&nbsp; use the first server node to configure the cluster
+> NOTES: <br/>
+> &nbsp;&nbsp; servers must have an odd number of nodes <br/>
+> &nbsp;&nbsp; use the first server node to configure the cluster <br/>
+> &nbsp;&nbsp; if `name` is not specified, the key in the map will be used as name <br/>
+> &nbsp;&nbsp; **only one** taint can be applied per taint name and per node <br/>
 
-### Node Type
-
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|----------|
-| name | Node name | string | `""` | false |
-| ip | Node IP (used by others node to communicate) | string (ip) | | true |
-| connection | Connection block used by `null_resource` to provision the node | [Connection block](https://www.terraform.io/docs/configuration/resources.html#provisioner-and-connection-resource-provisioners) | | false |
-| flags | Installation flags to be used on this node | list(string) | `[]` | false |
-| annotations | Map of annotations to be applied on this node (`{<name>: <value>}`) | map(string) | `{}` | false |
-| labels | Map of labels to be applied on this node (`{<name>: <value>}`) | map(string) | `{}` | false |
-| taints | Map of taints to be applied on this node (`{<name>: <value>}`) | map(string) | `{}` | false |
-
-> NOTES:  
-> &nbsp;&nbsp; if `name` is not specified, the key in the map will be used as name  
-> &nbsp;&nbsp; **only one** taint can be applied per taint name and per node
 
 ## Outputs
-| Name | Description | Type |
-|------|-------------|------|
-| summary | A summary of the current cluster state (version, server and agent list with all annotations, labels, ...) | string |
-| kube_config | A yaml encoded kubeconfig file | string |
-| kubernetes | A kubernetes object with cluster_ca_certificate, client_certificate and client_key properties | object |
-## More information
 
-### Security warning
+| Name | Description |
+|------|-------------|
+| <a name="output_kube_config"></a> [kube\_config](#output\_kube\_config) | Genereated kubeconfig. |
+| <a name="output_kubernetes"></a> [kubernetes](#output\_kubernetes) | Authentication credentials of Kubernetes (full administrator). |
+| <a name="output_kubernetes_ready"></a> [kubernetes\_ready](#output\_kubernetes\_ready) | Dependency endpoint to synchronize k3s installation and provisioning. |
+| <a name="output_summary"></a> [summary](#output\_summary) | Current state of k3s (version & nodes). |
 
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.0 |
+| <a name="requirement_http"></a> [http](#requirement\_http) | ~> 1.2 |
+| <a name="requirement_null"></a> [null](#requirement\_null) | ~> 2.1 |
+| <a name="requirement_random"></a> [random](#requirement\_random) | ~> 2.2 |
+
+## Security warning
 Because using external references on `destroy` provisionner is deprecated by Terraform, storing information
-inside each resources will be mandatory in order to manage several features like auto-draining node 
-and fields management. So, several fields like `connection` block will be available in your TF state. 
-This means that used password or private key will be **clearly readable** in this TF state.  
+inside each resources will be mandatory in order to manage several features like auto-draining node
+and fields management. So, several fields like `connection` block will be available in your TF state.
+This means that used password or private key will be **clearly readable** in this TF state.
 **Please do not use
 this module if you need to pass private key or password in the connection block, even if your TF state is
 securely stored**.
 
 ## License
-
 terraform-module-k3s is released under the **MIT License**. See the bundled [LICENSE](LICENSE) file for details.
+
+#
+*Generated with :heart: by [terraform-docs](https://github.com/terraform-docs/terraform-docs)*
+

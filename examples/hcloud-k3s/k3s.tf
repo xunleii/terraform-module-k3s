@@ -1,9 +1,9 @@
 module "k3s" {
   source = "./../.."
 
-  depends_on_ = hcloud_server.agents
-  k3s_version = "latest"
-  name        = "cluster.local"
+  depends_on_    = hcloud_server.agents
+  k3s_version    = "latest"
+  cluster_domain = "cluster.local"
   cidr = {
     pods     = "10.42.0.0/16"
     services = "10.43.0.0/16"

@@ -20,16 +20,16 @@ output "kube_config" {
         certificate-authority-data = base64encode(local.cluster_ca_certificate)
         server                     = "https://${local.root_server_connection.host}:6443"
       }
-      name = var.name
+      name = var.cluster_domain
     }]
     contexts = [{
       context = {
-        cluster = var.name
+        cluster = var.cluster_domain
         user : "master-user"
       }
-      name = var.name
+      name = var.cluster_domain
     }]
-    current-context = var.name
+    current-context = var.cluster_domain
     kind            = "Config"
     preferences     = {}
     users = [{
