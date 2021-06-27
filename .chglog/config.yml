@@ -5,24 +5,26 @@ info:
   repository_url: https://github.com/xunleii/terraform-module-k3s
 options:
   commits:
-    filters:
-      Type:
-        - feat
-        - fix
-        - perf
-        - refact
-        - doc
+    # filters:
+    #   Type:
+    #     - feat
+    #     - fix
+    #     - perf
+    #     - refactor
   commit_groups:
     title_maps:
+      chore: Others Changes
+      doc: Documentation Improvements
       feat: Features
       fix: Bug Fixes
       perf: Performance Improvements
-      refact: Code Refactoring
-      doc: Documentation
+      refactor: Code Refactoring
+      style: Code Style Formatting
   header:
-    pattern: "^(\\w*)\\:\\s(.*)$"
+    pattern: "^(\\w*)(?:\\(([\\w\\$\\.\\-\\*\\s]*)\\))?\\:\\s(.*)$"
     pattern_maps:
       - Type
+      - Scope
       - Subject
   notes:
     keywords:
