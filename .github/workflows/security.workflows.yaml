@@ -1,0 +1,18 @@
+name: Security hardening (Github Actions workflows)
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    paths: [".github/workflows/**"]
+  push:
+    branches: [master]
+    paths: [".github/workflows/**"]
+
+jobs:
+  ci_harden_security:
+    name: Github Action security hardening
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # renovate: tag=v2.3.4
+      - name: Ensure SHA pinned actions
+        uses: zgosalvez/github-actions-ensure-sha-pinned-actions@8877889a5717dad0b139f1d2925689aa68f88a43 # renovate: tag=v1.0.4

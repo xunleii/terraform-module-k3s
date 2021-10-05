@@ -1,0 +1,65 @@
+name: Terraform - PR plan validation
+
+on:
+  pull_request:
+    types: [labeled]
+
+defaults:
+  run:
+    working-directory: "examples/hcloud-k3s"
+
+jobs:
+  plan:
+    name: Terraform plan
+    runs-on: ubuntu-latest
+    if: ${{ github.event.label.name == 'terraform:plan' }}
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # renovate: tag=v2.3.4
+      - uses: hashicorp/setup-terraform@3d8debd658c92063839bc97da5c2427100420dec # renovate: tag=v1.3.2
+      - run: terraform init -backend=false
+      - run: terraform validate
+
+      - id: plan
+        env:
+          HCLOUD_TOKEN: ${{ secrets.HCLOUD_TOKEN }}
+          TF_VAR_ssh_key: ""
+        run: terraform plan -input=false -no-color
+        working-directory: examples/hcloud-k3s
+
+      - uses: marocchino/sticky-pull-request-comment@322a2451dae6c7831d1a8b931275a7f78147c888 # renovate: tag=v2.1.0
+        if: success()
+        with:
+          recreate: true
+          message: |
+            # Terraform CI/CD
+            - [x] :paintbrush: Check if all Terraform configuration files are in a canonical format
+            - [x] :hammer_and_wrench: Validate the configuration files
+            - [x] :scroll: Generate a speculative execution plan
+            ### Plan output
+            ```terraform
+            ${{ steps.plan.outputs.stdout }}
+            ```
+            #
+            > _Report based on commit ${{ github.sha }} (authored by **@${{ github.actor }}**).  See [`actions#${{ github.run_id }}`](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) for more details._
+      - uses: marocchino/sticky-pull-request-comment@322a2451dae6c7831d1a8b931275a7f78147c888 # renovate: tag=v2.1.0
+        if: failure() && steps.plan.outcome == 'failure'
+        with:
+          recreate: true
+          message: |
+            # Terraform CI/CD
+            - [x] :paintbrush: Check if all Terraform configuration files are in a canonical format
+            - [x] :hammer_and_wrench: Validate the configuration files
+            ### 🚫 Plan failed
+            ```
+            ${{ steps.plan.outputs.stderr }}
+            ```
+            #
+            > _Report based on commit ${{ github.sha }} (authored by **@${{ github.actor }}**).  See [`actions#${{ github.run_id }}`](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) for more details._
+
+      - name: Unlabel 'terraform:plan'
+        uses: actions-ecosystem/action-remove-labels@2ce5d41b4b6aa8503e285553f75ed56e0a40bae0 # renovate: tag=v1.3.0
+        if: always()
+        with:
+          labels: terraform:plan
