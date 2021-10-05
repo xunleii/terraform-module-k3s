@@ -14,7 +14,7 @@ jobs:
         id: fmt
         run: terraform fmt -check -recursive -diff -no-color
         continue-on-error: true
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@v5
         if: steps.fmt.outputs.exitcode != 0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -47,7 +47,7 @@ jobs:
         run: terraform init -no-color
         working-directory: examples/hcloud-k3s
         continue-on-error: true
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@v5
         if: steps.init.outputs.exitcode != 0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -72,7 +72,7 @@ jobs:
         run: terraform validate -no-color
         working-directory: examples/hcloud-k3s
         continue-on-error: true
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@v5
         if: steps.validate.outputs.exitcode != 0
         env:
           STDOUT: "terraform\n${{ steps.validate.outputs.stdout }}"
@@ -101,7 +101,7 @@ jobs:
         run: terraform plan -input=false -no-color
         working-directory: examples/hcloud-k3s
         continue-on-error: true
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@v5
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
