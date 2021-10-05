@@ -111,6 +111,7 @@ module "k3s" {
 | <a name="input_managed_fields"></a> [managed\_fields](#input\_managed\_fields) | List of fields which must be managed by this module (can be annotation, label and/or taint). | `list(string)` | <pre>[<br>  "annotation",<br>  "label",<br>  "taint"<br>]</pre> | no |
 | <a name="input_name"></a> [name](#input\_name) | K3s cluster domain name (see https://rancher.com/docs/k3s/latest/en/installation/install-options/). This input is deprecated and will be remove in the next major release. Use `cluster_domain` instead. | `string` | `"cluster.local"` | no |
 | <a name="input_separator"></a> [separator](#input\_separator) | Separator used to separates node name and field name (used to manage annotations, labels and taints). | `string` | `"|"` | no |
+| <a name="input_use_sudo"></a> [use_sudo](#input\_use\_sudo) | Whether or not to use kubectl with sudo during cluster setup. | `bool` | `false` | no |
 
 > NOTES: <br/>
 > &nbsp;&nbsp; servers must have an odd number of nodes <br/>
