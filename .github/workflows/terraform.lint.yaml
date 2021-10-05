@@ -1,0 +1,30 @@
+name: Terraform - PR validation
+
+on:
+  pull_request:
+    paths: ["**.tf"]
+
+jobs:
+  lint:
+    name: Terraform - PR lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # renovate: tag=v2.3.4
+      - uses: hashicorp/setup-terraform@3d8debd658c92063839bc97da5c2427100420dec # renovate: tag=v1.3.2
+      - run: terraform init -backend=false
+      - run: terraform fmt -check -recursive -diff -no-color
+
+  validate:
+    name: Terraform - PR validate
+    needs: [lint]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        workdir: ["hcloud-k3s", "civo-k3s"]
+    steps:
+      - uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # renovate: tag=v2.3.4
+      - uses: hashicorp/setup-terraform@3d8debd658c92063839bc97da5c2427100420dec # renovate: tag=v1.3.2
+      - run: terraform init -backend=false
+        working-directory: ${{ matrix.workdir }}
+      - run: terraform validate
+        working-directory: ${{ matrix.workdir }}

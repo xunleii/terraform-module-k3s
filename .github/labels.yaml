@@ -1,0 +1,46 @@
+- name: kind/bug
+  description: Something isn't working
+  color: D73A4A
+- name: kind/dependencies
+  description: Dependencies upgrade
+  color: 2B098D
+- name: kind/documentation
+  description: Improvements or additions to documentation
+  color: 0075CA
+- name: kind/enhancement
+  description: New feature or request
+  color: A2EEEF
+- name: kind/question
+  description: Further information is requested
+  color: D876E3
+
+- name: size/XS
+  color: 008000
+- name: size/S
+  color: 008000
+- name: size/M
+  color: FFFF00
+- name: size/L
+  color: FF0000
+- name: size/XL
+  color: FF0000
+
+- name: terraform:plan
+  description: Invoke Terraform plan workflow on the current PR
+  color: 7A55CC
+
+- name: duplicate
+  description: This doesn't seem right
+  color: CFD3D7
+- name: good first issue
+  description: Good for newcomers
+  color: 7057FF
+- name: help wanted
+  description: Extra attention is needed
+  color: 008672
+- name: invalid
+  description: This doesn't seem right
+  color: E4E669
+- name: wontfix
+  description: This will not be worked on
+  color: FFFFFF

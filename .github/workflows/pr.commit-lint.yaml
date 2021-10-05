@@ -1,0 +1,13 @@
+name: Lint PR commits
+on:
+  pull_request:
+
+jobs:
+  commitlint:
+    name: Lint commit messages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # renovate: tag=v2.3.4
+        with:
+          fetch-depth: 0
+      - uses: wagoid/commitlint-github-action@8d669e311fc7502dc60f825648fd08839988454e # renovate: tag=v4.1.5
