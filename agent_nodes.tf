@@ -61,6 +61,7 @@ locals {
       )))
     }
   }
+  kubectl_cmd = var.use_sudo ? "sudo kubectl" : "kubectl"
 }
 
 // Install k3s agent
@@ -129,6 +130,7 @@ resource "null_resource" "agents_drain" {
     agent_name      = local.agents_metadata[split(var.separator, each.key)[0]].name
     connection_json = base64encode(jsonencode(local.root_server_connection))
     drain_timeout   = var.drain_timeout
+    kubectl_cmd     = local.kubectl_cmd
   }
   // Because we use triggers as memory area, we need to ignore all changes on it.
   lifecycle { ignore_changes = [triggers] }
@@ -166,7 +168,7 @@ resource "null_resource" "agents_drain" {
   provisioner "remote-exec" {
     when = destroy
     inline = [
-      "kubectl drain ${self.triggers.agent_name} --delete-local-data --force --ignore-daemonsets --timeout=${self.triggers.drain_timeout}"
+      "${self.triggers.kubectl_cmd} drain ${self.triggers.agent_name} --delete-local-data --force --ignore-daemonsets --timeout=${self.triggers.drain_timeout}"
     ]
   }
 }
@@ -184,9 +186,10 @@ resource "null_resource" "agents_annotation" {
     // Because some fields must be used on destruction, we need to store them into the current
     // object. The only way to do that is to use triggers to store theses fields.
     connection_json = base64encode(jsonencode(local.root_server_connection))
+    kubectl_cmd     = local.kubectl_cmd
   }
   // Because we dont care about connection modification, we ignore its changes.
-  lifecycle { ignore_changes = [triggers["connection_json"]] }
+  lifecycle { ignore_changes = [triggers["connection_json"], triggers["kubectl_cmd"]] }
 
   connection {
     type = jsondecode(base64decode(self.triggers.connection_json)).type
@@ -221,14 +224,14 @@ resource "null_resource" "agents_annotation" {
   provisioner "remote-exec" {
     inline = [
       "until kubectl get node ${self.triggers.agent_name}; do sleep 1; done",
-      "kubectl annotate --overwrite node ${self.triggers.agent_name} ${self.triggers.annotation_name}=${self.triggers.on_value_changes}"
+      "${self.triggers.kubectl_cmd} annotate --overwrite node ${self.triggers.agent_name} ${self.triggers.annotation_name}=${self.triggers.on_value_changes}"
     ]
   }
 
   provisioner "remote-exec" {
     when = destroy
     inline = [
-      "kubectl annotate node ${self.triggers.agent_name} ${self.triggers.annotation_name}-"
+      "${self.triggers.kubectl_cmd} annotate node ${self.triggers.agent_name} ${self.triggers.annotation_name}-"
     ]
   }
 }
@@ -246,9 +249,10 @@ resource "null_resource" "agents_label" {
     // Because some fields must be used on destruction, we need to store them into the current
     // object. The only way to do that is to use triggers to store theses fields.
     connection_json = base64encode(jsonencode(local.root_server_connection))
+    kubectl_cmd     = local.kubectl_cmd
   }
   // Because we dont care about connection modification, we ignore its changes.
-  lifecycle { ignore_changes = [triggers["connection_json"]] }
+  lifecycle { ignore_changes = [triggers["connection_json"], triggers["kubectl_cmd"]] }
 
   connection {
     type = jsondecode(base64decode(self.triggers.connection_json)).type
@@ -282,15 +286,15 @@ resource "null_resource" "agents_label" {
 
   provisioner "remote-exec" {
     inline = [
-      "until kubectl get node ${self.triggers.agent_name}; do sleep 1; done",
-      "kubectl label --overwrite node ${self.triggers.agent_name} ${self.triggers.label_name}=${self.triggers.on_value_changes}"
+      "until ${self.triggers.kubectl_cmd} get node ${self.triggers.agent_name}; do sleep 1; done",
+      "${self.triggers.kubectl_cmd} label --overwrite node ${self.triggers.agent_name} ${self.triggers.label_name}=${self.triggers.on_value_changes}"
     ]
   }
 
   provisioner "remote-exec" {
     when = destroy
     inline = [
-      "kubectl label node ${self.triggers.agent_name} ${self.triggers.label_name}-"
+      "${self.triggers.kubectl_cmd} label node ${self.triggers.agent_name} ${self.triggers.label_name}-"
     ]
   }
 }
@@ -308,9 +312,10 @@ resource "null_resource" "agents_taint" {
     // Because some fields must be used on destruction, we need to store them into the current
     // object. The only way to do that is to use triggers to store theses fields.
     connection_json = base64encode(jsonencode(local.root_server_connection))
+    kubectl_cmd     = local.kubectl_cmd
   }
   // Because we dont care about connection modification, we ignore its changes.
-  lifecycle { ignore_changes = [triggers["connection_json"]] }
+  lifecycle { ignore_changes = [triggers["connection_json"], triggers["kubectl_cmd"]] }
 
   connection {
     type = jsondecode(base64decode(self.triggers.connection_json)).type
@@ -344,15 +349,15 @@ resource "null_resource" "agents_taint" {
 
   provisioner "remote-exec" {
     inline = [
-      "until kubectl get node ${self.triggers.agent_name}; do sleep 1; done",
-      "kubectl taint node ${self.triggers.agent_name} ${self.triggers.taint_name}=${self.triggers.on_value_changes} --overwrite"
+      "until ${self.triggers.kubectl_cmd} get node ${self.triggers.agent_name}; do sleep 1; done",
+      "${self.triggers.kubectl_cmd} taint node ${self.triggers.agent_name} ${self.triggers.taint_name}=${self.triggers.on_value_changes} --overwrite"
     ]
   }
 
   provisioner "remote-exec" {
     when = destroy
     inline = [
-      "kubectl taint node ${self.triggers.agent_name} ${self.triggers.taint_name}-"
+      "${self.triggers.kubectl_cmd} taint node ${self.triggers.agent_name} ${self.triggers.taint_name}-"
     ]
   }
 }

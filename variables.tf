@@ -146,3 +146,9 @@ variable "separator" {
   description = "Separator used to separates node name and field name (used to manage annotations, labels and taints)."
   default     = "|"
 }
+
+variable "use_sudo" {
+  description = "Whether or not to use kubectl with sudo during cluster setup."
+  default     = false
+  type        = bool
+}
