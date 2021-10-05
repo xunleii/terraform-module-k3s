@@ -41,7 +41,7 @@ module "k3s" {
   source      = "./../.."
   k3s_version = "v1.19.2+k3s1"
 
-  name = "civo_k3s"
+  cluster_domain = "civo_k3s"
 
   drain_timeout            = "60s"
   managed_fields           = ["label"]
