@@ -44,3 +44,14 @@
 - name: wontfix
   description: This will not be worked on
   color: FFFFFF
+
+# Hacktoberfest#2021
+- name: hacktoberfest-accepted
+  description: Validate your Hacktoberfest contribution
+  color: 5D2647
+- name: spam
+  description: Hacktoberfest spam PR spotted !
+  color: EE8D1C
+- name: invalid
+  description: Invalid Hacktoberfest PR
+  color: EE8D1C
