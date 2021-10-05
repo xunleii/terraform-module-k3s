@@ -185,6 +185,9 @@ dist
 *.tfstate
 *.tfstate.*
 
+# .terraform.lock.hcl on examples folders
+examples/**/.terraform.lock.hcl
+
 # Crash log files
 crash.log
 
