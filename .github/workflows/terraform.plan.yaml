@@ -28,7 +28,7 @@ jobs:
         run: terraform plan -input=false -no-color
         working-directory: examples/hcloud-k3s
 
-      - uses: marocchino/sticky-pull-request-comment@82e7a0d3c51217201b3fedc4ddde6632e969a477 # renovate: tag=v2.1.1
+      - uses: marocchino/sticky-pull-request-comment@39c5b5dc7717447d0cba270cd115037d32d28443 # renovate: tag=v2.2.0
         if: success()
         with:
           recreate: true
@@ -43,7 +43,7 @@ jobs:
             ```
             #
             > _Report based on commit ${{ github.sha }} (authored by **@${{ github.actor }}**).  See [`actions#${{ github.run_id }}`](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) for more details._
-      - uses: marocchino/sticky-pull-request-comment@82e7a0d3c51217201b3fedc4ddde6632e969a477 # renovate: tag=v2.1.1
+      - uses: marocchino/sticky-pull-request-comment@39c5b5dc7717447d0cba270cd115037d32d28443 # renovate: tag=v2.2.0
         if: failure() && steps.plan.outcome == 'failure'
         with:
           recreate: true
