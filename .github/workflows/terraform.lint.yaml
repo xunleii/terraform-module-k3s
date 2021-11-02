@@ -9,7 +9,7 @@ jobs:
     name: Terraform - PR lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@1e204e9a9253d643386038d443f96446fa156a97 # renovate: tag=v2.3.5
+      - uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # renovate: tag=v2.4.0
       - uses: hashicorp/setup-terraform@3d8debd658c92063839bc97da5c2427100420dec # renovate: tag=v1.3.2
       - run: terraform init -backend=false
       - run: terraform fmt -check -recursive -diff -no-color
@@ -22,7 +22,7 @@ jobs:
       matrix:
         workdir: ["examples/hcloud-k3s", "examples/civo-k3s"]
     steps:
-      - uses: actions/checkout@1e204e9a9253d643386038d443f96446fa156a97 # renovate: tag=v2.3.5
+      - uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # renovate: tag=v2.4.0
       - uses: hashicorp/setup-terraform@3d8debd658c92063839bc97da5c2427100420dec # renovate: tag=v1.3.2
       - run: terraform init -backend=false
         working-directory: ${{ matrix.workdir }}
