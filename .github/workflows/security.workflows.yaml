@@ -13,6 +13,6 @@ jobs:
     name: Github Action security hardening
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@1e204e9a9253d643386038d443f96446fa156a97 # renovate: tag=v2.3.5
+      - uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # renovate: tag=v2.4.0
       - name: Ensure SHA pinned actions
         uses: zgosalvez/github-actions-ensure-sha-pinned-actions@0b552a197e44b819629237e065d781f5ca691460 # renovate: tag=v1.1.1
