@@ -15,4 +15,4 @@ jobs:
     steps:
       - uses: actions/checkout@1e204e9a9253d643386038d443f96446fa156a97 # renovate: tag=v2.3.5
       - name: Ensure SHA pinned actions
-        uses: zgosalvez/github-actions-ensure-sha-pinned-actions@8877889a5717dad0b139f1d2925689aa68f88a43 # renovate: tag=v1.0.4
+        uses: zgosalvez/github-actions-ensure-sha-pinned-actions@0b552a197e44b819629237e065d781f5ca691460 # renovate: tag=v1.1.1
