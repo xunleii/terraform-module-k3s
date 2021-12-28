@@ -72,3 +72,8 @@ output "kubernetes_ready" {
   description = "Dependency endpoint to synchronize k3s installation and provisioning."
   value       = null_resource.kubernetes_ready
 }
+
+output "kubernetes_cluster_secret" {
+  description = "Secret token used to join nodes to the cluster"
+  value       = random_password.k3s_cluster_secret.result
+}
