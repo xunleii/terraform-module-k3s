@@ -1,0 +1,21 @@
+name: Generate & push changelog (master only)
+on:
+  push:
+    branches: [master]
+
+jobs:
+  generate-push-changelog:
+    name: Generate & push changelog
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # renovate: tag=v2.4.0
+      - uses: heinrichreimer/github-changelog-generator-action@6f5b9494dd265d6fb7243a10c53dc0169c55f247 # renovate: tag=v2.3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: EndBug/add-and-commit@8c12ff729a98cfbcd3fe38b49f55eceb98a5ec02 # renovate: tag=v7.5.0
+        with:
+          add: CHANGELOG.md
+          default_author: github_actions
+          message: "Commit last changes to CHANGELOG.md"
