@@ -1,341 +1,275 @@
+# Changelog
 
-<a name="v3.0.0"></a>
-## [v3.0.0] - 2021-06-24
-### Bug Fixes
-- **server:** configure CIDR on all server nodes
+## [Unreleased](https://github.com/xunleii/terraform-module-k3s/tree/HEAD)
 
-### Code Refactoring
-- **inputs:** use `cluster_domain` instead of `name`
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v3.0.0...HEAD)
 
-### Docs
-- **readme:** use tf-docs to generate README automatically from TF config
+**Dependencies upgrades:**
 
-### Others Changes
-- **repo:** add git hooks for commit message lint
-- **tf:** upgrade TF required version to 1.x release
+- chore\(deps\): update commitlint monorepo \(major\) [\#78](https://github.com/xunleii/terraform-module-k3s/pull/78) (@renovate[bot])
+- chore\(deps\): update actions/checkout action to v2.4.0 [\#77](https://github.com/xunleii/terraform-module-k3s/pull/77) (@renovate[bot])
+- chore\(deps\): update commitlint monorepo to v15 \(major\) [\#76](https://github.com/xunleii/terraform-module-k3s/pull/76) (@renovate[bot])
+- chore\(deps\): update zgosalvez/github-actions-ensure-sha-pinned-actions action to v1.1.1 [\#75](https://github.com/xunleii/terraform-module-k3s/pull/75) (@renovate[bot])
+- chore\(deps\): update dependency husky to v7.0.4 [\#74](https://github.com/xunleii/terraform-module-k3s/pull/74) (@renovate[bot])
+- chore\(deps\): update marocchino/sticky-pull-request-comment action to v2.2.0 [\#73](https://github.com/xunleii/terraform-module-k3s/pull/73) (@renovate[bot])
+- chore\(deps\): update actions/checkout action to v2.3.5 [\#72](https://github.com/xunleii/terraform-module-k3s/pull/72) (@renovate[bot])
+- chore\(deps\): update wagoid/commitlint-github-action action to v4.1.9 [\#71](https://github.com/xunleii/terraform-module-k3s/pull/71) (@renovate[bot])
+- chore\(deps\): update dependency @commitlint/cli to v13.2.1 [\#70](https://github.com/xunleii/terraform-module-k3s/pull/70) (@renovate[bot])
+- chore\(deps\): update marocchino/sticky-pull-request-comment action to v2.1.1 [\#68](https://github.com/xunleii/terraform-module-k3s/pull/68) (@renovate[bot])
+- chore\(deps\): update terraform random to v3 [\#65](https://github.com/xunleii/terraform-module-k3s/pull/65) (@renovate[bot])
+- chore\(deps\): update terraform null to v3 [\#64](https://github.com/xunleii/terraform-module-k3s/pull/64) (@renovate[bot])
+- chore\(deps\): update terraform http to v2 [\#63](https://github.com/xunleii/terraform-module-k3s/pull/63) (@renovate[bot])
+- chore\(deps\): update dependency husky to v7 [\#62](https://github.com/xunleii/terraform-module-k3s/pull/62) (@renovate[bot])
+- chore\(deps\): update commitlint monorepo to v13 \(major\) [\#61](https://github.com/xunleii/terraform-module-k3s/pull/61) (@renovate[bot])
+- chore\(deps\): pin dependencies [\#58](https://github.com/xunleii/terraform-module-k3s/pull/58) (@renovate[bot])
 
-### Pull Requests
-- Merge pull request [#54](https://github.com/xunleii/terraform-module-k3s/issues/54) from xunleii/fix/resolve-[#53](https://github.com/xunleii/terraform-module-k3s/issues/53)-[#52](https://github.com/xunleii/terraform-module-k3s/issues/52)
+**Merged pull requests:**
 
-### BREAKING CHANGE
+- Output the Kubernetes cluster secret [\#80](https://github.com/xunleii/terraform-module-k3s/pull/80) (@orf)
+- Add Hacktoberfest labels [\#69](https://github.com/xunleii/terraform-module-k3s/pull/69) (@xunleii)
+- Rewrite CI/CD workflows [\#67](https://github.com/xunleii/terraform-module-k3s/pull/67) (@xunleii)
+- Add new use\_sudo input to the documentation [\#66](https://github.com/xunleii/terraform-module-k3s/pull/66) (@Corwind)
+- add option to use kubectl with sudo [\#57](https://github.com/xunleii/terraform-module-k3s/pull/57) (@Corwind)
+- Configure Renovate [\#56](https://github.com/xunleii/terraform-module-k3s/pull/56) (@renovate[bot])
+- Fix civo example [\#55](https://github.com/xunleii/terraform-module-k3s/pull/55) (@debovema)
 
-Deprecation of `name` variable
+## [v3.0.0](https://github.com/xunleii/terraform-module-k3s/tree/v3.0.0) (2021-06-27)
 
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v2.2.4...v3.0.0)
 
-<a name="v2.2.4"></a>
-## [v2.2.4] - 2021-04-30
-### Pull Requests
-- Merge pull request [#51](https://github.com/xunleii/terraform-module-k3s/issues/51) from NicoWde/master
-- Merge pull request [#49](https://github.com/xunleii/terraform-module-k3s/issues/49) from caleb-devops/master
+**Closed issues:**
 
+- rename variable name to cluster\_domain [\#53](https://github.com/xunleii/terraform-module-k3s/issues/53)
+- Pod and Service cidrs must be passed on all masters \(not just the 1st one\) [\#52](https://github.com/xunleii/terraform-module-k3s/issues/52)
+- Hetzner example doesn't work [\#50](https://github.com/xunleii/terraform-module-k3s/issues/50)
+- mkdir: cannot create directory ‘/var/lib/rancher’: Permission denied [\#42](https://github.com/xunleii/terraform-module-k3s/issues/42)
 
-<a name="v2.2.3"></a>
-## [v2.2.3] - 2021-02-17
-### Bug Fixes
-- add *_drain to kubernetes_ready
+**Merged pull requests:**
 
-### Pull Requests
-- Merge pull request [#48](https://github.com/xunleii/terraform-module-k3s/issues/48) from xunleii/fix/add-drain-to-dependencies
+- Resolve issues \#52 & \#53 [\#54](https://github.com/xunleii/terraform-module-k3s/pull/54) (@xunleii)
 
+## [v2.2.4](https://github.com/xunleii/terraform-module-k3s/tree/v2.2.4) (2021-04-30)
 
-<a name="v2.2.2"></a>
-## [v2.2.2] - 2021-02-13
-### Features
-- add dependency endpoint to allow sychronizing k3s install & provisionning
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v2.2.3...v2.2.4)
 
-### Pull Requests
-- Merge pull request [#47](https://github.com/xunleii/terraform-module-k3s/issues/47) from xunleii/features/done-trigger
+**Closed issues:**
 
+- Failed to join the cluster with the same name [\#26](https://github.com/xunleii/terraform-module-k3s/issues/26)
 
-<a name="v2.2.1"></a>
-## [v2.2.1] - 2021-02-10
-### Bug Fixes
-- change README node name
-- post-pone node labeling after installation
+**Merged pull requests:**
 
-### Pull Requests
-- Merge pull request [#46](https://github.com/xunleii/terraform-module-k3s/issues/46) from xunleii/fix/node-install
+- Enhancing 'Hetzner example' docs [\#51](https://github.com/xunleii/terraform-module-k3s/pull/51) (@NicoWde)
+- Add support for provisioning without logging in as root [\#49](https://github.com/xunleii/terraform-module-k3s/pull/49) (@caleb-devops)
 
+## [v2.2.3](https://github.com/xunleii/terraform-module-k3s/tree/v2.2.3) (2021-02-17)
 
-<a name="v2.2.0"></a>
-## [v2.2.0] - 2021-01-03
-### Bug Fixes
-- remove useless interpolation syntax
-- lint module with TF 0.14.x
-- avoid JS interpretation on TF vars
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v2.2.2...v2.2.3)
 
-### Documentation Improvements
-- use : instead of = in README
+**Merged pull requests:**
 
-### Pull Requests
-- Merge pull request [#40](https://github.com/xunleii/terraform-module-k3s/issues/40) from xunleii/fix/what-ci
-- Merge pull request [#39](https://github.com/xunleii/terraform-module-k3s/issues/39) from DblK/master
-- Merge pull request [#37](https://github.com/xunleii/terraform-module-k3s/issues/37) from noct-cloud/master
-- Merge pull request [#36](https://github.com/xunleii/terraform-module-k3s/issues/36) from guitcastro/patch-1
+- fix: add \*\_drain to kubernetes\_ready [\#48](https://github.com/xunleii/terraform-module-k3s/pull/48) (@xunleii)
 
+## [v2.2.2](https://github.com/xunleii/terraform-module-k3s/tree/v2.2.2) (2021-02-13)
 
-<a name="v2.1.0"></a>
-## [v2.1.0] - 2020-08-26
-### Bug Fixes
-- use k3s update channels for latest releases instead of github
-- replace network_id with subnet_id
-- use k3s update channels for latest releases instead of github
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v2.2.1...v2.2.2)
 
-### Documentation Improvements
-- update README
+**Merged pull requests:**
 
-### Others Changes
-- bump terraform requirement to 0.13
-- update actions/github-script to v3
+- feat: add dependency endpoint to allow sychronizing k3s install & provisionning [\#47](https://github.com/xunleii/terraform-module-k3s/pull/47) (@xunleii)
 
-### Pull Requests
-- Merge pull request [#32](https://github.com/xunleii/terraform-module-k3s/issues/32) from tedsteen/fix-node-not-found
-- Merge pull request [#35](https://github.com/xunleii/terraform-module-k3s/issues/35) from xunleii/chore-update-readme
-- Merge pull request [#33](https://github.com/xunleii/terraform-module-k3s/issues/33) from xunleii/fix-ci
-- Merge pull request [#30](https://github.com/xunleii/terraform-module-k3s/issues/30) from solidnerd/fix-examples-for-hcloud-provider
-- Merge pull request [#28](https://github.com/xunleii/terraform-module-k3s/issues/28) from solidnerd/fix-latest-feature
+## [v2.2.1](https://github.com/xunleii/terraform-module-k3s/tree/v2.2.1) (2021-02-10)
 
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v2.2.0...v2.2.1)
 
-<a name="v2.0.1"></a>
-## [v2.0.1] - 2020-05-31
-### Bug Fixes
-- do not uninstall k3s during upgrade
+**Closed issues:**
 
-### Pull Requests
-- Merge pull request [#25](https://github.com/xunleii/terraform-module-k3s/issues/25) from xunleii/24-fix-version-upgrade
+- failed to start k3s node with label `node-role.kubernetes.io/***` [\#45](https://github.com/xunleii/terraform-module-k3s/issues/45)
+- register: metadata.name: Invalid value [\#44](https://github.com/xunleii/terraform-module-k3s/issues/44)
+- Fix this stupid CI [\#38](https://github.com/xunleii/terraform-module-k3s/issues/38)
 
+**Merged pull requests:**
 
-<a name="v2.0.0"></a>
-## [v2.0.0] - 2020-05-31
-### Bug Fixes
-- format main.tf file
-- use new TF Action for Terraform Format
-- remove useless validation
-- force agent or server mode during install
-- store connection value directly into objects
+- fix: correct some installation issues \(\#44 & \#45\) [\#46](https://github.com/xunleii/terraform-module-k3s/pull/46) (@xunleii)
+- Generate Kubeconfig file [\#37](https://github.com/xunleii/terraform-module-k3s/pull/37) (@guitcastro)
+- removed missing additional\_flags from readme [\#36](https://github.com/xunleii/terraform-module-k3s/pull/36) (@guitcastro)
+- doc: update README [\#35](https://github.com/xunleii/terraform-module-k3s/pull/35) (@xunleii)
 
-### Documentation Improvements
-- update README
-- add dependency variable
-- document all TF files
-- fix README example
+## [v2.2.0](https://github.com/xunleii/terraform-module-k3s/tree/v2.2.0) (2021-01-03)
 
-### Draft
-- prepare example for the v2 DSL
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v2.1.0...v2.2.0)
 
-### Features
-- add validation for agent nodes
-- add summary output
-- ignore 'connection_json' changes
-- add node drain mechanism
-- use root server to manage annotation/label/taint
-- add agent node management
-- add multi servers feature
-- add server annotation management
-- add server node management
-- update module variables
+**Closed issues:**
 
-### Others Changes
-- add plan step in Github Action workflow
-- update CI workflow
+- kube\_config output missing  [\#41](https://github.com/xunleii/terraform-module-k3s/issues/41)
+- NodeNotFound when trying to update nodes [\#31](https://github.com/xunleii/terraform-module-k3s/issues/31)
 
-### Refact
-- add missing linereturn
-- update/remove useless requirement
-- clean example
-- remove k3s_ prefix
-- rename 'enabled_managed_field' in 'managed_fields'
+**Merged pull requests:**
 
-### Pull Requests
-- Merge pull request [#23](https://github.com/xunleii/terraform-module-k3s/issues/23) from xunleii/22-fix-CI
-- Merge pull request [#21](https://github.com/xunleii/terraform-module-k3s/issues/21) from xunleii/feat-rewrote-module
-- Merge pull request [#19](https://github.com/xunleii/terraform-module-k3s/issues/19) from tedsteen/flags-per-agent
+- Try to fix this CI.... another time [\#40](https://github.com/xunleii/terraform-module-k3s/pull/40) (@xunleii)
+- Fix doc typo in readme [\#39](https://github.com/xunleii/terraform-module-k3s/pull/39) (@DblK)
 
+## [v2.1.0](https://github.com/xunleii/terraform-module-k3s/tree/v2.1.0) (2020-08-26)
 
-<a name="v1.7.0"></a>
-## [v1.7.0] - 2020-02-01
-### Features
-- add taints & labels
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v2.0.1...v2.1.0)
 
-### Test
-- update tests for taints & labels
+**Closed issues:**
 
-### Pull Requests
-- Merge pull request [#17](https://github.com/xunleii/terraform-module-k3s/issues/17) from xunleii/feat-add-node-taint-label
+- Deprecation of network\_id in `hcloud_server_network` [\#29](https://github.com/xunleii/terraform-module-k3s/issues/29)
+- Remove or fix the 'latest' feature [\#27](https://github.com/xunleii/terraform-module-k3s/issues/27)
+- Agent not update when k3s version changes [\#24](https://github.com/xunleii/terraform-module-k3s/issues/24)
+- Need actions to test automatically PR [\#5](https://github.com/xunleii/terraform-module-k3s/issues/5)
 
+**Merged pull requests:**
 
-<a name="v1.6.3"></a>
-## [v1.6.3] - 2019-12-28
-### Bug Fixes
-- use node_name field in node deletion
+- fix: repair Terraform workflow \(CI\) [\#33](https://github.com/xunleii/terraform-module-k3s/pull/33) (@xunleii)
+- Make sure the node is up before trying to use it. [\#32](https://github.com/xunleii/terraform-module-k3s/pull/32) (@tedsteen)
+- fix: replace network\_id with subnet\_id [\#30](https://github.com/xunleii/terraform-module-k3s/pull/30) (@solidnerd)
+- fix: use k3s update channels for latest releases instead of github [\#28](https://github.com/xunleii/terraform-module-k3s/pull/28) (@solidnerd)
 
-### Pull Requests
-- Merge pull request [#16](https://github.com/xunleii/terraform-module-k3s/issues/16) from xunleii/fix-use-node-cache
+## [v2.0.1](https://github.com/xunleii/terraform-module-k3s/tree/v2.0.1) (2020-05-31)
 
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v2.0.0...v2.0.1)
 
-<a name="v1.6.2"></a>
-## [v1.6.2] - 2019-12-21
-### Features
-- use name in agent nodes
+**Closed issues:**
 
-### Pull Requests
-- Merge pull request [#15](https://github.com/xunleii/terraform-module-k3s/issues/15) from xunleii/feat-use-name-in-agent
+- CI needs to be fixed before v2 release [\#22](https://github.com/xunleii/terraform-module-k3s/issues/22)
 
+**Merged pull requests:**
 
-<a name="v1.6.1"></a>
-## [v1.6.1] - 2019-12-04
-### Features
-- upload k3s installer on node
-- upload k3s version only if latest is chosen
+- fix: do not uninstall k3s during upgrade [\#25](https://github.com/xunleii/terraform-module-k3s/pull/25) (@xunleii)
 
-### Pull Requests
-- Merge pull request [#14](https://github.com/xunleii/terraform-module-k3s/issues/14) from xunleii/feat-upload-installer
+## [v2.0.0](https://github.com/xunleii/terraform-module-k3s/tree/v2.0.0) (2020-05-31)
 
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v1.7.0...v2.0.0)
 
-<a name="v1.6.0"></a>
-## [v1.6.0] - 2019-12-04
-### Refact
-- rename node roles in server and agent
+**Closed issues:**
 
-### Pull Requests
-- Merge pull request [#13](https://github.com/xunleii/terraform-module-k3s/issues/13) from xunleii/fix-rename-node-role
+- Server taints flags are not used [\#20](https://github.com/xunleii/terraform-module-k3s/issues/20)
+- Make it possible to have additional flags per agent [\#18](https://github.com/xunleii/terraform-module-k3s/issues/18)
 
+**Merged pull requests:**
 
-<a name="v1.5.0"></a>
-## [v1.5.0] - 2019-12-01
-### Documentation Improvements
-- update module usage
+- fix: update Github Actions worflow [\#23](https://github.com/xunleii/terraform-module-k3s/pull/23) (@xunleii)
+- feat: rewrote module [\#21](https://github.com/xunleii/terraform-module-k3s/pull/21) (@xunleii)
+- Additional flags per instance [\#19](https://github.com/xunleii/terraform-module-k3s/pull/19) (@tedsteen)
 
-### Refact
-- update examples with module refactoring
-- use new module variables
+## [v1.7.0](https://github.com/xunleii/terraform-module-k3s/tree/v1.7.0) (2020-01-31)
 
-### Pull Requests
-- Merge pull request [#12](https://github.com/xunleii/terraform-module-k3s/issues/12) from xunleii/refact-clean-module
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v1.6.3...v1.7.0)
 
+**Merged pull requests:**
 
-<a name="v1.4.0"></a>
-## [v1.4.0] - 2019-11-28
-### Refact
-- clean custom flags feature
+- feat: add node taints & labels [\#17](https://github.com/xunleii/terraform-module-k3s/pull/17) (@xunleii)
 
-### Pull Requests
-- Merge pull request [#11](https://github.com/xunleii/terraform-module-k3s/issues/11) from xunleii/refact-clean-flags
+## [v1.6.3](https://github.com/xunleii/terraform-module-k3s/tree/v1.6.3) (2019-12-28)
 
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v1.6.2...v1.6.3)
 
-<a name="v1.3.2"></a>
-## [v1.3.2] - 2019-11-27
-### Bug Fixes
-- join custom arguments
+**Merged pull requests:**
 
-### Pull Requests
-- Merge pull request [#10](https://github.com/xunleii/terraform-module-k3s/issues/10) from xunleii/fix-join-custom-args
+- fix: use node\_name field in node deletion [\#16](https://github.com/xunleii/terraform-module-k3s/pull/16) (@xunleii)
 
+## [v1.6.2](https://github.com/xunleii/terraform-module-k3s/tree/v1.6.2) (2019-12-21)
 
-<a name="v1.3.1"></a>
-## [v1.3.1] - 2019-11-27
-### Features
-- add custom arguments
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v1.6.1...v1.6.2)
 
-### Pull Requests
-- Merge pull request [#9](https://github.com/xunleii/terraform-module-k3s/issues/9) from xunleii/feat-add-custom-args
+**Merged pull requests:**
 
+- feat: use name in agent nodes [\#15](https://github.com/xunleii/terraform-module-k3s/pull/15) (@xunleii)
 
-<a name="v1.2.3"></a>
-## [v1.2.3] - 2019-11-24
-### Bug Fixes
-- remove warning 'quoted keywords are now deprecated'
+## [v1.6.1](https://github.com/xunleii/terraform-module-k3s/tree/v1.6.1) (2019-12-04)
 
-### Pull Requests
-- Merge pull request [#8](https://github.com/xunleii/terraform-module-k3s/issues/8) from xunleii/fix-warn
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v1.6.0...v1.6.1)
 
+**Merged pull requests:**
 
-<a name="v1.2.2"></a>
-## [v1.2.2] - 2019-11-16
-### Features
-- add Terraform actions
+- feat: upload installer [\#14](https://github.com/xunleii/terraform-module-k3s/pull/14) (@xunleii)
 
-### Pull Requests
-- Merge pull request [#6](https://github.com/xunleii/terraform-module-k3s/issues/6) from xunleii/feat-add-actions
+## [v1.6.0](https://github.com/xunleii/terraform-module-k3s/tree/v1.6.0) (2019-12-04)
 
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v1.5.0...v1.6.0)
 
-<a name="v1.2.1"></a>
-## [v1.2.1] - 2019-11-16
-### Bug Fixes
-- use random_password to make k3s key sensitive
+**Merged pull requests:**
 
+- refact: rename node roles in server and agent [\#13](https://github.com/xunleii/terraform-module-k3s/pull/13) (@xunleii)
+- Refact clean module [\#12](https://github.com/xunleii/terraform-module-k3s/pull/12) (@xunleii)
 
-<a name="v1.2.0"></a>
-## [v1.2.0] - 2019-11-16
-### Bug Fixes
-- fix Terraform crash
+## [v1.5.0](https://github.com/xunleii/terraform-module-k3s/tree/v1.5.0) (2019-12-01)
 
-### Features
-- use K3S_CLUSTER_SECRET and remove scp
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v1.4.0...v1.5.0)
 
-### Refact
-- run terraform fmt
+## [v1.4.0](https://github.com/xunleii/terraform-module-k3s/tree/v1.4.0) (2019-11-27)
 
-### Repo
-- add example for hcloud
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v1.3.2...v1.4.0)
 
-### Pull Requests
-- Merge pull request [#4](https://github.com/xunleii/terraform-module-k3s/issues/4) from xunleii/feat-remove-scp
+**Merged pull requests:**
 
+- refact: clean custom flags feature [\#11](https://github.com/xunleii/terraform-module-k3s/pull/11) (@xunleii)
 
-<a name="v1.1.0"></a>
-## [v1.1.0] - 2019-11-03
-### Bug Fixes
-- drain & delete node from the master node
-- use map instead of list to fix removable node
+## [v1.3.2](https://github.com/xunleii/terraform-module-k3s/tree/v1.3.2) (2019-11-27)
 
-### Pull Requests
-- Merge pull request [#2](https://github.com/xunleii/terraform-module-k3s/issues/2) from xunleii/fix-removable-node
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v1.3.1...v1.3.2)
 
+**Merged pull requests:**
 
-<a name="v1.0.0"></a>
-## v1.0.0 - 2019-11-03
-### Bug Fixes
-- specify dependencies and fix pre-calc values
+- fix: join custom arguments [\#10](https://github.com/xunleii/terraform-module-k3s/pull/10) (@xunleii)
 
-### Documentation Improvements
-- add litle documentation
+## [v1.3.1](https://github.com/xunleii/terraform-module-k3s/tree/v1.3.1) (2019-11-27)
 
-### Features
-- add minions.tf
-- install and update k3s master node automatically
-- check automatically new release of k3s
-- add master.tf
-- add module variables
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v1.2.3...v1.3.1)
 
-### Refact
-- clean minions and master file
+**Merged pull requests:**
 
-### Repo
-- add more details to README
-- prepare repository
+- feat: add custom arguments [\#9](https://github.com/xunleii/terraform-module-k3s/pull/9) (@xunleii)
 
+## [v1.2.3](https://github.com/xunleii/terraform-module-k3s/tree/v1.2.3) (2019-11-24)
 
-[v3.0.0]: https://github.com/xunleii/terraform-module-k3s/compare/v2.2.4...v3.0.0
-[v2.2.4]: https://github.com/xunleii/terraform-module-k3s/compare/v2.2.3...v2.2.4
-[v2.2.3]: https://github.com/xunleii/terraform-module-k3s/compare/v2.2.2...v2.2.3
-[v2.2.2]: https://github.com/xunleii/terraform-module-k3s/compare/v2.2.1...v2.2.2
-[v2.2.1]: https://github.com/xunleii/terraform-module-k3s/compare/v2.2.0...v2.2.1
-[v2.2.0]: https://github.com/xunleii/terraform-module-k3s/compare/v2.1.0...v2.2.0
-[v2.1.0]: https://github.com/xunleii/terraform-module-k3s/compare/v2.0.1...v2.1.0
-[v2.0.1]: https://github.com/xunleii/terraform-module-k3s/compare/v2.0.0...v2.0.1
-[v2.0.0]: https://github.com/xunleii/terraform-module-k3s/compare/v1.7.0...v2.0.0
-[v1.7.0]: https://github.com/xunleii/terraform-module-k3s/compare/v1.6.3...v1.7.0
-[v1.6.3]: https://github.com/xunleii/terraform-module-k3s/compare/v1.6.2...v1.6.3
-[v1.6.2]: https://github.com/xunleii/terraform-module-k3s/compare/v1.6.1...v1.6.2
-[v1.6.1]: https://github.com/xunleii/terraform-module-k3s/compare/v1.6.0...v1.6.1
-[v1.6.0]: https://github.com/xunleii/terraform-module-k3s/compare/v1.5.0...v1.6.0
-[v1.5.0]: https://github.com/xunleii/terraform-module-k3s/compare/v1.4.0...v1.5.0
-[v1.4.0]: https://github.com/xunleii/terraform-module-k3s/compare/v1.3.2...v1.4.0
-[v1.3.2]: https://github.com/xunleii/terraform-module-k3s/compare/v1.3.1...v1.3.2
-[v1.3.1]: https://github.com/xunleii/terraform-module-k3s/compare/v1.2.3...v1.3.1
-[v1.2.3]: https://github.com/xunleii/terraform-module-k3s/compare/v1.2.2...v1.2.3
-[v1.2.2]: https://github.com/xunleii/terraform-module-k3s/compare/v1.2.1...v1.2.2
-[v1.2.1]: https://github.com/xunleii/terraform-module-k3s/compare/v1.2.0...v1.2.1
-[v1.2.0]: https://github.com/xunleii/terraform-module-k3s/compare/v1.1.0...v1.2.0
-[v1.1.0]: https://github.com/xunleii/terraform-module-k3s/compare/v1.0.0...v1.1.0
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v1.2.2...v1.2.3)
+
+**Merged pull requests:**
+
+- fix: remove warning 'quoted keywords are now deprecated' [\#8](https://github.com/xunleii/terraform-module-k3s/pull/8) (@xunleii)
+
+## [v1.2.2](https://github.com/xunleii/terraform-module-k3s/tree/v1.2.2) (2019-11-16)
+
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v1.2.1...v1.2.2)
+
+**Merged pull requests:**
+
+- feat: add Terraform actions [\#6](https://github.com/xunleii/terraform-module-k3s/pull/6) (@xunleii)
+
+## [v1.2.1](https://github.com/xunleii/terraform-module-k3s/tree/v1.2.1) (2019-11-16)
+
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v1.2.0...v1.2.1)
+
+## [v1.2.0](https://github.com/xunleii/terraform-module-k3s/tree/v1.2.0) (2019-11-16)
+
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v1.1.0...v1.2.0)
+
+**Closed issues:**
+
+- Remove 'scp' dependency [\#3](https://github.com/xunleii/terraform-module-k3s/issues/3)
+
+**Merged pull requests:**
+
+- Remove 'scp' dependency [\#4](https://github.com/xunleii/terraform-module-k3s/pull/4) (@xunleii)
+
+## [v1.1.0](https://github.com/xunleii/terraform-module-k3s/tree/v1.1.0) (2019-11-03)
+
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v1.0.0...v1.1.0)
+
+**Closed issues:**
+
+- Impossible to remove one \(several\) minion node\(s\) [\#1](https://github.com/xunleii/terraform-module-k3s/issues/1)
+
+**Merged pull requests:**
+
+- \#1 - fix removable node [\#2](https://github.com/xunleii/terraform-module-k3s/pull/2) (@xunleii)
+
+## [v1.0.0](https://github.com/xunleii/terraform-module-k3s/tree/v1.0.0) (2019-11-02)
+
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/ccc49fe3f98ef7a9885dcf5ae3efb087048497f9...v1.0.0)
+
+
+
+\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)*
