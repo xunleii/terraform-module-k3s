@@ -2,7 +2,19 @@
 
 ## [Unreleased](https://github.com/xunleii/terraform-module-k3s/tree/HEAD)
 
-[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v3.0.0...HEAD)
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v3.1.0...HEAD)
+
+**Closed issues:**
+
+- Publish a new version on the Terraform registry  [\#79](https://github.com/xunleii/terraform-module-k3s/issues/79)
+
+**Merged pull requests:**
+
+- Generate Changelog automatically [\#82](https://github.com/xunleii/terraform-module-k3s/pull/82) (@xunleii)
+
+## [v3.1.0](https://github.com/xunleii/terraform-module-k3s/tree/v3.1.0) (2022-01-04)
+
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v3.0.0...v3.1.0)
 
 **Dependencies upgrades:**
 
@@ -25,6 +37,7 @@
 
 **Merged pull requests:**
 
+- Remove commit lint dependencies [\#81](https://github.com/xunleii/terraform-module-k3s/pull/81) (@xunleii)
 - Output the Kubernetes cluster secret [\#80](https://github.com/xunleii/terraform-module-k3s/pull/80) (@orf)
 - Add Hacktoberfest labels [\#69](https://github.com/xunleii/terraform-module-k3s/pull/69) (@xunleii)
 - Rewrite CI/CD workflows [\#67](https://github.com/xunleii/terraform-module-k3s/pull/67) (@xunleii)
