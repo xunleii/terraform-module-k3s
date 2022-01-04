@@ -1,4 +1,3 @@
 add-sections={"dependencies":{"prefix":"**Dependencies upgrades:**", "labels":["kind/dependencies"]}}
 project=terraform-module-k3s
 user=xunleii
-usernames-as-github-logins=true
