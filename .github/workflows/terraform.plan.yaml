@@ -1,65 +1,30 @@
-name: Terraform - PR plan validation
+name: Terraform plan validation (PRs only)
 
 on:
   pull_request:
     types: [labeled]
 
-defaults:
-  run:
-    working-directory: "examples/hcloud-k3s"
-
 jobs:
-  plan:
-    name: Terraform plan
-    runs-on: ubuntu-latest
+  examples_hcloud-k3s:
     if: ${{ github.event.label.name == 'terraform:plan' }}
     permissions:
       pull-requests: write
+    secrets:
+      env: |
+        HCLOUD_TOKEN: ${{ secrets.HCLOUD_TOKEN }}
+    uses: xunleii/github-actions-grimoire/.github/workflows/terraform.pull_requests.plan.yaml@374b560c4a555ce0e76665d60985ab3be07e5b1e
+    with:
+      terraform_vars: |
+        ssh_key: ''
+      terraform_workdir: examples/hcloud-k3s
+
+  unlabel-pull-request:
+    if: always()
+    name: Remove 'terraform:plan' label
+    needs: [examples_hcloud-k3s]
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # renovate: tag=v2.4.0
-      - uses: hashicorp/setup-terraform@3d8debd658c92063839bc97da5c2427100420dec # renovate: tag=v1.3.2
-      - run: terraform init -backend=false
-      - run: terraform validate
-
-      - id: plan
-        env:
-          HCLOUD_TOKEN: ${{ secrets.HCLOUD_TOKEN }}
-          TF_VAR_ssh_key: ""
-        run: terraform plan -input=false -no-color
-        working-directory: examples/hcloud-k3s
-
-      - uses: marocchino/sticky-pull-request-comment@39c5b5dc7717447d0cba270cd115037d32d28443 # renovate: tag=v2.2.0
-        if: success()
-        with:
-          recreate: true
-          message: |
-            # Terraform CI/CD
-            - [x] :paintbrush: Check if all Terraform configuration files are in a canonical format
-            - [x] :hammer_and_wrench: Validate the configuration files
-            - [x] :scroll: Generate a speculative execution plan
-            ### Plan output
-            ```terraform
-            ${{ steps.plan.outputs.stdout }}
-            ```
-            #
-            > _Report based on commit ${{ github.sha }} (authored by **@${{ github.actor }}**).  See [`actions#${{ github.run_id }}`](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) for more details._
-      - uses: marocchino/sticky-pull-request-comment@39c5b5dc7717447d0cba270cd115037d32d28443 # renovate: tag=v2.2.0
-        if: failure() && steps.plan.outcome == 'failure'
-        with:
-          recreate: true
-          message: |
-            # Terraform CI/CD
-            - [x] :paintbrush: Check if all Terraform configuration files are in a canonical format
-            - [x] :hammer_and_wrench: Validate the configuration files
-            ### 🚫 Plan failed
-            ```
-            ${{ steps.plan.outputs.stderr }}
-            ```
-            #
-            > _Report based on commit ${{ github.sha }} (authored by **@${{ github.actor }}**).  See [`actions#${{ github.run_id }}`](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) for more details._
-
       - name: Unlabel 'terraform:plan'
-        uses: actions-ecosystem/action-remove-labels@2ce5d41b4b6aa8503e285553f75ed56e0a40bae0 # renovate: tag=v1.3.0
-        if: always()
+        uses: actions-ecosystem/action-remove-labels@2ce5d41b4b6aa8503e285553f75ed56e0a40bae0
         with:
           labels: terraform:plan
