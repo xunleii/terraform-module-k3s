@@ -12,7 +12,7 @@ jobs:
     secrets:
       env: |
         HCLOUD_TOKEN: ${{ secrets.HCLOUD_TOKEN }}
-    uses: xunleii/github-actions-grimoire/.github/workflows/terraform.pull_requests.plan.yaml@374b560c4a555ce0e76665d60985ab3be07e5b1e
+    uses: xunleii/github-actions-grimoire/.github/workflows/terraform.pull_requests.plan.yaml@7b2b7670929e4c824678dd0c2b6521d115602dfc
     with:
       terraform_vars: |
         ssh_key: ''
