@@ -4,6 +4,9 @@ on:
   pull_request:
     paths: ["**.tf"]
 
+permissions:
+  pull-requests: write
+
 jobs:
   terraform-module-k3s:
     name: Terraform module
