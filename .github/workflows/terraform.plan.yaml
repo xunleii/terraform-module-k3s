@@ -6,6 +6,7 @@ on:
 
 jobs:
   examples_hcloud-k3s:
+    name: Hetzner Cloud
     if: ${{ github.event.label.name == 'terraform:plan' }}
     permissions:
       pull-requests: write

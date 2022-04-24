@@ -6,17 +6,20 @@ on:
 
 jobs:
   terraform-module-k3s:
+    name: Terraform module
     uses: xunleii/github-actions-grimoire/.github/workflows/terraform.pull_requests.lint.yaml@7b2b7670929e4c824678dd0c2b6521d115602dfc
     with:
       terraform_workdir: fixtures/terraform/project-01
 
   examples_hcloud-k3s:
+    name: Hetzner Cloud
     needs: [terraform-module-k3s]
     uses: xunleii/github-actions-grimoire/.github/workflows/terraform.pull_requests.lint.yaml@7b2b7670929e4c824678dd0c2b6521d115602dfc
     with:
       terraform_workdir: examples/hcloud-k3s
 
   examples_civo-k3s:
+    name: CIVO
     needs: [terraform-module-k3s]
     uses: xunleii/github-actions-grimoire/.github/workflows/terraform.pull_requests.lint.yaml@7b2b7670929e4c824678dd0c2b6521d115602dfc
     with:
