@@ -7,4 +7,6 @@ on:
 
 jobs:
   ci_harden_security:
+    permissions:
+      security-events: write
     uses: xunleii/github-actions-grimoire/.github/workflows/security.workflows.yaml@c2aa30107b33425265a404d218d429ab3085f558
