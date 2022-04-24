@@ -6,6 +6,7 @@
 
 **Dependencies upgrades:**
 
+- Update EndBug/add-and-commit action to v9 [\#94](https://github.com/xunleii/terraform-module-k3s/pull/94) ([renovate[bot]](https://github.com/apps/renovate))
 - Update Hetzner Cloud example [\#93](https://github.com/xunleii/terraform-module-k3s/pull/93) ([xunleii](https://github.com/xunleii))
 - Update actions/checkout action to v2.4.2 [\#89](https://github.com/xunleii/terraform-module-k3s/pull/89) ([renovate[bot]](https://github.com/apps/renovate))
 - Update xunleii/github-actions-grimoire digest to 7b2b767 [\#87](https://github.com/xunleii/terraform-module-k3s/pull/87) ([renovate[bot]](https://github.com/apps/renovate))
