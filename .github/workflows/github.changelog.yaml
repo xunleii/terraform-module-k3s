@@ -6,11 +6,11 @@ on:
 jobs:
   generate-push-changelog:
     name: Generate & push changelog
-    permissions:
-      contents: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # renovate: tag=v2.4.0
+        with:
+          token: ${{ secrets.ALLOWED_GITHUB_TOKEN }}
       - uses: heinrichreimer/github-changelog-generator-action@6f5b9494dd265d6fb7243a10c53dc0169c55f247 # renovate: tag=v2.3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
