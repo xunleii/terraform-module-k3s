@@ -4,12 +4,20 @@
 
 [Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v3.1.0...HEAD)
 
+**Dependencies upgrades:**
+
+- Update xunleii/github-actions-grimoire digest to 7b2b767 [\#87](https://github.com/xunleii/terraform-module-k3s/pull/87) ([renovate[bot]](https://github.com/apps/renovate))
+- Update actions/checkout action to v3 [\#86](https://github.com/xunleii/terraform-module-k3s/pull/86) ([renovate[bot]](https://github.com/apps/renovate))
+
 **Closed issues:**
 
+- Error sensitive var.servers [\#84](https://github.com/xunleii/terraform-module-k3s/issues/84)
 - Publish a new version on the Terraform registry  [\#79](https://github.com/xunleii/terraform-module-k3s/issues/79)
 
 **Merged pull requests:**
 
+- Reenable auto changelog generation [\#91](https://github.com/xunleii/terraform-module-k3s/pull/91) ([xunleii](https://github.com/xunleii))
+- Add missing permission on github actions workflow [\#90](https://github.com/xunleii/terraform-module-k3s/pull/90) ([xunleii](https://github.com/xunleii))
 - Generate Changelog automatically [\#82](https://github.com/xunleii/terraform-module-k3s/pull/82) ([xunleii](https://github.com/xunleii))
 
 ## [v3.1.0](https://github.com/xunleii/terraform-module-k3s/tree/v3.1.0) (2022-01-04)
