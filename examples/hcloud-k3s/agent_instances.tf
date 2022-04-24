@@ -3,7 +3,7 @@ resource "hcloud_server" "agents" {
   name  = "k3s-agent-${count.index}"
 
   image       = data.hcloud_image.ubuntu.name
-  server_type = "cx11-ceph"
+  server_type = "cx11"
 
   ssh_keys = [hcloud_ssh_key.default.id]
   labels = {

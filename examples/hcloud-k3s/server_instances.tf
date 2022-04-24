@@ -3,7 +3,7 @@ resource "hcloud_server" "control_planes" {
   name  = "k3s-control-plane-${count.index}"
 
   image       = data.hcloud_image.ubuntu.name
-  server_type = "cx11-ceph"
+  server_type = "cx11"
 
   ssh_keys = [hcloud_ssh_key.default.id]
   labels = {
