@@ -6,6 +6,7 @@
 
 **Dependencies upgrades:**
 
+- Update Hetzner Cloud example [\#93](https://github.com/xunleii/terraform-module-k3s/pull/93) ([xunleii](https://github.com/xunleii))
 - Update xunleii/github-actions-grimoire digest to 7b2b767 [\#87](https://github.com/xunleii/terraform-module-k3s/pull/87) ([renovate[bot]](https://github.com/apps/renovate))
 - Update actions/checkout action to v3 [\#86](https://github.com/xunleii/terraform-module-k3s/pull/86) ([renovate[bot]](https://github.com/apps/renovate))
 
