@@ -40,7 +40,7 @@ resource "tls_self_signed_cert" "kubernetes_ca_certs" {
   for_each = local.certificates_types
 
   validity_period_hours = 876600 # 100 years
-  allowed_uses          = ["digital_signature", "key_encipherment", "cert_signing"] 
+  allowed_uses          = ["digital_signature", "key_encipherment", "cert_signing"]
   private_key_pem       = tls_private_key.kubernetes_ca[each.key].private_key_pem
   is_ca_certificate     = true
 
