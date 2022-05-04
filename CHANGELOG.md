@@ -22,6 +22,7 @@
 - Fix some Github Action issues [\#92](https://github.com/xunleii/terraform-module-k3s/pull/92) ([xunleii](https://github.com/xunleii))
 - Reenable auto changelog generation [\#91](https://github.com/xunleii/terraform-module-k3s/pull/91) ([xunleii](https://github.com/xunleii))
 - Add missing permission on github actions workflow [\#90](https://github.com/xunleii/terraform-module-k3s/pull/90) ([xunleii](https://github.com/xunleii))
+- addressing changes in recent hashicorp tls provider [\#88](https://github.com/xunleii/terraform-module-k3s/pull/88) ([ptu](https://github.com/ptu))
 - Generate Changelog automatically [\#82](https://github.com/xunleii/terraform-module-k3s/pull/82) ([xunleii](https://github.com/xunleii))
 
 ## [v3.1.0](https://github.com/xunleii/terraform-module-k3s/tree/v3.1.0) (2022-01-04)
