@@ -1,5 +1,5 @@
 variable "depends_on_" {
-  description = "Resouce dependency of this module."
+  description = "Resource dependency of this module."
   default     = null
 }
 
