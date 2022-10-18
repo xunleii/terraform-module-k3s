@@ -6,6 +6,7 @@
 
 **Dependencies upgrades:**
 
+- Update actions-ecosystem/action-remove-labels digest to d051625 [\#103](https://github.com/xunleii/terraform-module-k3s/pull/103) ([renovate[bot]](https://github.com/apps/renovate))
 - Update EndBug/add-and-commit action to v9.0.1 [\#99](https://github.com/xunleii/terraform-module-k3s/pull/99) ([renovate[bot]](https://github.com/apps/renovate))
 - Update xunleii/github-actions-grimoire digest to 42f3d38 [\#98](https://github.com/xunleii/terraform-module-k3s/pull/98) ([renovate[bot]](https://github.com/apps/renovate))
 - Update actions/checkout action to v3 [\#97](https://github.com/xunleii/terraform-module-k3s/pull/97) ([renovate[bot]](https://github.com/apps/renovate))
