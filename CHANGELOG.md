@@ -2,7 +2,16 @@
 
 ## [Unreleased](https://github.com/xunleii/terraform-module-k3s/tree/HEAD)
 
-[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v3.1.0...HEAD)
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v3.2.0...HEAD)
+
+**Dependencies upgrades:**
+
+- Update actions/checkout action to v3.1.0 [\#105](https://github.com/xunleii/terraform-module-k3s/pull/105) ([renovate[bot]](https://github.com/apps/renovate))
+- Update EndBug/add-and-commit action to v9.1.1 [\#102](https://github.com/xunleii/terraform-module-k3s/pull/102) ([renovate[bot]](https://github.com/apps/renovate))
+
+## [v3.2.0](https://github.com/xunleii/terraform-module-k3s/tree/v3.2.0) (2022-10-18)
+
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v3.1.0...v3.2.0)
 
 **Dependencies upgrades:**
 
