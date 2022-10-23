@@ -10,18 +10,18 @@ permissions:
 jobs:
   terraform-module-k3s:
     name: Terraform module
-    uses: xunleii/github-actions-grimoire/.github/workflows/terraform.pull_requests.lint.yaml@42f3d38aa983309e49769c5ef3736746bb1ddf39
+    uses: xunleii/github-actions-grimoire/.github/workflows/terraform.pull_requests.lint.yaml@0ab2cd93e86642397ecdfb2da1e5b97594ab9905
 
   examples_hcloud-k3s:
     name: Hetzner Cloud
     needs: [terraform-module-k3s]
-    uses: xunleii/github-actions-grimoire/.github/workflows/terraform.pull_requests.lint.yaml@42f3d38aa983309e49769c5ef3736746bb1ddf39
+    uses: xunleii/github-actions-grimoire/.github/workflows/terraform.pull_requests.lint.yaml@0ab2cd93e86642397ecdfb2da1e5b97594ab9905
     with:
       terraform_workdir: examples/hcloud-k3s
 
   examples_civo-k3s:
     name: CIVO
     needs: [terraform-module-k3s]
-    uses: xunleii/github-actions-grimoire/.github/workflows/terraform.pull_requests.lint.yaml@42f3d38aa983309e49769c5ef3736746bb1ddf39
+    uses: xunleii/github-actions-grimoire/.github/workflows/terraform.pull_requests.lint.yaml@0ab2cd93e86642397ecdfb2da1e5b97594ab9905
     with:
       terraform_workdir: examples/civo-k3s

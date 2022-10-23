@@ -10,4 +10,4 @@ jobs:
     name: Security hardening
     permissions:
       security-events: write
-    uses: xunleii/github-actions-grimoire/.github/workflows/security.workflows.yaml@42f3d38aa983309e49769c5ef3736746bb1ddf39
+    uses: xunleii/github-actions-grimoire/.github/workflows/security.workflows.yaml@0ab2cd93e86642397ecdfb2da1e5b97594ab9905
