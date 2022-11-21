@@ -6,6 +6,7 @@
 
 **Dependencies upgrades:**
 
+- Update xunleii/github-actions-grimoire digest to 0ab2cd9 [\#106](https://github.com/xunleii/terraform-module-k3s/pull/106) ([renovate[bot]](https://github.com/apps/renovate))
 - Update actions/checkout action to v3.1.0 [\#105](https://github.com/xunleii/terraform-module-k3s/pull/105) ([renovate[bot]](https://github.com/apps/renovate))
 - Update EndBug/add-and-commit action to v9.1.1 [\#102](https://github.com/xunleii/terraform-module-k3s/pull/102) ([renovate[bot]](https://github.com/apps/renovate))
 
