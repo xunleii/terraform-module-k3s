@@ -10,6 +10,7 @@
 - Update actions/checkout action to v3.1.0 [\#105](https://github.com/xunleii/terraform-module-k3s/pull/105) ([renovate[bot]](https://github.com/apps/renovate))
 - Update EndBug/add-and-commit action to v9.1.1 [\#102](https://github.com/xunleii/terraform-module-k3s/pull/102) ([renovate[bot]](https://github.com/apps/renovate))
 - Update Terraform http to v3 [\#101](https://github.com/xunleii/terraform-module-k3s/pull/101) ([renovate[bot]](https://github.com/apps/renovate))
+- Update Terraform tls to v4 [\#100](https://github.com/xunleii/terraform-module-k3s/pull/100) ([renovate[bot]](https://github.com/apps/renovate))
 
 ## [v3.2.0](https://github.com/xunleii/terraform-module-k3s/tree/v3.2.0) (2022-10-18)
 
