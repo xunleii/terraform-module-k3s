@@ -9,6 +9,12 @@ variable "k3s_version" {
   default     = "latest"
 }
 
+variable "k3s_selinux_warn" {
+  description = "Force the install script to log a warning rather than fail when k3s tries to install the SELinux policies."
+  type        = bool
+  default     = false
+}
+
 variable "name" {
   description = "K3s cluster domain name (see https://rancher.com/docs/k3s/latest/en/installation/install-options/). This input is deprecated and will be remove in the next major release. Use `cluster_domain` instead."
   type        = string
