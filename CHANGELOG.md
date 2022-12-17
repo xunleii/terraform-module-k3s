@@ -12,6 +12,14 @@
 - Update Terraform http to v3 [\#101](https://github.com/xunleii/terraform-module-k3s/pull/101) ([renovate[bot]](https://github.com/apps/renovate))
 - Update Terraform tls to v4 [\#100](https://github.com/xunleii/terraform-module-k3s/pull/100) ([renovate[bot]](https://github.com/apps/renovate))
 
+**Closed issues:**
+
+- Error: Invalid Attribute Value Match  [\#104](https://github.com/xunleii/terraform-module-k3s/issues/104)
+
+**Merged pull requests:**
+
+- Add support for INSTALL\_K3S\_SELINUX\_WARN [\#109](https://github.com/xunleii/terraform-module-k3s/pull/109) ([hobbypunk90](https://github.com/hobbypunk90))
+
 ## [v3.2.0](https://github.com/xunleii/terraform-module-k3s/tree/v3.2.0) (2022-10-18)
 
 [Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v3.1.0...v3.2.0)
