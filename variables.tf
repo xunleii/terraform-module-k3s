@@ -10,7 +10,7 @@ variable "k3s_version" {
 }
 
 variable "k3s_selinux_warn" {
-  description = "Specify the k3s selinux warn."
+  description = "Force the install script to log a warning rather than fail when k3s tries to install the SELinux policies."
   type        = bool
   default     = false
 }
