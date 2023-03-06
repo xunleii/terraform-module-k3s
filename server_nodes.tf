@@ -125,6 +125,8 @@ locals {
 resource "null_resource" "k8s_ca_certificates_install" {
   count = length(local.certificates_files)
 
+  depends_on = [var.depends_on_]
+
   connection {
     type = try(local.root_server_connection.type, "ssh")
 
