@@ -1,7 +1,8 @@
 locals {
   // Some vars use to easily access to the first k3s server values
   root_server_name = keys(var.servers)[0]
-  root_server_ip   = split(",", values(var.servers)[0].ip)[0]
+  root_advertise_ip   = split(",", values(var.servers)[0].ip)[0]
+  root_server_ip   = values(var.servers)[0].ip
   root_server_connection = {
     type = try(var.servers[local.root_server_name].connection.type, "ssh")
 
@@ -79,7 +80,7 @@ locals {
         key == local.root_server_name ?
         // For the first server node, add all configuration flags
         [
-          "--advertise-address ${local.root_server_ip}",
+          "--advertise-address ${local.root_advertise_ip}",
           "--node-ip ${server.ip}",
           "--node-name '${try(server.name, key)}'",
           "--cluster-domain '${var.cluster_domain}'",
