@@ -1,7 +1,7 @@
 locals {
   // Some vars use to easily access to the first k3s server values
   root_server_name = keys(var.servers)[0]
-  root_server_ip   = values(var.servers)[0].ip
+  root_server_ip   = split(",", values(var.servers)[0].ip)[0]
   root_server_connection = {
     type = try(var.servers[local.root_server_name].connection.type, "ssh")
 
