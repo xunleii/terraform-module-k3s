@@ -106,7 +106,7 @@ resource "null_resource" "agents_install" {
 
   // Upload k3s install script
   provisioner "file" {
-    content     = data.http.k3s_installer.body
+    content     = data.http.k3s_installer.response_body
     destination = "/tmp/k3s-installer"
   }
 
