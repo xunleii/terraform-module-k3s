@@ -79,6 +79,7 @@ locals {
         key == local.root_server_name ?
         // For the first server node, add all configuration flags
         [
+          "--advertise-address ${local.root_server_ip}",
           "--node-ip ${server.ip}",
           "--node-name '${try(server.name, key)}'",
           "--cluster-domain '${var.cluster_domain}'",
