@@ -93,7 +93,7 @@ locals {
         [
           "--node-ip ${server.ip}",
           "--node-name '${try(server.name, key)}'",
-          "--server https://${local.root_server_ip}:6443",
+          "--server https://${local.root_advertise_ip}:6443",
           "--cluster-cidr ${var.cidr.pods}",
           "--service-cidr ${var.cidr.services}",
           "--token ${random_password.k3s_cluster_secret.result}",
