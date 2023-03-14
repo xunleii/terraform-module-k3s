@@ -75,7 +75,7 @@ locals {
   ])
   server_taints = local.managed_taint_enabled ? { for o in local.server_taints_list : o.key => o.value if o.key != "" } : {}
 
-  // Generate a map of all calculed server fields, used during k3s installation.
+  // Generate a map of all calculated server fields, used during k3s installation.
   servers_metadata = {
     for key, server in var.servers :
     key => {
