@@ -3,16 +3,10 @@ locals {
   root_server_name = keys(var.servers)[0]
 
   // Get the first address from the IP array using comma's as the delimiter
-  root_advertise_addr = [split(",", values(var.servers)[0].ip)[0]]
-  
-  // Look at root_advertise_addr and see if it contains '::' to figure out if it is an IPv4 or IPv6 address
-  root_advertise_ipv4 = [for addr in local.root_advertise_addr : addr if !can(regex("::", addr))]
-  root_advertise_ipv6 = [for addr in local.root_advertise_addr : addr if can(regex("::", addr))]
-  
-  // If root_advertise_ipv4 is not empty, use it, else use root_advertise_ipv6
-  root_advertise_ip = length(local.root_advertise_ipv4) > 0 ? local.root_advertise_ipv4[0] : "${local.root_advertise_ipv6[0]}"
-  // If root_advertise_ipv4 is not empty, use it, else use root_advertise_ipv6 and wrap it in square brackets for IPv6 K3S URLs
-  root_advertise_ip_curl = length(local.root_advertise_ipv4) > 0 ? local.root_advertise_ipv4[0] : "[${local.root_advertise_ipv6[0]}]"
+	root_advertise_ip = split(",", values(var.servers)[0].ip)[0]
+	
+	// If root_advertise_ip is IPv6 wrap it in square brackets for IPv6 K3S URLs otherwise leave it raw
+	root_advertise_ip_k3s = can(regex("::", local.root_advertise_ip)) ? "[${local.root_advertise_ip}]" : local.root_advertise_ip
 
 
   root_server_ip = values(var.servers)[0].ip
