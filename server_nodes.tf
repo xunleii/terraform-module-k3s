@@ -9,7 +9,6 @@ locals {
 	root_advertise_ip_k3s = can(regex("::", local.root_advertise_ip)) ? "[${local.root_advertise_ip}]" : local.root_advertise_ip
 
 
-  root_server_ip = values(var.servers)[0].ip
   root_server_connection = {
     type = try(var.servers[local.root_server_name].connection.type, "ssh")
 
