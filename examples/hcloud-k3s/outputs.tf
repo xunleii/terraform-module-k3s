@@ -2,8 +2,8 @@ output "summary" {
   value = module.k3s.summary
 }
 
-output "bootstrap_sa" {
-  description = "Bootstrap ServiceAccount. Can be used by Terraform to provision this cluster."
-  value       = data.kubernetes_secret.sa_credentials.data
+output "ssh_private_key" {
+  description = "Generated SSH private key."
+  value       = tls_private_key.ed25519-provisioning.private_key_openssh
   sensitive   = true
 }
