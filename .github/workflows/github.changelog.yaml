@@ -7,13 +7,11 @@ jobs:
   generate-push-changelog:
     name: Generate & push changelog
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3.4.0
-        with:
-          token: ${{ secrets.ALLOWED_GITHUB_TOKEN }}
       - uses: heinrichreimer/github-changelog-generator-action@6f5b9494dd265d6fb7243a10c53dc0169c55f247 # renovate: tag=v2.3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
       - uses: EndBug/add-and-commit@61a88be553afe4206585b31aa72387c64295d08b # tag=v9.1.1
         with:
           add: CHANGELOG.md
