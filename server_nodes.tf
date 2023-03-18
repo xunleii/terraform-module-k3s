@@ -1,7 +1,14 @@
 locals {
   // Some vars use to easily access to the first k3s server values
   root_server_name = keys(var.servers)[0]
-  root_server_ip   = values(var.servers)[0].ip
+
+  // Get the first address from the IP array using comma's as the delimiter
+  root_advertise_ip = split(",", values(var.servers)[0].ip)[0]
+
+  // If root_advertise_ip is IPv6 wrap it in square brackets for IPv6 K3S URLs otherwise leave it raw
+  root_advertise_ip_k3s = can(regex("::", local.root_advertise_ip)) ? "[${local.root_advertise_ip}]" : local.root_advertise_ip
+
+
   root_server_connection = {
     type = try(var.servers[local.root_server_name].connection.type, "ssh")
 
@@ -79,6 +86,7 @@ locals {
         key == local.root_server_name ?
         // For the first server node, add all configuration flags
         [
+          "--advertise-address ${local.root_advertise_ip}",
           "--node-ip ${server.ip}",
           "--node-name '${try(server.name, key)}'",
           "--cluster-domain '${var.cluster_domain}'",
@@ -91,7 +99,7 @@ locals {
         [
           "--node-ip ${server.ip}",
           "--node-name '${try(server.name, key)}'",
-          "--server https://${local.root_server_ip}:6443",
+          "--server https://${local.root_advertise_ip_k3s}:6443",
           "--cluster-cidr ${var.cidr.pods}",
           "--service-cidr ${var.cidr.services}",
           "--token ${random_password.k3s_cluster_secret.result}",

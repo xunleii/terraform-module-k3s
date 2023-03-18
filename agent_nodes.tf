@@ -46,7 +46,7 @@ locals {
         [
           "--node-ip ${agent.ip}",
           "--node-name '${try(agent.name, key)}'",
-          "--server https://${local.root_server_ip}:6443",
+          "--server https://${local.root_advertise_ip_k3s}:6443",
           "--token ${random_password.k3s_cluster_secret.result}",
         ],
         var.global_flags,
