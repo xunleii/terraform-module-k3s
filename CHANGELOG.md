@@ -6,6 +6,13 @@
 
 **Dependencies upgrades:**
 
+- chore\(deps\): update endbug/add-and-commit action to v9.1.3 [\#123](https://github.com/xunleii/terraform-module-k3s/pull/123) ([renovate[bot]](https://github.com/apps/renovate))
+- chore\(deps\): update terraform http to v3.3.0 [\#122](https://github.com/xunleii/terraform-module-k3s/pull/122) ([renovate[bot]](https://github.com/apps/renovate))
+- chore\(deps\): update actions/checkout action to v3.5.2 [\#121](https://github.com/xunleii/terraform-module-k3s/pull/121) ([renovate[bot]](https://github.com/apps/renovate))
+- chore\(deps\): update terraform random to v3.5.1 [\#120](https://github.com/xunleii/terraform-module-k3s/pull/120) ([renovate[bot]](https://github.com/apps/renovate))
+- chore\(deps\): update actions/checkout action to v3.5.0 [\#119](https://github.com/xunleii/terraform-module-k3s/pull/119) ([renovate[bot]](https://github.com/apps/renovate))
+- Update actions/checkout action to v3.4.0 [\#118](https://github.com/xunleii/terraform-module-k3s/pull/118) ([renovate[bot]](https://github.com/apps/renovate))
+- Update actions/checkout action to v3.3.0 [\#108](https://github.com/xunleii/terraform-module-k3s/pull/108) ([renovate[bot]](https://github.com/apps/renovate))
 - Update xunleii/github-actions-grimoire digest to 0ab2cd9 [\#106](https://github.com/xunleii/terraform-module-k3s/pull/106) ([renovate[bot]](https://github.com/apps/renovate))
 - Update actions/checkout action to v3.1.0 [\#105](https://github.com/xunleii/terraform-module-k3s/pull/105) ([renovate[bot]](https://github.com/apps/renovate))
 - Update EndBug/add-and-commit action to v9.1.1 [\#102](https://github.com/xunleii/terraform-module-k3s/pull/102) ([renovate[bot]](https://github.com/apps/renovate))
@@ -14,10 +21,16 @@
 
 **Closed issues:**
 
+- API URL broken in build script when using dual stack configs [\#111](https://github.com/xunleii/terraform-module-k3s/issues/111)
+- Deprecated attribute with Terraform 1.3.7 [\#110](https://github.com/xunleii/terraform-module-k3s/issues/110)
 - Error: Invalid Attribute Value Match  [\#104](https://github.com/xunleii/terraform-module-k3s/issues/104)
 
 **Merged pull requests:**
 
+- Update workflows generating documentation assets [\#125](https://github.com/xunleii/terraform-module-k3s/pull/125) ([xunleii](https://github.com/xunleii))
+- feat\(k3s\_env\_vars\): introduce k3s\_install\_env\_vars [\#124](https://github.com/xunleii/terraform-module-k3s/pull/124) ([FalcoSuessgott](https://github.com/FalcoSuessgott))
+- Dual-stack & IPv6 fixes [\#113](https://github.com/xunleii/terraform-module-k3s/pull/113) ([djh00t](https://github.com/djh00t))
+- Update providers and fix \#110 [\#112](https://github.com/xunleii/terraform-module-k3s/pull/112) ([xunleii](https://github.com/xunleii))
 - Add support for INSTALL\_K3S\_SELINUX\_WARN [\#109](https://github.com/xunleii/terraform-module-k3s/pull/109) ([hobbypunk90](https://github.com/hobbypunk90))
 
 ## [v3.2.0](https://github.com/xunleii/terraform-module-k3s/tree/v3.2.0) (2022-10-18)
