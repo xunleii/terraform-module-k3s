@@ -9,10 +9,15 @@ variable "k3s_version" {
   default     = "latest"
 }
 
-variable "k3s_selinux_warn" {
-  description = "Force the install script to log a warning rather than fail when k3s tries to install the SELinux policies."
-  type        = bool
-  default     = false
+variable "k3s_install_env_vars" {
+  description = "map of enviroment variables that are passed to the k3s installation script (see https://docs.k3s.io/reference/env-variables)"
+  type        = map(string)
+  default     = null
+
+  validation {
+    condition     = !can(var.k3s_install_env_vars["INSTALL_K3S_VERSION"])
+    error_message = "Environment variable \"INSTALL_K3S_VERSION\" needs to be set via variable k3s_version"
+  }
 }
 
 variable "name" {
@@ -95,7 +100,7 @@ variable "servers" {
   }
   validation {
     condition     = !can(values(var.servers)[*].flags) || !contains([for v in var.servers : can(tolist(v.flags))], false)
-    error_message = "Field servers.<name>.flags must be a list of string."
+    error_message = "Field servers.<name>.flags must be a list of string (see: https://docs.k3s.io/cli/server)."
   }
   validation {
     condition     = !can(values(var.servers)[*].annotations) || !contains([for v in var.servers : can(tomap(v.annotations))], false)
@@ -126,7 +131,7 @@ variable "agents" {
   }
   validation {
     condition     = !can(values(var.agents)[*].flags) || !contains([for v in var.agents : can(tolist(v.flags))], false)
-    error_message = "Field agents.<name>.flags must be a list of string."
+    error_message = "Field agents.<name>.flags must be a list of string (see: https://docs.k3s.io/cli/agent)."
   }
   validation {
     condition     = !can(values(var.agents)[*].annotations) || !contains([for v in var.agents : can(tomap(v.annotations))], false)

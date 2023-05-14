@@ -8,6 +8,8 @@ locals {
   // If root_advertise_ip is IPv6 wrap it in square brackets for IPv6 K3S URLs otherwise leave it raw
   root_advertise_ip_k3s = can(regex("::", local.root_advertise_ip)) ? "[${local.root_advertise_ip}]" : local.root_advertise_ip
 
+  // string representation of all specified extra k3s installation env vars
+  install_env_vars = join(" ", [for k, v in var.k3s_install_env_vars : "${k}=${v}"])
 
   root_server_connection = {
     type = try(var.servers[local.root_server_name].connection.type, "ssh")
@@ -213,7 +215,7 @@ resource "null_resource" "servers_install" {
   // Install k3s server
   provisioner "remote-exec" {
     inline = [
-      "INSTALL_K3S_SELINUX_WARN=${var.k3s_selinux_warn} INSTALL_K3S_VERSION=${local.k3s_version} sh /tmp/k3s-installer server ${local.servers_metadata[each.key].flags}",
+      "${local.install_env_vars} INSTALL_K3S_VERSION=${local.k3s_version} sh /tmp/k3s-installer server ${local.servers_metadata[each.key].flags}",
       "until ${local.kubectl_cmd} get node ${local.servers_metadata[each.key].name}; do sleep 1; done"
     ]
   }
