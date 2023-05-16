@@ -3,7 +3,7 @@ locals {
   root_server_name = keys(var.servers)[0]
 
   // Get the first address from the IP array using comma's as the delimiter
-  root_advertise_ip = split(",", values(var.servers)[0].ip)[0]
+  root_advertise_ip = coalesce(var.loadbalancer_address, split(",", values(var.servers)[0].ip)[0])
 
   // If root_advertise_ip is IPv6 wrap it in square brackets for IPv6 K3S URLs otherwise leave it raw
   root_advertise_ip_k3s = can(regex("::", local.root_advertise_ip)) ? "[${local.root_advertise_ip}]" : local.root_advertise_ip

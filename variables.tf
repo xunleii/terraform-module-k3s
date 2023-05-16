@@ -37,6 +37,12 @@ variable "cluster_domain" {
   default     = "cluster.local"
 }
 
+variable "loadbalancer_address" {
+  description = "IP or DNS of an external loadbalancer that is used as an advertise address for server and as the k3s server url for agents. If null (default) the first server address is used"
+  type        = string
+  default     = null
+}
+
 variable "generate_ca_certificates" {
   description = "If true, this module will generate the CA certificates (see https://github.com/rancher/k3s/issues/1868#issuecomment-639690634). Otherwise rancher will generate it. This is required to generate kubeconfig"
   type        = bool

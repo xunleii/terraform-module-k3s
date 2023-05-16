@@ -18,7 +18,7 @@ output "kube_config" {
     clusters = [{
       cluster = {
         certificate-authority-data = base64encode(local.cluster_ca_certificate)
-        server                     = "https://${local.root_server_connection.host}:6443"
+        server                     = "https://${local.root_advertise_ip}:6443"
       }
       name = var.cluster_domain
     }]

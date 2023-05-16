@@ -35,6 +35,7 @@ locals {
   ])
   agent_taints = local.managed_taint_enabled ? { for o in local.agent_taints_list : o.key => o.value if o.key != "" } : {}
 
+
   // Generate a map of all calculated agent fields, used during k3s installation.
   agents_metadata = {
     for key, agent in var.agents :
