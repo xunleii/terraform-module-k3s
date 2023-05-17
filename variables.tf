@@ -12,7 +12,7 @@ variable "k3s_version" {
 variable "k3s_install_env_vars" {
   description = "map of enviroment variables that are passed to the k3s installation script (see https://docs.k3s.io/reference/env-variables)"
   type        = map(string)
-  default     = null
+  default     = {}
 
   validation {
     condition     = !can(var.k3s_install_env_vars["INSTALL_K3S_VERSION"])
