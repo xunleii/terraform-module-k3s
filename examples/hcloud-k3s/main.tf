@@ -1,5 +1,3 @@
-provider "hcloud" {}
-
 data "hcloud_image" "ubuntu" {
   name = "ubuntu-20.04"
 }
