@@ -1,0 +1,24 @@
+name: Terraform HCL validation (PRs only)
+
+on:
+  pull_request:
+    paths: ["**.tf"]
+
+jobs:
+  terraform-module-k3s:
+    name: Validate main Terraform module
+    uses: ./.github/worflows/terraform.lint.yaml
+
+  examples_hcloud-k3s:
+    name: Hetzner Cloud
+    needs: [terraform-module-k3s]
+    uses: ./.github/worflows/terraform.lint.yaml
+    with:
+      terraform_workdir: examples/hcloud-k3s
+
+  examples_civo-k3s:
+    name: CIVO
+    needs: [terraform-module-k3s]
+    uses: ./.github/worflows/terraform.lint.yaml
+    with:
+      terraform_workdir: examples/civo-k3s

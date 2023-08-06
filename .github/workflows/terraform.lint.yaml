@@ -1,27 +1,50 @@
-name: Terraform HCL validation (PRs only)
+---
+name: Terraform HCL validation
 
 on:
-  pull_request:
-    paths: ["**.tf"]
+  workflow_call:
+    inputs:
+      terraform_workdir:
+        description: Working directory where Terraform files are
+        required: false
+        default: "."
+        type: string
 
-permissions:
-  pull-requests: write
+env:
+  TF_IN_AUTOMATION: "yes"
 
 jobs:
-  terraform-module-k3s:
-    name: Terraform module
-    uses: xunleii/github-actions-grimoire/.github/workflows/terraform.pull_requests.lint.yaml@0ab2cd93e86642397ecdfb2da1e5b97594ab9905
+  # Checks if your TF files are in a canonical format and without HCL issues
+  terraform_validate:
+    name: Terraform files validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
+      - uses: hashicorp/setup-terraform@bbe167fbdaa1a3bd046bdd70eba9dd3dddcca99c # tag=v2.0.2
+        with:
+          terraform_version: ${{ inputs.terraform_version }}
+      - uses: terraform-linters/setup-tflint@ba6bb2989f94daf58a4cc6eac2c1ca7398a678bf # tag=v3.0.0
 
-  examples_hcloud-k3s:
-    name: Hetzner Cloud
-    needs: [terraform-module-k3s]
-    uses: xunleii/github-actions-grimoire/.github/workflows/terraform.pull_requests.lint.yaml@0ab2cd93e86642397ecdfb2da1e5b97594ab9905
-    with:
-      terraform_workdir: examples/hcloud-k3s
+      # --- `terraform fmt`
+      - name: Check if all Terraform configuration files are in a canonical format ${{ steps.pre.outputs.workdir }}
+        id: fmt
+        run: terraform fmt -check -recursive -diff -no-color
+        working-directory: ${{ inputs.terraform_workdir }}
 
-  examples_civo-k3s:
-    name: CIVO
-    needs: [terraform-module-k3s]
-    uses: xunleii/github-actions-grimoire/.github/workflows/terraform.pull_requests.lint.yaml@0ab2cd93e86642397ecdfb2da1e5b97594ab9905
-    with:
-      terraform_workdir: examples/civo-k3s
+      # --- `terraform init`
+      - name: Initialize Terraform working directory ${{ steps.pre.outputs.workdir }}
+        id: init
+        run: terraform init -no-color -backend=false
+        working-directory: ${{ inputs.terraform_workdir }}
+
+      # --- `terraform validate`
+      - name: Validate the configuration files ${{ steps.pre.outputs.workdir }}
+        id: validate
+        run: terraform validate -no-color
+        working-directory: ${{ inputs.terraform_workdir }}
+
+      # --- `terraform lint`
+      - name: Lint the configuration files ${{ steps.pre.outputs.workdir }}
+        id: lint
+        run: tflint --format compact
+        working-directory: ${{ inputs.terraform_workdir }}
