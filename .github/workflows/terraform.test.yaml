@@ -1,0 +1,11 @@
+name: vagrant-up
+
+on: [push]
+
+jobs:
+  vagrant-up:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Show Vagrant version
+        run: vagrant --version
