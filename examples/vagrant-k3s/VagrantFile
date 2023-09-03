@@ -1,0 +1,26 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+#
+
+Vagrant.configure("2") do |config|
+  config.vm.box = 'generic/ubuntu2204'
+  config.vm.boot_timeout = ENV['TEST_VM_BOOT_TIMEOUT'] || 600 # seconds
+  config.vm.synced_folder '.', '/vagrant', disabled: true
+
+  ['k3s-server-01', 'k3s-server-02', 'k3s-server-03', 'k3s-agent-01', 'k3s-agent-02'].each do |name|
+    config.vm.define name do |vm|
+        vm.vm.hostname = name
+    end
+  end
+
+  %w[libvirt virtualbox vmware_desktop].each do |p|
+    config.vm.provider p do |v|
+      v.cpus = ENV['TEST_VM_CPUS'] || 1
+      v.memory = ENV['TEST_VM_MEMORY'] || 512
+    end
+  end
+  config.vm.provider :virtualbox do |v,o|
+    v.gui = false
+    v.check_guest_additions = false
+  end
+end

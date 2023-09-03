@@ -2,10 +2,24 @@ name: vagrant-up
 
 on: [push]
 
+defaults:
+  run:
+    working-directory: examples/vagrant-k3s
+
 jobs:
   vagrant-up:
-    runs-on: ubuntu-latest
+    runs-on: macos-12
 
     steps:
+      - name: "Checkout"
+        uses: actions/checkout@v3
       - name: Show Vagrant version
         run: vagrant --version
+      - uses: hashicorp/setup-terraform@v2
+      - run: vagrant up
+      # - run: terraform init
+      # - run: terraform apply -auto-approve
+      #   env:
+      #     TF_LOG: TRACE
+      # - run: terraform output -json
+      # - run: terraform destroy -auto-approve
