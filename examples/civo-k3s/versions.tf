@@ -1,8 +1,8 @@
 terraform {
   required_providers {
-    hcloud = {
-      source = "hetznercloud/hcloud"
-      version = "1.44.1"
+    civo = {
+      source  = "civo/civo"
+      version = "~>0.10.10"
     }
   }
   required_version = "~> 1.0"

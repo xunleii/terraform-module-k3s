@@ -2,6 +2,11 @@ output "summary" {
   value = module.k3s.summary
 }
 
+output "kubeconfig" {
+  value     = module.k3s.kube_config
+  sensitive = true
+}
+
 output "ssh_private_key" {
   description = "Generated SSH private key."
   value       = tls_private_key.ed25519-provisioning.private_key_openssh
