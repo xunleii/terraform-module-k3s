@@ -1,0 +1,26 @@
+formatter: "markdown table"
+
+content: |-
+  ## Example _(based on [Hetzner Cloud example](examples/hcloud-k3s))_
+
+  ```hcl
+  {{ include "examples/hcloud-k3s/k3s.tf" | replace "./../.." "xunleii/k3s/module" }}
+  ```
+
+  {{ .Inputs | replace "\"|\"" "\"\\|\"" }}
+
+  {{ .Outputs }}
+
+  {{ .Providers }}
+
+output:
+  file: README.md
+  mode: inject
+  template: |-
+    <!-- BEGIN_TF_DOCS -->
+    {{ .Content }}
+    <!-- END_TF_DOCS -->
+
+sort:
+  enabled: true
+  by: required
