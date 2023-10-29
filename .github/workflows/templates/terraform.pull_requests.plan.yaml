@@ -1,0 +1,163 @@
+name: IaaS - Terraform CI (for pull requests) - Plan
+
+on:
+  workflow_call:
+    inputs:
+      after_lint:
+        default: true
+        description: Is this workflow run after lint?
+        required: false
+        type: boolean
+
+      env:
+        description: List of environment variables to set (YAML formatted)
+        required: false
+        type: string
+
+      terraform_vars:
+        description: Terraform variables (YAML formatted)
+        required: false
+        type: string
+
+      terraform_version:
+        description: Terraform version that should we use (latest by default)
+        required: false
+        type: string
+      terraform_workdir:
+        description: Working directory where Terraform files are
+        required: false
+        default: "."
+        type: string
+
+    secrets:
+      env:
+        description: List of sensitive environment variables to set (YAML formatted)
+        required: false
+
+      terraform_vars:
+        description: Sensitive Terraform variables (YAML formatted)
+        required: false
+
+jobs:
+  # Terraform plan generated the speculative execution plan
+  terraform_plan:
+    name: Generate a speculative execution plan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
+      - uses: hashicorp/setup-terraform@bbe167fbdaa1a3bd046bdd70eba9dd3dddcca99c # tag=v2.0.2
+        with:
+          terraform_version: ${{ inputs.terraform_version }}
+      - name: Pre-hook Terraform workflow
+        id: pre
+        run: |
+          # Setup `workdir` suffix used to give more information during execution
+          if [[ '${{ inputs.terraform_workdir }}' == '.' ]]; then
+            echo "workdir=" >> "${GITHUB_OUTPUT}"
+          else
+            echo "workdir=(${{ inputs.terraform_workdir }})" >> "${GITHUB_OUTPUT}"
+          fi
+
+          if [[ '${{ inputs.after_lint }}' == 'true' ]]; then
+            echo 'lint_fmt_success="- [x] :paintbrush: Check if all Terraform configuration files are in a canonical format"' >> "${GITHUB_OUTPUT}"
+            echo 'lint_val_success="- [x] :hammer_and_wrench: Validate the configuration files"' >> "${GITHUB_OUTPUT}"
+          else
+            echo 'lint_fmt_success=""' >> "${GITHUB_OUTPUT}"
+            echo 'lint_val_success=""' >> "${GITHUB_OUTPUT}"
+          fi
+
+          # Import Terraform variables
+          import yaml
+          import os
+
+          tf_env = '''
+          ${{ inputs.env }}
+          ${{ secrets.env }}
+          '''
+
+          tf_vars = '''
+          ${{ inputs.terraform_vars }}
+          ${{ secrets.terraform_vars }}
+          '''
+
+          with open(os.getenv('GITHUB_ENV'), 'a') as env:
+            if tf_env.strip():
+              for var in yaml.safe_load(tf_env).items():
+                env.write('%s=%s\n' % var)
+            if tf_vars.strip():
+              for var in yaml.safe_load(tf_vars).items():
+                env.write('TF_VAR_%s=%s\n' % var)
+        shell: python
+
+      # --- `terraform init`
+      - name: Initialize Terraform working directory ${{ steps.pre.outputs.workdir }}
+        id: init
+        env:
+          TF_IN_AUTOMATION: yes
+        run: terraform init -no-color -backend=false
+        working-directory: ${{ inputs.terraform_workdir }}
+      - uses: marocchino/sticky-pull-request-comment@97bddef64db61b9d80edc69593cc4e4c415c3362 # tag=v2.2.1
+        if: failure() && steps.init.outcome == 'failure'
+        with:
+          recreate: true
+          header: tf::${{ steps.pre.outputs.workdir }}
+          message: |
+            # Terraform CI/CD ${{ steps.pre.outputs.workdir }}
+
+            ${{ steps.pre.outputs.lint_fmt_success }}
+            ${{ steps.pre.outputs.lint_val_success }}
+            - [ ] :scroll: Generate a speculative execution plan
+
+            ### 🚫 Failure reason
+            ```
+            ${{ steps.init.outputs.stderr }}
+            ```
+            <br/>
+
+            > _Report based on commit ${{ github.sha }} (authored by **@${{ github.actor }}**).  See [`actions#${{ github.run_id }}`](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) for more details._
+
+      # --- `terraform plan`
+      - name: Generate a speculative execution plan ${{ steps.pre.outputs.workdir }}
+        id: plan
+        env:
+          TF_IN_AUTOMATION: yes
+        run: terraform plan -input=false -no-color -parallelism=30 -compact-warnings
+        working-directory: ${{ inputs.terraform_workdir }}
+      - uses: marocchino/sticky-pull-request-comment@97bddef64db61b9d80edc69593cc4e4c415c3362 # tag=v2.2.1
+        if: failure() && steps.plan.outcome == 'failure'
+        with:
+          recreate: true
+          header: tf::${{ steps.pre.outputs.workdir }}
+          message: |
+            # Terraform CI/CD ${{ steps.pre.outputs.workdir }}
+
+            ${{ steps.pre.outputs.lint_fmt_success }}
+            ${{ steps.pre.outputs.lint_val_success }}
+            - [ ] :scroll: Generate a speculative execution plan
+
+            ### 🚫 Failure reason
+            ```
+            ${{ steps.plan.outputs.stderr }}
+            ```
+            <br/>
+
+            > _Report based on commit ${{ github.sha }} (authored by **@${{ github.actor }}**).  See [`actions#${{ github.run_id }}`](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) for more details._
+      - uses: marocchino/sticky-pull-request-comment@97bddef64db61b9d80edc69593cc4e4c415c3362 # tag=v2.2.1
+        if: success()
+        with:
+          recreate: true
+          header: tf::${{ steps.pre.outputs.workdir }}
+          message: |
+            # Terraform CI/CD ${{ steps.pre.outputs.workdir }}
+
+            ${{ steps.pre.outputs.lint_fmt_success }}
+            ${{ steps.pre.outputs.lint_val_success }}
+            - [x] :scroll: Generate a speculative execution plan
+
+            ### Terraform Plan output
+            ```terraform
+            ${{ steps.plan.outputs.stdout }}
+            ```
+            <br/>
+
+            > _Report based on commit ${{ github.sha }} (authored by **@${{ github.actor }}**).  See [`actions#${{ github.run_id }}`](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) for more details._

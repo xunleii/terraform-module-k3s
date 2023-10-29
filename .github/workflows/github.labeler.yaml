@@ -1,8 +1,11 @@
-name: Synchronize labels
+---
+name: '[bot] Synchronize labels'
 on:
   push:
     branches: [master]
     paths: [.github/workflows/github.labeler.yaml, .github/labels.yaml]
+  schedule:
+    - cron: '0 0 * * *'
 
 jobs:
   sync:
@@ -10,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
-      - uses: micnncim/action-label-syncer@3abd5ab72fda571e69fffd97bd4e0033dd5f495c # renovate: tag=v1.3.0
+      - uses: micnncim/action-label-syncer@3abd5ab72fda571e69fffd97bd4e0033dd5f495c # v1.3.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:

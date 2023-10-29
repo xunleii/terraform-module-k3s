@@ -7,7 +7,20 @@ on:
 
 jobs:
   ci_harden_security:
-    name: Security hardening
+    name: Github Action security hardening
+    runs-on: ubuntu-latest
     permissions:
       security-events: write
-    uses: xunleii/github-actions-grimoire/.github/workflows/security.workflows.yaml@0ab2cd93e86642397ecdfb2da1e5b97594ab9905
+    steps:
+      - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+
+      - name: Lint your Github Actions
+        run: |
+          curl -O https://raw.githubusercontent.com/rhysd/actionlint/main/.github/actionlint-matcher.json
+
+          echo "::add-matcher::actionlint-matcher.json"
+          bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
+          ./actionlint -color
+
+      - name: Ensure SHA pinned actions
+        uses: zgosalvez/github-actions-ensure-sha-pinned-actions@6ca5574367befbc9efdb2fa25978084159c5902d # v1.3.0

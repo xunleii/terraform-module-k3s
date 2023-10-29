@@ -1,0 +1,16 @@
+name: Security hardening (Terraform)
+
+on:
+  pull_request:
+
+jobs:
+  trivy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+      - uses: aquasecurity/trivy-action@b77b85c0254bba6789e787844f0585cde1e56320 # v0.13.0
+        with:
+          scan-type: config
+          scan-ref: .
+          exit-code: 1
+          severity: UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL
