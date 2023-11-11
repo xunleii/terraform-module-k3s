@@ -94,7 +94,7 @@ locals {
           "--cluster-domain '${var.cluster_domain}'",
           "--cluster-cidr ${var.cidr.pods}",
           "--service-cidr ${var.cidr.services}",
-          "--token ${random_password.k3s_cluster_secret.result}",
+          "--token ${nonsensitive(random_password.k3s_cluster_secret.result)}", # NOTE: nonsensitive is used to show logs during provisioning
           length(var.servers) > 1 ? "--cluster-init" : "",
         ] :
         // For other server nodes, use agent flags (because the first node manage the cluster configuration)
@@ -105,7 +105,7 @@ locals {
           "--cluster-domain '${var.cluster_domain}'",
           "--cluster-cidr ${var.cidr.pods}",
           "--service-cidr ${var.cidr.services}",
-          "--token ${random_password.k3s_cluster_secret.result}",
+          "--token ${nonsensitive(random_password.k3s_cluster_secret.result)}", # NOTE: nonsensitive is used to show logs during provisioning
         ],
         var.global_flags,
         try(server.flags, []),

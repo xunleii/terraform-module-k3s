@@ -47,7 +47,7 @@ locals {
           "--node-ip ${agent.ip}",
           "--node-name '${try(agent.name, key)}'",
           "--server https://${local.root_advertise_ip_k3s}:6443",
-          "--token ${random_password.k3s_cluster_secret.result}",
+          "--token ${nonsensitive(random_password.k3s_cluster_secret.result)}", # NOTE: nonsensitive is used to show logs during provisioning
         ],
         var.global_flags,
         try(agent.flags, []),
