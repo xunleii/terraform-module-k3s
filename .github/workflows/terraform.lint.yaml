@@ -10,18 +10,18 @@ permissions:
 jobs:
   terraform-module-k3s:
     name: Terraform module
-    uses: ./.github/workflows/templates/terraform.pull_requests.lint.yaml
+    uses: ./.github/workflows/templates.terraform.pull_requests.lint.yaml
 
   examples_hcloud-k3s:
     name: Hetzner Cloud
     needs: [terraform-module-k3s]
-    uses: ./.github/workflows/templates/terraform.pull_requests.lint.yaml
+    uses: ./.github/workflows/templates.terraform.pull_requests.lint.yaml
     with:
       terraform_workdir: examples/hcloud-k3s
 
   examples_civo-k3s:
     name: CIVO
     needs: [terraform-module-k3s]
-    uses: ./.github/workflows/templates/terraform.pull_requests.lint.yaml
+    uses: ./.github/workflows/templates.terraform.pull_requests.lint.yaml
     with:
       terraform_workdir: examples/civo-k3s
