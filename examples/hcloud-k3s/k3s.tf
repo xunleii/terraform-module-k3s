@@ -24,7 +24,10 @@ module "k3s" {
         host        = hcloud_server.control_planes[i].ipv4_address
         private_key = trimspace(tls_private_key.ed25519_provisioning.private_key_pem)
       }
-      flags       = ["--disable-cloud-controller"]
+      flags = [
+        "--disable-cloud-controller",
+        "--tls-san ${hcloud_server.control_planes[0].ipv4_address}",
+      ]
       annotations = { "server_id" : i } // theses annotations will not be managed by this module
     }
   }

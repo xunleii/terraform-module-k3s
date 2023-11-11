@@ -2,15 +2,18 @@
   "$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.schema.json",
   "name": "k3s Terraform module - Dev Container",
   "image": "mcr.microsoft.com/vscode/devcontainers/universal",
-
   "features": {
     "ghcr.io/devcontainers-contrib/features/yamllint:2.0.9": {},
-    "ghcr.io/devcontainers/features/terraform:1.3.5": { "version": "1.6.2" },
-    "ghcr.io/dhoeric/features/terraform-docs:1.0.0": { "version": "0.16.0" },
+    "ghcr.io/devcontainers/features/terraform:1.3.5": {
+      "version": "1.6.2"
+    },
+    "ghcr.io/devcontainers-contrib/features/go-task:1.0.5": {},
+    "ghcr.io/dhoeric/features/terraform-docs:1.0.0": {
+      "version": "0.16.0"
+    },
     "ghcr.io/itsmechlark/features/act:1.0.0": {},
     "ghcr.io/itsmechlark/features/trivy:1.0.0": {}
   },
-
   "customizations": {
     "vscode": {
       "extensions": [
@@ -19,7 +22,8 @@
         "ms-vscode.makefile-tools",
         "redhat.vscode-yaml",
         "tylerharris.terraform-link-docs",
-        "yzhang.markdown-all-in-one"
+        "yzhang.markdown-all-in-one",
+        "task.vscode-task"
       ]
     }
   }

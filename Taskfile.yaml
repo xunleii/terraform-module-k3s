@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: "3"
+
+tasks:
+  default: { cmds: [task --list], silent: true }
+
+  dev:lint:
+    aliases: [lint]
+    cmds:
+      - terraform fmt -recursive
+    desc: Lint terraform code
+
+  examples:hcloud:setup:
+    aliases: [test, dev:test]
+    cmds:
+      - terraform init
+      - terraform validate
+      - terraform apply -auto-approve
+      - terraform output -raw kubeconfig > kubeconfig~
+    desc: Test this terraform module on Hetzner Cloud
+    dir: examples/hcloud-k3s
+    generates:
+      - kubeconfig~
+    interactive: true
+    requires:
+      vars: [HCLOUD_TOKEN]
+    sources:
+      # - "../../*.tf"
+      - "*.tf"
+
+  examples:hcloud:teardown:
+    cmds:
+      - terraform destroy -auto-approve
+      - rm -f kubeconfig~
+    desc: Remove all resources created by test:hcloud:setup
+    dir: examples/hcloud-k3s
+    interactive: true
+    preconditions:
+      - sh: test -f kubeconfig~
+        msg: Run `test:hcloud:setup` first
+    prompt: Are you sure you want to destroy all resources created by `test:hcloud:setup`?
+    requires:
+      vars: [HCLOUD_TOKEN]
+
+  e2e:hcloud:
+    aliases: [e2e]
+    cmds:
+      - task: examples:hcloud:setup
+      - defer: task examples:hcloud:teardown
+      - kubectl --kubeconfig examples/hcloud-k3s/kubeconfig~ get nodes
+    desc: Run e2e tests on Hetzner Cloud
