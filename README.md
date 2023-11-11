@@ -106,6 +106,47 @@ module "k3s" {
 | <a name="provider_tls"></a> [tls](#provider\_tls) | 4.0.4 |
 <!-- END_TF_DOCS -->
 
+## Frequently Asked Questions
+
+### How to customise the generated `kubeconfig`
+
+It is sometimes necessary to modify the context or the cluster name to adapt `kubeconfig` to a third-party tool or to avoid conflicts with existing tools. Although this is not the role of this module, it can easily be done with its outputs :
+
+```hcl
+module "k3s" {
+  ...
+}
+
+local {
+  kubeconfig = yamlencode({
+    apiVersion      = "v1"
+    kind            = "Config"
+    current-context = "my-context-name"
+    contexts = [{
+      context = {
+        cluster = "my-cluster-name"
+        user : "my-user-name"
+      }
+      name = "my-context-name"
+    }]
+    clusters = [{
+      cluster = {
+        certificate-authority-data = base64encode(module.k3s.kubernetes.cluster_ca_certificate)
+        server                     = module.k3s.kubernetes.api_endpoint
+      }
+      name = "my-cluster-name"
+    }]
+    users = [{
+      user = {
+        client-certificate-data : base64encode(module.k3s.kubernetes.client_certificate)
+        client-key-data : base64encode(module.k3s.kubernetes.client_key)
+      }
+      name : "my-user-name"
+    }]
+  })
+}
+```
+
 ## License
 `terraform-module-k3s` is released under the **MIT License**. See the bundled [LICENSE](LICENSE) file for details.
 
