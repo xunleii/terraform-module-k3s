@@ -2,13 +2,13 @@ data "hcloud_image" "ubuntu" {
   name = "ubuntu-20.04"
 }
 
-resource "tls_private_key" "ed25519-provisioning" {
+resource "tls_private_key" "ed25519_provisioning" {
   algorithm = "ED25519"
 }
 
 resource "hcloud_ssh_key" "default" {
   name       = "K3S terraform module - Provisionning SSH key"
-  public_key = trimspace(tls_private_key.ed25519-provisioning.public_key_openssh)
+  public_key = trimspace(tls_private_key.ed25519_provisioning.public_key_openssh)
 }
 
 resource "hcloud_network" "k3s" {
