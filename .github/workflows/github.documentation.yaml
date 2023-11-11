@@ -1,4 +1,5 @@
-name: Update documentation assets (master only)
+---
+name: '[bot] Update documentation assets (master only)'
 on:
   push:
     branches: [master]
@@ -11,7 +12,7 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
-      - uses: heinrichreimer/github-changelog-generator-action@6f5b9494dd265d6fb7243a10c53dc0169c55f247 # renovate: tag=v2.3
+      - uses: heinrichreimer/github-changelog-generator-action@6f5b9494dd265d6fb7243a10c53dc0169c55f247 # v2.3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
       # NOTE: seems impossible to use terraform-docs/gh-actions with EndBug/add-and-commit... so
@@ -19,7 +20,7 @@ jobs:
       - name: Generate README.md with terraform-docs
         run: |
           mkdir .terraform-docs
-          curl -L https://github.com/terraform-docs/terraform-docs/releases/download/v0.16.0/terraform-docs-v0.16.0-$(uname)-amd64.tar.gz | tar -xvzC .terraform-docs
+          curl -L "https://github.com/terraform-docs/terraform-docs/releases/download/v0.16.0/terraform-docs-v0.16.0-$(uname)-amd64.tar.gz" | tar -xvzC .terraform-docs
           chmod +x .terraform-docs/terraform-docs
           
           .terraform-docs/terraform-docs .

@@ -1,0 +1,25 @@
+---
+name: '[bot] Close stale issues and PRs'
+on:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/stale@1160a2240286f5da8ec72b1c0816ce2481aabf84 # v8.0.0
+        with:
+          days-before-close: 7
+          days-before-stale: 30
+          exempt-issue-labels: no-stale
+          exempt-pr-labels: no-stale
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          stale-issue-label: status/stale
+          stale-issue-message: 'This issue has been automatically marked as stale because it has not had recent activity. If the issue still persists, please leave a comment and it will be reopened.'
+          stale-pr-label: status/stale
+          stale-pr-message: 'This pull request has been automatically marked as stale because it has not had recent activity. If the pull request still needs attention, please leave a comment and it will be reopened.'

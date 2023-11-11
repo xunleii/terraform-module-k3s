@@ -1,0 +1,5 @@
+act 0.2.52
+task 3.31.0
+terraform 1.6.2
+terraform-docs 0.16.0
+trivy 0.46.0

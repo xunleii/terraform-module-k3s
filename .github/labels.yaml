@@ -25,6 +25,13 @@
 - name: size/XL
   color: FF0000
 
+- name: status/stale
+  description: This issue has not had recent activity
+  color: 6A5ACD
+- name: no-stale
+  description: This issue cannot be marked as stale
+  color: 6A5ACD
+
 - name: terraform:plan
   description: Invoke Terraform plan workflow on the current PR
   color: 7A55CC

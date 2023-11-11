@@ -22,9 +22,12 @@ module "k3s" {
       ip = hcloud_server_network.control_planes[i].ip
       connection = {
         host        = hcloud_server.control_planes[i].ipv4_address
-        private_key = trimspace(tls_private_key.ed25519-provisioning.private_key_pem)
+        private_key = trimspace(tls_private_key.ed25519_provisioning.private_key_pem)
       }
-      flags       = ["--disable-cloud-controller"]
+      flags = [
+        "--disable-cloud-controller",
+        "--tls-san ${hcloud_server.control_planes[0].ipv4_address}",
+      ]
       annotations = { "server_id" : i } // theses annotations will not be managed by this module
     }
   }
@@ -36,7 +39,7 @@ module "k3s" {
       ip   = hcloud_server_network.agents_network[i].ip
       connection = {
         host        = hcloud_server.agents[i].ipv4_address
-        private_key = trimspace(tls_private_key.ed25519-provisioning.private_key_pem)
+        private_key = trimspace(tls_private_key.ed25519_provisioning.private_key_pem)
       }
 
       labels = { "node.kubernetes.io/pool" = hcloud_server.agents[i].labels.nodepool }
