@@ -51,25 +51,26 @@ jobs:
       - name: Pre-hook Terraform workflow
         id: pre
         run: |
-          # Setup `workdir` suffix used to give more information during execution
-          if [[ '${{ inputs.terraform_workdir }}' == '.' ]]; then
-            echo "workdir=" >> "${GITHUB_OUTPUT}"
-          else
-            echo "workdir=(${{ inputs.terraform_workdir }})" >> "${GITHUB_OUTPUT}"
-          fi
+          import os
+          import yaml
 
-          if [[ '${{ inputs.after_lint }}' == 'true' ]]; then
-            echo 'lint_fmt_success="- [x] :paintbrush: Check if all Terraform configuration files are in a canonical format"' >> "${GITHUB_OUTPUT}"
-            echo 'lint_val_success="- [x] :hammer_and_wrench: Validate the configuration files"' >> "${GITHUB_OUTPUT}"
-          else
-            echo 'lint_fmt_success=""' >> "${GITHUB_OUTPUT}"
-            echo 'lint_val_success=""' >> "${GITHUB_OUTPUT}"
-          fi
+          # Setup `workdir` suffix used to give more information during execution
+
+          with open(os.getenv('GITHUB_OUTPUT'), 'a') as output:
+            if '${{ inputs.terraform_workdir }}' == '.':
+              output.write('workdir=\n')
+            else:
+              output.write('workdir=(${{ inputs.terraform_workdir }})\n')
+
+            if '${{ inputs.after_lint }}' == 'true':
+              output.write('- [x] :paintbrush: Check if all Terraform configuration files are in a canonical format\n')
+              output.write('- [x] :hammer_and_wrench: Validate the configuration files\n')
+            else:
+              output.write('lint_fmt_success=""\n')
+              output.write('lint_val_success=""\n')
 
           # Import Terraform variables
-          import yaml
-          import os
-
+  
           tf_env = '''
           ${{ inputs.env }}
           ${{ secrets.env }}
