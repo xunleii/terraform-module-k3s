@@ -19,7 +19,7 @@ jobs:
       #       we will do everything manually
       - name: Generate README.md with terraform-docs
         run: |
-          mkdir .terraform-docs
+          mkdir --parent .terraform-docs
           curl -L "https://github.com/terraform-docs/terraform-docs/releases/download/v0.16.0/terraform-docs-v0.16.0-$(uname)-amd64.tar.gz" | tar -xvzC .terraform-docs
           chmod +x .terraform-docs/terraform-docs
           
