@@ -44,7 +44,10 @@ module "k3s" {
         host        = hcloud_server.control_planes[i].ipv4_address
         private_key = trimspace(tls_private_key.ed25519_provisioning.private_key_pem)
       }
-      flags       = ["--disable-cloud-controller"]
+      flags = [
+        "--disable-cloud-controller",
+        "--tls-san ${hcloud_server.control_planes[0].ipv4_address}",
+      ]
       annotations = { "server_id" : i } // theses annotations will not be managed by this module
     }
   }
@@ -100,10 +103,10 @@ module "k3s" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_http"></a> [http](#provider\_http) | 3.4.0 |
-| <a name="provider_null"></a> [null](#provider\_null) | 3.2.1 |
-| <a name="provider_random"></a> [random](#provider\_random) | 3.5.1 |
-| <a name="provider_tls"></a> [tls](#provider\_tls) | 4.0.4 |
+| <a name="provider_http"></a> [http](#provider\_http) | ~> 3.0 |
+| <a name="provider_null"></a> [null](#provider\_null) | ~> 3.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | ~> 3.0 |
+| <a name="provider_tls"></a> [tls](#provider\_tls) | ~> 4.0 |
 <!-- END_TF_DOCS -->
 
 ## Frequently Asked Questions

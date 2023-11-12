@@ -2,7 +2,44 @@
 
 ## [Unreleased](https://github.com/xunleii/terraform-module-k3s/tree/HEAD)
 
-[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v3.2.0...HEAD)
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v3.3.0...HEAD)
+
+**Dependencies upgrades:**
+
+- chore\(deps\): update zgosalvez/github-actions-ensure-sha-pinned-actions action to v3 [\#152](https://github.com/xunleii/terraform-module-k3s/pull/152) ([renovate[bot]](https://github.com/apps/renovate))
+- chore\(deps\): update hashicorp/setup-terraform action to v3 [\#151](https://github.com/xunleii/terraform-module-k3s/pull/151) ([renovate[bot]](https://github.com/apps/renovate))
+- chore\(deps\): update zgosalvez/github-actions-ensure-sha-pinned-actions action to v1.4.1 [\#150](https://github.com/xunleii/terraform-module-k3s/pull/150) ([renovate[bot]](https://github.com/apps/renovate))
+- chore\(deps\): update marocchino/sticky-pull-request-comment action to v2.8.0 [\#149](https://github.com/xunleii/terraform-module-k3s/pull/149) ([renovate[bot]](https://github.com/apps/renovate))
+- chore\(deps\): update dependency trivy to v0.47.0 [\#148](https://github.com/xunleii/terraform-module-k3s/pull/148) ([renovate[bot]](https://github.com/apps/renovate))
+- chore\(deps\): update aquasecurity/trivy-action action to v0.14.0 [\#147](https://github.com/xunleii/terraform-module-k3s/pull/147) ([renovate[bot]](https://github.com/apps/renovate))
+- chore\(deps\): update hashicorp/setup-terraform action to v2.0.3 [\#146](https://github.com/xunleii/terraform-module-k3s/pull/146) ([renovate[bot]](https://github.com/apps/renovate))
+- chore\(deps\): update dependency terraform to v1.6.3 [\#145](https://github.com/xunleii/terraform-module-k3s/pull/145) ([renovate[bot]](https://github.com/apps/renovate))
+- chore\(deps\): update actions/checkout action to v4 [\#137](https://github.com/xunleii/terraform-module-k3s/pull/137) ([renovate[bot]](https://github.com/apps/renovate))
+- chore\(deps\): update terraform http to v3.4.0 [\#130](https://github.com/xunleii/terraform-module-k3s/pull/130) ([renovate[bot]](https://github.com/apps/renovate))
+
+**Closed issues:**
+
+- Custom k3s cluster name inside of the admin kubeconfig  [\#144](https://github.com/xunleii/terraform-module-k3s/issues/144)
+- When generate\_ca\_certificates = false, module does not export any kubeconfig [\#143](https://github.com/xunleii/terraform-module-k3s/issues/143)
+- Refresh kubeconfig when terraform state is lost [\#142](https://github.com/xunleii/terraform-module-k3s/issues/142)
+- 🚧 Refresh this repository [\#140](https://github.com/xunleii/terraform-module-k3s/issues/140)
+- terraform destroy gets stuck while draining the last node [\#138](https://github.com/xunleii/terraform-module-k3s/issues/138)
+- Error "Variable `name` is deprecated" [\#136](https://github.com/xunleii/terraform-module-k3s/issues/136)
+- cdktf compatibility  [\#135](https://github.com/xunleii/terraform-module-k3s/issues/135)
+- hcloud-k3s doesnt work with v3.3.0 [\#127](https://github.com/xunleii/terraform-module-k3s/issues/127)
+- Generated kubeconfig cannot be used \(certificate signed by unknown authority\) [\#107](https://github.com/xunleii/terraform-module-k3s/issues/107)
+- Cluster CA certificate is not trusted [\#85](https://github.com/xunleii/terraform-module-k3s/issues/85)
+- Windows Terraform - SSH authentication failed [\#43](https://github.com/xunleii/terraform-module-k3s/issues/43)
+
+**Merged pull requests:**
+
+- :recycle: Cleanup this repository [\#141](https://github.com/xunleii/terraform-module-k3s/pull/141) ([xunleii](https://github.com/xunleii))
+- fix--multi\_server-install [\#131](https://github.com/xunleii/terraform-module-k3s/pull/131) ([N7KnightOne](https://github.com/N7KnightOne))
+- Fix k3s\_install\_env\_vars and hcloud-k3s example issues [\#128](https://github.com/xunleii/terraform-module-k3s/pull/128) ([xunleii](https://github.com/xunleii))
+
+## [v3.3.0](https://github.com/xunleii/terraform-module-k3s/tree/v3.3.0) (2023-05-14)
+
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v3.2.0...v3.3.0)
 
 **Dependencies upgrades:**
 
