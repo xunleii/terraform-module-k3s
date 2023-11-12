@@ -85,6 +85,9 @@ override.tf.json
 .terraformrc
 terraform.rc
 
+# Ignore temporary TF docs folder
+.terraform-docs/
+
 ### Windows ###
 # Windows thumbnail cache files
 Thumbs.db
