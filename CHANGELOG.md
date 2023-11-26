@@ -20,17 +20,17 @@
 
 **Closed issues:**
 
-- Custom k3s cluster name inside of the admin kubeconfig  [\#144](https://github.com/xunleii/terraform-module-k3s/issues/144)
 - When generate\_ca\_certificates = false, module does not export any kubeconfig [\#143](https://github.com/xunleii/terraform-module-k3s/issues/143)
 - Refresh kubeconfig when terraform state is lost [\#142](https://github.com/xunleii/terraform-module-k3s/issues/142)
-- 🚧 Refresh this repository [\#140](https://github.com/xunleii/terraform-module-k3s/issues/140)
 - terraform destroy gets stuck while draining the last node [\#138](https://github.com/xunleii/terraform-module-k3s/issues/138)
-- Error "Variable `name` is deprecated" [\#136](https://github.com/xunleii/terraform-module-k3s/issues/136)
 - cdktf compatibility  [\#135](https://github.com/xunleii/terraform-module-k3s/issues/135)
 - hcloud-k3s doesnt work with v3.3.0 [\#127](https://github.com/xunleii/terraform-module-k3s/issues/127)
 - Generated kubeconfig cannot be used \(certificate signed by unknown authority\) [\#107](https://github.com/xunleii/terraform-module-k3s/issues/107)
 - Cluster CA certificate is not trusted [\#85](https://github.com/xunleii/terraform-module-k3s/issues/85)
 - Windows Terraform - SSH authentication failed [\#43](https://github.com/xunleii/terraform-module-k3s/issues/43)
+- Custom k3s cluster name inside of the admin kubeconfig  [\#144](https://github.com/xunleii/terraform-module-k3s/issues/144)
+- 🚧 Refresh this repository [\#140](https://github.com/xunleii/terraform-module-k3s/issues/140)
+- Error "Variable `name` is deprecated" [\#136](https://github.com/xunleii/terraform-module-k3s/issues/136)
 
 **Merged pull requests:**
 
