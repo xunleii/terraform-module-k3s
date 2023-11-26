@@ -6,6 +6,7 @@
 
 **Dependencies upgrades:**
 
+- chore\(deps\): update dependency terraform to v1.6.4 [\#154](https://github.com/xunleii/terraform-module-k3s/pull/154) ([renovate[bot]](https://github.com/apps/renovate))
 - chore\(deps\): update zgosalvez/github-actions-ensure-sha-pinned-actions action to v3 [\#152](https://github.com/xunleii/terraform-module-k3s/pull/152) ([renovate[bot]](https://github.com/apps/renovate))
 - chore\(deps\): update hashicorp/setup-terraform action to v3 [\#151](https://github.com/xunleii/terraform-module-k3s/pull/151) ([renovate[bot]](https://github.com/apps/renovate))
 - chore\(deps\): update zgosalvez/github-actions-ensure-sha-pinned-actions action to v1.4.1 [\#150](https://github.com/xunleii/terraform-module-k3s/pull/150) ([renovate[bot]](https://github.com/apps/renovate))
