@@ -1,8 +1,8 @@
 # Changelog
 
-## [Unreleased](https://github.com/xunleii/terraform-module-k3s/tree/HEAD)
+## [v3.4.0](https://github.com/xunleii/terraform-module-k3s/tree/v3.4.0) (2023-11-26)
 
-[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v3.3.0...HEAD)
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v3.3.0...v3.4.0)
 
 **Dependencies upgrades:**
 
