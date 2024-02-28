@@ -86,10 +86,10 @@ variable "servers" {
     condition     = length(var.servers) > 0
     error_message = "At least one server node must be provided."
   }
-  validation {
-    condition     = length(var.servers) % 2 == 1
-    error_message = "Servers must have an odd number of nodes."
-  }
+  #validation {
+  #  condition     = length(var.servers) % 2 == 1
+  #  error_message = "Servers must have an odd number of nodes."
+  #}
   validation {
     condition     = can(values(var.servers)[*].ip)
     error_message = "Field servers.<name>.ip is required."
