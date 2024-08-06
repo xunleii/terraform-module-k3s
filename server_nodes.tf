@@ -6,7 +6,8 @@ locals {
   root_advertise_ip = split(",", values(var.servers)[0].ip)[0]
 
   // If root_advertise_ip is IPv6 wrap it in square brackets for IPv6 K3S URLs otherwise leave it raw
-  root_advertise_ip_k3s = can(regex("::", local.root_advertise_ip)) ? "[${local.root_advertise_ip}]" : local.root_advertise_ip
+  kube_apiserver_address = var.server_load_balancer_address != null ? var.server_load_balancer_address : local.root_server_connection.host
+  root_advertise_ip_k3s  = can(regex("::", local.kube_apiserver_address)) ? "[${local.kube_apiserver_address}]" : local.kube_apiserver_address
 
   // string representation of all specified extra k3s installation env vars
   install_env_vars = join(" ", [for k, v in var.k3s_install_env_vars : "${k}=${v}"])

@@ -16,6 +16,8 @@ module "k3s" {
     "--kubelet-arg cloud-provider=external" // required to use https://github.com/hetznercloud/hcloud-cloud-controller-manager
   ]
 
+  server_load_balancer_address = var.servers_num > 1 ? hcloud_load_balancer.control_plane[0].ipv4 : null
+
   servers = {
     for i in range(length(hcloud_server.control_planes)) :
     hcloud_server.control_planes[i].name => {
@@ -24,10 +26,16 @@ module "k3s" {
         host        = hcloud_server.control_planes[i].ipv4_address
         private_key = trimspace(tls_private_key.ed25519_provisioning.private_key_pem)
       }
-      flags = [
-        "--disable-cloud-controller",
-        "--tls-san ${hcloud_server.control_planes[0].ipv4_address}",
-      ]
+      flags = concat(
+        [
+          "--disable-cloud-controller",
+          "--tls-san ${hcloud_server.control_planes[0].ipv4_address}",
+        ],
+        # Add load balancer IP
+        var.servers_num > 1 ? [
+          "--tls-san ${hcloud_load_balancer.control_plane[0].ipv4}",
+        ] : []
+      )
       annotations = { "server_id" : i } // theses annotations will not be managed by this module
     }
   }
