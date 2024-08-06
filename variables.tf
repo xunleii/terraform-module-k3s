@@ -78,6 +78,12 @@ variable "global_flags" {
   default     = []
 }
 
+variable "server_load_balancer_address" {
+  description = "Address for server load balancer, to create a highly-available control-plane"
+  type        = string
+  default     = null
+}
+
 variable "servers" {
   description = "K3s server nodes definition. The key is used as node name if no name is provided."
   type        = map(any)
