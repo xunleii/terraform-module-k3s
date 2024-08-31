@@ -6,7 +6,7 @@ locals {
   root_advertise_ip = split(",", values(var.servers)[0].ip)[0]
 
   // If root_advertise_ip is IPv6 wrap it in square brackets for IPv6 K3S URLs otherwise leave it raw
-  root_advertise_ip_k3s = can(regex("::", local.root_advertise_ip)) ? "[${local.root_advertise_ip}]" : local.root_advertise_ip
+  root_advertise_ip_k3s = can(regex(":", local.root_advertise_ip)) ? "[${local.root_advertise_ip}]" : local.root_advertise_ip
 
   // string representation of all specified extra k3s installation env vars
   install_env_vars = join(" ", [for k, v in var.k3s_install_env_vars : "${k}=${v}"])
