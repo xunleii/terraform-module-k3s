@@ -4,7 +4,7 @@ output "kubernetes" {
     cluster_ca_certificate = local.cluster_ca_certificate
     client_certificate     = local.client_certificate
     client_key             = local.client_key
-    api_endpoint           = "https://${local.root_server_connection.host}:6443"
+    api_endpoint           = "https://${local.root_advertise_ip_k3s}:6443"
     password               = null
     username               = null
   }
@@ -18,7 +18,7 @@ output "kube_config" {
     clusters = [{
       cluster = {
         certificate-authority-data = base64encode(local.cluster_ca_certificate)
-        server                     = "https://${local.root_server_connection.host}:6443"
+        server                     = "https://${local.root_advertise_ip_k3s}:6443"
       }
       name = var.cluster_domain
     }]
