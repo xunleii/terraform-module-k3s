@@ -168,7 +168,7 @@ resource "null_resource" "agents_drain" {
   provisioner "remote-exec" {
     when = destroy
     inline = [
-      "${self.triggers.kubectl_cmd} drain ${self.triggers.agent_name} --delete-local-data --force --ignore-daemonsets --timeout=${self.triggers.drain_timeout}"
+      "${self.triggers.kubectl_cmd} drain ${self.triggers.agent_name} --delete-emptydir-data --force --ignore-daemonsets --timeout=${self.triggers.drain_timeout}"
     ]
   }
 }
