@@ -1,5 +1,38 @@
 # Changelog
 
+## [Unreleased](https://github.com/xunleii/terraform-module-k3s/tree/HEAD)
+
+[Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v3.4.0...HEAD)
+
+**Dependencies upgrades:**
+
+- chore\(deps\): update marocchino/sticky-pull-request-comment action to v2.9.2 [\#203](https://github.com/xunleii/terraform-module-k3s/pull/203) ([renovate[bot]](https://github.com/apps/renovate))
+- chore\(deps\): update dependency terraform-docs to v0.20.0 [\#202](https://github.com/xunleii/terraform-module-k3s/pull/202) ([renovate[bot]](https://github.com/apps/renovate))
+- chore\(deps\): update zgosalvez/github-actions-ensure-sha-pinned-actions action to v3.0.23 - autoclosed [\#201](https://github.com/xunleii/terraform-module-k3s/pull/201) ([renovate[bot]](https://github.com/apps/renovate))
+- chore\(deps\): update ghcr.io/devcontainers/features/terraform docker tag to v1.3.10 [\#200](https://github.com/xunleii/terraform-module-k3s/pull/200) ([renovate[bot]](https://github.com/apps/renovate))
+- chore\(deps\): update dependency terraform-docs to v0.17.0 [\#163](https://github.com/xunleii/terraform-module-k3s/pull/163) ([renovate[bot]](https://github.com/apps/renovate))
+- chore\(deps\): update actions/stale action to v9 [\#162](https://github.com/xunleii/terraform-module-k3s/pull/162) ([renovate[bot]](https://github.com/apps/renovate))
+- chore\(deps\): update heinrichreimer/github-changelog-generator-action action to v2.4 [\#161](https://github.com/xunleii/terraform-module-k3s/pull/161) ([renovate[bot]](https://github.com/apps/renovate))
+- chore\(deps\): update dependency trivy to v0.48.2 [\#160](https://github.com/xunleii/terraform-module-k3s/pull/160) ([renovate[bot]](https://github.com/apps/renovate))
+- chore\(deps\): update aquasecurity/trivy-action action to v0.16.1 [\#159](https://github.com/xunleii/terraform-module-k3s/pull/159) ([renovate[bot]](https://github.com/apps/renovate))
+- chore\(deps\): update dependency act to v0.2.57 [\#158](https://github.com/xunleii/terraform-module-k3s/pull/158) ([renovate[bot]](https://github.com/apps/renovate))
+- chore\(deps\): update zgosalvez/github-actions-ensure-sha-pinned-actions action to v3.0.3 [\#157](https://github.com/xunleii/terraform-module-k3s/pull/157) ([renovate[bot]](https://github.com/apps/renovate))
+- chore\(deps\): update dependency terraform to v1.6.6 [\#156](https://github.com/xunleii/terraform-module-k3s/pull/156) ([renovate[bot]](https://github.com/apps/renovate))
+
+**Closed issues:**
+
+- :unicorn: Add Certificate data as outputs [\#182](https://github.com/xunleii/terraform-module-k3s/issues/182)
+- Servers must have an odd number of nodes [\#172](https://github.com/xunleii/terraform-module-k3s/issues/172)
+- :bug:  Cannot scale up server nodes  [\#153](https://github.com/xunleii/terraform-module-k3s/issues/153)
+- Taking a node out of the configuration keeps the node within the cluster but cordoned [\#139](https://github.com/xunleii/terraform-module-k3s/issues/139)
+- Consider Integration Testing with k3d [\#133](https://github.com/xunleii/terraform-module-k3s/issues/133)
+- K3s Cluster Node\(s\) Upgrade [\#132](https://github.com/xunleii/terraform-module-k3s/issues/132)
+- Unable to use on Windows Terraform [\#95](https://github.com/xunleii/terraform-module-k3s/issues/95)
+
+**Merged pull requests:**
+
+- let k8s\_ca\_certificates\_install depend on var.depends\_on\_ [\#164](https://github.com/xunleii/terraform-module-k3s/pull/164) ([sschaeffner](https://github.com/sschaeffner))
+
 ## [v3.4.0](https://github.com/xunleii/terraform-module-k3s/tree/v3.4.0) (2023-11-26)
 
 [Full Changelog](https://github.com/xunleii/terraform-module-k3s/compare/v3.3.0...v3.4.0)
@@ -35,7 +68,7 @@
 **Merged pull requests:**
 
 - :recycle: Cleanup this repository [\#141](https://github.com/xunleii/terraform-module-k3s/pull/141) ([xunleii](https://github.com/xunleii))
-- fix--multi\_server-install [\#131](https://github.com/xunleii/terraform-module-k3s/pull/131) ([N7KnightOne](https://github.com/N7KnightOne))
+- fix--multi\_server-install [\#131](https://github.com/xunleii/terraform-module-k3s/pull/131) ([jacaudi](https://github.com/jacaudi))
 - Fix k3s\_install\_env\_vars and hcloud-k3s example issues [\#128](https://github.com/xunleii/terraform-module-k3s/pull/128) ([xunleii](https://github.com/xunleii))
 
 ## [v3.3.0](https://github.com/xunleii/terraform-module-k3s/tree/v3.3.0) (2023-05-14)
