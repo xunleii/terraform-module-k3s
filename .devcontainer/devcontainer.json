@@ -11,7 +11,7 @@
     "ghcr.io/dhoeric/features/terraform-docs:1.0.0": {
       "version": "0.16.0"
     },
-    "ghcr.io/itsmechlark/features/act:1.0.0": {},
+    "ghcr.io/itsmechlark/features/act:1.2.1": {},
     "ghcr.io/itsmechlark/features/trivy:1.0.0": {}
   },
   "customizations": {
