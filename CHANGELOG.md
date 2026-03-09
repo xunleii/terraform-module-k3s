@@ -6,6 +6,11 @@
 
 **Dependencies upgrades:**
 
+- chore\(deps\): update hashicorp/setup-terraform action to v4 [\#225](https://github.com/xunleii/terraform-module-k3s/pull/225) ([renovate[bot]](https://github.com/apps/renovate))
+- chore\(deps\): update zgosalvez/github-actions-ensure-sha-pinned-actions action to v5 [\#223](https://github.com/xunleii/terraform-module-k3s/pull/223) ([renovate[bot]](https://github.com/apps/renovate))
+- chore\(deps\): update dependency trivy to v0.69.3 [\#221](https://github.com/xunleii/terraform-module-k3s/pull/221) ([renovate[bot]](https://github.com/apps/renovate))
+- chore\(deps\): update dependency terraform to v1.14.6 [\#214](https://github.com/xunleii/terraform-module-k3s/pull/214) ([renovate[bot]](https://github.com/apps/renovate))
+- chore\(deps\): update ghcr.io/devcontainers/features/terraform docker tag to v1.4.2 [\#213](https://github.com/xunleii/terraform-module-k3s/pull/213) ([renovate[bot]](https://github.com/apps/renovate))
 - chore\(deps\): update marocchino/sticky-pull-request-comment action to v2.9.2 [\#203](https://github.com/xunleii/terraform-module-k3s/pull/203) ([renovate[bot]](https://github.com/apps/renovate))
 - chore\(deps\): update dependency terraform-docs to v0.20.0 [\#202](https://github.com/xunleii/terraform-module-k3s/pull/202) ([renovate[bot]](https://github.com/apps/renovate))
 - chore\(deps\): update zgosalvez/github-actions-ensure-sha-pinned-actions action to v3.0.23 - autoclosed [\#201](https://github.com/xunleii/terraform-module-k3s/pull/201) ([renovate[bot]](https://github.com/apps/renovate))
