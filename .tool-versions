@@ -1,5 +1,5 @@
 act 0.2.57
 task 3.31.0
-terraform 1.14.6
+terraform 1.15.1
 terraform-docs 0.20.0
 trivy 0.69.3
