@@ -35,6 +35,8 @@ locals {
   ])
   agent_taints = local.managed_taint_enabled ? { for o in local.agent_taints_list : o.key => o.value if o.key != "" } : {}
 
+  agent_flags = [for f in var.global_flags : f if !startswith(f, "--tls-san")]
+
   // Generate a map of all calculated agent fields, used during k3s installation.
   agents_metadata = {
     for key, agent in var.agents :
@@ -49,14 +51,14 @@ locals {
           "--server https://${local.root_advertise_ip_k3s}:6443",
           "--token ${nonsensitive(random_password.k3s_cluster_secret.result)}", # NOTE: nonsensitive is used to show logs during provisioning
         ],
-        var.global_flags,
+        local.agent_flags,
         try(agent.flags, []),
         [for key, value in try(agent.taints, {}) : "--node-taint '${key}=${value}'" if value != null]
       )))
 
       immutable_fields_hash = sha1(join("", concat(
         [var.cluster_domain],
-        var.global_flags,
+        local.agent_flags,
         try(agent.flags, []),
       )))
     }
